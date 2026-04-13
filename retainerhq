@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RetainerHQ</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0B0F1A;
+      --bg2: #111827;
+      --card: #1C2333;
+      --card2: #232D42;
+      --accent: #10B981;
+      --accent2: #059669;
+      --accent-glow: rgba(16,185,129,0.12);
+      --text: #F1F5F9;
+      --text2: #94A3B8;
+      --text3: #64748B;
+      --border: #2D3748;
+      --border2: #3D4F6A;
+      --red: #F87171;
+      --yellow: #FBBF24;
+      --blue: #60A5FA;
+      --purple: #A78BFA;
+      --sidebar-w: 240px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text span { color: var(--accent); }
+
+    .logo-badge {
+      font-size: 10px;
+      background: var(--accent-glow);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-top: 4px;
+      display: inline-block;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar-nav { padding: 16px 12px; flex: 1; }
+
+    .nav-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text3);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 0 8px;
+      margin-bottom: 8px;
+      margin-top: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text2);
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+      margin-bottom: 2px;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-item:hover { background: var(--card); color: var(--text); }
+    .nav-item.active { background: var(--accent-glow); color: var(--accent); }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .user-info { display: flex; align-items: center; gap: 10px; }
+
+    .avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #059669);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: white; flex-shrink: 0;
+    }
+
+    .user-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .user-role { font-size: 11px; color: var(--text3); }
+
+    /* ── MAIN ── */
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+    .header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .header-title { font-size: 18px; font-weight: 700; color: var(--text); }
+    .header-sub { font-size: 13px; color: var(--text2); margin-top: 1px; }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+    .btn-secondary { background: var(--card2); color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: var(--card); border-color: var(--border2); }
+    .btn-ghost { background: transparent; color: var(--text2); }
+    .btn-ghost:hover { background: var(--card); color: var(--text); }
+    .btn-danger { background: rgba(248,113,113,0.15); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
+    .btn-danger:hover { background: rgba(248,113,113,0.25); }
+    .btn svg { width: 16px; height: 16px; }
+
+    /* ── CONTENT ── */
+    .content { padding: 28px; flex: 1; }
+
+    /* ── STATS ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .stat-card:hover { border-color: var(--border2); }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .stat-card:hover::before { opacity: 1; }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text3);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value { font-size: 28px; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 4px; }
+    .stat-sub { font-size: 12px; color: var(--text2); }
+
+    .stat-icon {
+      position: absolute;
+      top: 16px; right: 16px;
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .stat-icon svg { width: 18px; height: 18px; }
+    .icon-green { background: rgba(16,185,129,0.15); color: var(--accent); }
+    .icon-blue { background: rgba(96,165,250,0.15); color: var(--blue); }
+    .icon-yellow { background: rgba(251,191,36,0.15); color: var(--yellow); }
+    .icon-purple { background: rgba(167,139,250,0.15); color: var(--purple); }
+
+    /* ── SECTION ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .section-title { font-size: 16px; font-weight: 700; color: var(--text); }
+
+    .section-count {
+      font-size: 12px;
+      color: var(--text3);
+      background: var(--card2);
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-left: 8px;
+    }
+
+    /* ── CONTRACT CARDS ── */
+    .contracts-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .contract-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .contract-card:hover {
+      border-color: var(--border2);
+      background: var(--card2);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .contract-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; }
+    .contract-brand { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .contract-package { font-size: 13px; color: var(--text2); }
+    .contract-pay { text-align: right; }
+    .pay-amount { font-size: 20px; font-weight: 700; color: var(--accent); }
+    .pay-label { font-size: 11px; color: var(--text3); }
+
+    /* ── PROGRESS ── */
+    .progress-section { margin-bottom: 12px; }
+    .progress-labels { display: flex; justify-content: space-between; margin-bottom: 6px; }
+    .progress-text { font-size: 12px; color: var(--text2); }
+    .progress-pct { font-size: 12px; color: var(--text3); }
+    .progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #34D399); border-radius: 3px; transition: width 0.5s ease; }
+
+    .contract-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+
+    /* ── BADGES ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-green { background: rgba(16,185,129,0.15); color: var(--accent); }
+    .badge-yellow { background: rgba(251,191,36,0.15); color: var(--yellow); }
+    .badge-blue { background: rgba(96,165,250,0.15); color: var(--blue); }
+    .badge-red { background: rgba(248,113,113,0.15); color: var(--red); }
+    .badge-gray { background: var(--card2); color: var(--text3); }
+
+    /* ── EMPTY STATE ── */
+    .empty-state { text-align: center; padding: 60px 20px; }
+    .empty-state-icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state h3 { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .empty-state p { font-size: 14px; color: var(--text2); margin-bottom: 24px; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 540px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: modalIn 0.2s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title { font-size: 16px; font-weight: 700; color: var(--text); }
+
+    .modal-close {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text2);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      transition: all 0.15s;
+    }
+
+    .modal-close:hover { background: var(--card2); color: var(--text); }
+    .modal-body { padding: 24px; }
+    .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; }
+
+    /* ── FORMS ── */
+    .form-group { margin-bottom: 16px; }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text2);
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s;
+      font-family: inherit;
+    }
+
+    .form-input:focus { border-color: var(--accent); }
+    .form-input::placeholder { color: var(--text3); }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    textarea.form-input { resize: vertical; min-height: 80px; }
+
+    select.form-input {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    /* ── DETAIL ── */
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+
+    .detail-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .detail-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .detail-value { font-size: 20px; font-weight: 700; color: var(--text); }
+    .detail-value.accent { color: var(--accent); }
+
+    /* ── VIDEO LOG ── */
+    .video-log { display: flex; flex-direction: column; gap: 8px; }
+
+    .video-entry {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: border-color 0.15s;
+    }
+
+    .video-entry:hover { border-color: var(--border2); }
+    .video-num { font-size: 13px; font-weight: 700; color: var(--accent); min-width: 60px; }
+    .video-date { font-size: 12px; color: var(--text3); }
+    .video-link { font-size: 12px; color: var(--blue); text-decoration: none; }
+    .video-link:hover { text-decoration: underline; }
+
+    /* ── EMAIL GENERATOR ── */
+    .email-preview {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 13.5px;
+      line-height: 1.75;
+      color: var(--text);
+      white-space: pre-wrap;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 300px;
+    }
+
+    /* ── SETTINGS ── */
+    .settings-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .settings-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .settings-sub { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+
+    .package-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
+    }
+
+    .package-videos { font-size: 14px; font-weight: 700; color: var(--text); min-width: 80px; }
+
+    /* ── TABS ── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 8px 16px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text2);
+      text-align: center;
+      transition: all 0.15s;
+      border: none;
+      background: none;
+    }
+
+    .tab.active { background: var(--accent); color: white; }
+    .tab:hover:not(.active) { background: var(--card2); color: var(--text); }
+
+    /* ── DIVIDER ── */
+    .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--card2);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 14px;
+      color: var(--text);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      max-width: 340px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-success { border-left: 3px solid var(--accent); }
+    .toast-error { border-left: 3px solid var(--red); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: 60px;
+        bottom: 0;
+        top: auto;
+        flex-direction: row;
+        border-right: none;
+        border-top: 1px solid var(--border);
+        padding: 0;
+      }
+
+      .sidebar-logo, .sidebar-footer { display: none; }
+
+      .sidebar-nav {
+        display: flex;
+        flex-direction: row;
+        padding: 0;
+        width: 100%;
+        justify-content: space-around;
+      }
+
+      .nav-label { display: none; }
+
+      .nav-item {
+        flex-direction: column;
+        font-size: 10px;
+        gap: 3px;
+        padding: 8px 4px;
+        flex: 1;
+        justify-content: center;
+        border-radius: 0;
+        margin-bottom: 0;
+        text-align: center;
+      }
+
+      .nav-item svg { width: 20px; height: 20px; }
+
+      .main { margin-left: 0; margin-bottom: 60px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .content { padding: 16px; }
+      .header { padding: 12px 16px; }
+      .detail-grid { grid-template-columns: 1fr 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+
+      .email-two-col { grid-template-columns: 1fr !important; }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── HELPERS ── */
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .gap-2 { gap: 8px; }
+    .gap-3 { gap: 12px; }
+    .mt-4 { margin-top: 16px; }
+    .text-sm { font-size: 13px; }
+    .text-xs { font-size: 11px; }
+    .text-muted { color: var(--text2); }
+    .text-accent { color: var(--accent); }
+    .font-bold { font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">Retainer<span>HQ</span></div>
+    <div class="logo-badge">BETA</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-label">Main</div>
+    <button class="nav-item active" onclick="navigate('dashboard')" id="nav-dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </button>
+    <button class="nav-item" onclick="navigate('contracts')" id="nav-contracts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Contracts
+    </button>
+    <button class="nav-item" onclick="navigate('email')" id="nav-email">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Email Gen
+    </button>
+    <button class="nav-item" onclick="navigate('settings')" id="nav-settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Rate Card
+    </button>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="avatar">IS</div>
+      <div>
+        <div class="user-name">Isaac</div>
+        <div class="user-role">TikTok Shop Affiliate</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <div class="header">
+    <div>
+      <div class="header-title" id="page-title">Dashboard</div>
+      <div class="header-sub" id="page-sub">Welcome back, Isaac 👋</div>
+    </div>
+    <div class="header-actions" id="header-actions">
+      <button class="btn btn-primary" onclick="openModal('add-contract')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Contract
+      </button>
+    </div>
+  </div>
+  <div class="content" id="page-content"></div>
+</div>
+
+<!-- ═══ TOAST ═══ -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══ MODAL: Add Contract ═══ -->
+<div class="modal-overlay" id="modal-add-contract">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add New Contract</div>
+      <button class="modal-close" onclick="closeModal('add-contract')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Brand Name *</label>
+        <input type="text" class="form-input" id="inp-brand" placeholder="e.g. GlowSkin Co.">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Total Videos *</label>
+          <input type="number" class="form-input" id="inp-videos" placeholder="e.g. 10" min="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Base Pay ($) *</label>
+          <input type="number" class="form-input" id="inp-pay" placeholder="e.g. 2000" min="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Commission Rate (%)</label>
+          <input type="number" class="form-input" id="inp-commission" placeholder="e.g. 5" min="0" max="100" step="0.5">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Start Date</label>
+          <input type="date" class="form-input" id="inp-date">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Usage Rights</label>
+        <select class="form-input" id="inp-usage">
+          <option value="365">365-day Spark Ads + Meta Ads</option>
+          <option value="180">180-day</option>
+          <option value="90">90-day</option>
+          <option value="0">No usage rights</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea class="form-input" id="inp-notes" placeholder="Any details about this deal..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('add-contract')">Cancel</button>
+      <button class="btn btn-primary" onclick="addContract()">Add Contract</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: Log Video ═══ -->
+<div class="modal-overlay" id="modal-log-video">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Log Posted Video</div>
+      <button class="modal-close" onclick="closeModal('log-video')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">TikTok Video URL (optional)</label>
+        <input type="text" class="form-input" id="inp-video-url" placeholder="https://tiktok.com/@...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date Posted</label>
+        <input type="date" class="form-input" id="inp-video-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Video Description</label>
+        <input type="text" class="form-input" id="inp-video-notes" placeholder="e.g. Unboxing + first impressions">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('log-video')">Cancel</button>
+      <button class="btn btn-primary" onclick="logVideo()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+        Log Video
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+// DATA & STATE
+// ════════════════════════════════════════════════
+
+const STORAGE_KEY = 'rhq_contracts_v2';
+const SETTINGS_KEY = 'rhq_settings_v2';
+
+const defaultSettings = {
+  name: 'Isaac',
+  gmv: '$1M+',
+  monthly: '$120K+',
+  commission: 5,
+  usageRights: 365,
+  packages: [
+    { videos: 5, price: 1500 },
+    { videos: 10, price: 2000 },
+    { videos: 15, price: 3000 }
+  ]
+};
+
+const demoContracts = [
+  {
+    id: 'c1',
+    brand: 'GlowSkin Co.',
+    totalVideos: 10,
+    basePay: 2000,
+    commission: 5,
+    startDate: '2026-03-15',
+    usage: 365,
+    notes: 'Skincare brand — focus on anti-aging. They want unboxing + routine integration content.',
+    status: 'active',
+    videos: [
+      { id: 'v1', date: '2026-03-18', url: '', notes: 'Unboxing + First impressions' },
+      { id: 'v2', date: '2026-03-22', url: '', notes: 'Week 1 skin check-in' },
+      { id: 'v3', date: '2026-03-28', url: '', notes: 'Morning routine integration' },
+      { id: 'v4', date: '2026-04-02', url: '', notes: 'Before & after comparison' },
+      { id: 'v5', date: '2026-04-07', url: '', notes: 'Month 1 results' },
+      { id: 'v6', date: '2026-04-10', url: '', notes: 'FAQ video' },
+      { id: 'v7', date: '2026-04-11', url: '', notes: 'Get Ready With Me' }
+    ]
+  },
+  {
+    id: 'c2',
+    brand: 'FitLife Supplements',
+    totalVideos: 5,
+    basePay: 1500,
+    commission: 8,
+    startDate: '2026-02-01',
+    usage: 365,
+    notes: 'Pre-workout and protein supplements. Great commission rate.',
+    status: 'completed',
+    videos: [
+      { id: 'v1', date: '2026-02-05', url: '', notes: 'Unboxing' },
+      { id: 'v2', date: '2026-02-10', url: '', notes: 'Workout routine' },
+      { id: 'v3', date: '2026-02-15', url: '', notes: 'Results check-in' },
+      { id: 'v4', date: '2026-02-20', url: '', notes: 'Recipe video' },
+      { id: 'v5', date: '2026-02-28', url: '', notes: 'Final review' }
+    ]
+  },
+  {
+    id: 'c3',
+    brand: 'TechGear Pro',
+    totalVideos: 15,
+    basePay: 3000,
+    commission: 5,
+    startDate: '2026-04-01',
+    usage: 365,
+    notes: 'Phone accessories and gadgets.',
+    status: 'active',
+    videos: [
+      { id: 'v1', date: '2026-04-03', url: '', notes: 'First look' },
+      { id: 'v2', date: '2026-04-08', url: '', notes: 'Setup guide' }
+    ]
+  },
+  {
+    id: 'c4',
+    brand: 'NaturalBeauty Co.',
+    totalVideos: 10,
+    basePay: 2500,
+    commission: 6,
+    startDate: '2026-04-10',
+    usage: 365,
+    notes: 'Organic beauty products — just signed. Starting content next week.',
+    status: 'active',
+    videos: []
+  }
+];
+
+let state = {
+  page: 'dashboard',
+  contracts: [],
+  settings: { ...defaultSettings },
+  currentContractId: null,
+  contractFilter: 'all'
+};
+
+function loadData() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  const savedSettings = localStorage.getItem(SETTINGS_KEY);
+  state.contracts = saved ? JSON.parse(saved) : demoContracts;
+  state.settings = savedSettings ? JSON.parse(savedSettings) : { ...defaultSettings };
+  if (!saved) saveData();
+  if (!savedSettings) saveSettings();
+}
+
+function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state.contracts)); }
+function saveSettings() { localStorage.setItem(SETTINGS_KEY, JSON.stringify(state.settings)); }
+
+// ════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════
+
+function navigate(page, contractId) {
+  state.page = page;
+  state.currentContractId = contractId || null;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const navKey = page === 'contract-detail' ? 'contracts' : page;
+  const navEl = document.getElementById('nav-' + navKey);
+  if (navEl) navEl.classList.add('active');
+  renderPage();
+  window.scrollTo(0, 0);
+}
+
+function renderPage() {
+  const content = document.getElementById('page-content');
+  const title   = document.getElementById('page-title');
+  const sub     = document.getElementById('page-sub');
+  const actions = document.getElementById('header-actions');
+
+  const addBtn = `<button class="btn btn-primary" onclick="openModal('add-contract')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Contract</button>`;
+
+  switch (state.page) {
+    case 'dashboard':
+      title.textContent = 'Dashboard';
+      sub.textContent = 'Welcome back, Isaac 👋';
+      actions.innerHTML = addBtn;
+      content.innerHTML = renderDashboard();
+      break;
+    case 'contracts':
+      title.textContent = 'Contracts';
+      sub.textContent = 'All your retainer deals in one place';
+      actions.innerHTML = addBtn;
+      content.innerHTML = renderContracts();
+      break;
+    case 'contract-detail':
+      const c = state.contracts.find(x => x.id === state.currentContractId);
+      title.textContent = c ? c.brand : 'Contract';
+      sub.textContent = 'Retainer contract details';
+      actions.innerHTML = `<button class="btn btn-secondary" onclick="navigate('contracts')">← Back</button>`;
+      content.innerHTML = c ? renderContractDetail(c) : '<p style="color:var(--text2)">Contract not found.</p>';
+      break;
+    case 'email':
+      title.textContent = 'Email Generator';
+      sub.textContent = 'AI-powered responses based on your rate card';
+      actions.innerHTML = '';
+      content.innerHTML = renderEmailGenerator();
+      break;
+    case 'settings':
+      title.textContent = 'Rate Card';
+      sub.textContent = 'Your rates and creator profile';
+      actions.innerHTML = `<button class="btn btn-primary" onclick="saveSettingsFromForm()">Save Changes</button>`;
+      content.innerHTML = renderSettings();
+      break;
+  }
+}
+
+// ════════════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════════════
+
+function renderDashboard() {
+  const active = state.contracts.filter(c => c.status === 'active');
+  const totalValue = active.reduce((s, c) => s + c.basePay, 0);
+  const totalVideos = active.reduce((s, c) => s + c.totalVideos, 0);
+  const posted = active.reduce((s, c) => s + c.videos.length, 0);
+  const remaining = totalVideos - posted;
+  const completed = state.contracts.filter(c => c.status === 'completed').length;
+
+  return `
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon icon-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <div class="stat-label">Active Contracts</div>
+        <div class="stat-value">${active.length}</div>
+        <div class="stat-sub">${completed} completed total</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+        <div class="stat-label">Total Value (Active)</div>
+        <div class="stat-value">$${totalValue.toLocaleString()}</div>
+        <div class="stat-sub">base pay across deals</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-yellow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+        <div class="stat-label">Videos Posted</div>
+        <div class="stat-value">${posted}</div>
+        <div class="stat-sub">of ${totalVideos} required</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div class="stat-label">Videos Remaining</div>
+        <div class="stat-value">${remaining}</div>
+        <div class="stat-sub">across active contracts</div>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div class="flex items-center">
+        <div class="section-title">Active Retainers</div>
+        <span class="section-count">${active.length}</span>
+      </div>
+      <button class="btn btn-ghost text-sm" onclick="navigate('contracts')">View all →</button>
+    </div>
+
+    <div class="contracts-list">
+      ${active.length === 0
+        ? `<div class="empty-state"><div class="empty-state-icon">📋</div><h3>No active contracts yet</h3><p>Add your first retainer deal to get started</p><button class="btn btn-primary" onclick="openModal('add-contract')">+ Add Contract</button></div>`
+        : active.map(c => contractCard(c)).join('')}
+    </div>`;
+}
+
+function contractCard(c) {
+  const pct = c.totalVideos > 0 ? Math.round((c.videos.length / c.totalVideos) * 100) : 0;
+  const rem = c.totalVideos - c.videos.length;
+  const badge = c.status === 'completed'
+    ? '<span class="badge badge-blue">✓ Completed</span>'
+    : rem === 0
+      ? '<span class="badge badge-green">✓ All Posted</span>'
+      : rem <= 2
+        ? `<span class="badge badge-yellow">⚡ ${rem} left</span>`
+        : `<span class="badge badge-green">${rem} remaining</span>`;
+
+  return `
+    <div class="contract-card" onclick="navigate('contract-detail','${c.id}')">
+      <div class="contract-top">
+        <div>
+          <div class="contract-brand">${c.brand}</div>
+          <div class="contract-package">${c.totalVideos} video package · ${c.commission}% commission</div>
+        </div>
+        <div class="contract-pay">
+          <div class="pay-amount">$${c.basePay.toLocaleString()}</div>
+          <div class="pay-label">base pay</div>
+        </div>
+      </div>
+      <div class="progress-section">
+        <div class="progress-labels">
+          <span class="progress-text">${c.videos.length} of ${c.totalVideos} videos posted</span>
+          <span class="progress-pct">${pct}%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      </div>
+      <div class="contract-footer">
+        ${badge}
+        <span class="text-xs text-muted">Started ${fmtDate(c.startDate)}</span>
+      </div>
+    </div>`;
+}
+
+// ════════════════════════════════════════════════
+// CONTRACTS LIST
+// ════════════════════════════════════════════════
+
+function renderContracts() {
+  const f = state.contractFilter;
+  const all = state.contracts;
+  const filtered = f === 'all' ? all : all.filter(c => c.status === f);
+
+  return `
+    <div class="tabs">
+      <button class="tab ${f==='all'?'active':''}" onclick="setFilter('all')">All (${all.length})</button>
+      <button class="tab ${f==='active'?'active':''}" onclick="setFilter('active')">Active (${all.filter(c=>c.status==='active').length})</button>
+      <button class="tab ${f==='completed'?'active':''}" onclick="setFilter('completed')">Completed (${all.filter(c=>c.status==='completed').length})</button>
+    </div>
+    <div class="contracts-list">
+      ${filtered.length === 0
+        ? `<div class="empty-state"><div class="empty-state-icon">📋</div><h3>No contracts here</h3><p>Add your first retainer deal to get started</p><button class="btn btn-primary" onclick="openModal('add-contract')">+ Add Contract</button></div>`
+        : filtered.map(c => contractCard(c)).join('')}
+    </div>`;
+}
+
+function setFilter(f) {
+  state.contractFilter = f;
+  document.getElementById('page-content').innerHTML = renderContracts();
+}
+
+// ════════════════════════════════════════════════
+// CONTRACT DETAIL
+// ════════════════════════════════════════════════
+
+function renderContractDetail(c) {
+  const pct = c.totalVideos > 0 ? Math.round((c.videos.length / c.totalVideos) * 100) : 0;
+  const rem = c.totalVideos - c.videos.length;
+
+  return `
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="detail-label">Base Payment</div>
+        <div class="detail-value accent">$${c.basePay.toLocaleString()}</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">Commission Rate</div>
+        <div class="detail-value">${c.commission}%</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">Videos Remaining</div>
+        <div class="detail-value">${rem} / ${c.totalVideos}</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-label">Usage Rights</div>
+        <div class="detail-value" style="font-size:14px">${c.usage > 0 ? c.usage + '-day Spark + Meta' : 'None'}</div>
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px;">
+      <div class="section-header" style="margin-bottom:12px;">
+        <div class="section-title" style="font-size:14px;">Video Progress</div>
+        <span style="font-size:13px;color:var(--text2);">${pct}% complete</span>
+      </div>
+      <div class="progress-bar" style="height:10px;margin-bottom:8px;">
+        <div class="progress-fill" style="width:${pct}%"></div>
+      </div>
+      <div style="font-size:12px;color:var(--text3);">${c.videos.length} posted · ${rem} remaining · started ${fmtDate(c.startDate)}</div>
+    </div>
+
+    <div class="section-header">
+      <div class="flex items-center">
+        <div class="section-title">Posted Videos</div>
+        <span class="section-count">${c.videos.length}</span>
+      </div>
+      ${rem > 0 && c.status === 'active'
+        ? `<button class="btn btn-primary" onclick="openLogVideo('${c.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Log Video</button>`
+        : rem === 0 && c.status === 'active'
+          ? `<button class="btn btn-secondary" onclick="markComplete('${c.id}')">✓ Mark Complete</button>`
+          : ''}
+    </div>
+
+    ${c.videos.length === 0
+      ? `<div class="empty-state" style="padding:40px 20px;"><div class="empty-state-icon">🎬</div><h3>No videos logged yet</h3><p>Log your first posted video for this contract</p>${c.status==='active'?`<button class="btn btn-primary" onclick="openLogVideo('${c.id}')">Log First Video</button>`:''}</div>`
+      : `<div class="video-log">${c.videos.map((v, i) => `
+          <div class="video-entry">
+            <div class="flex items-center gap-3">
+              <div class="video-num">Video ${i+1}</div>
+              <div>
+                <div style="font-size:13px;color:var(--text);">${v.notes || 'No description'}</div>
+                <div class="video-date">Posted ${fmtDate(v.date)}</div>
+              </div>
+            </div>
+            ${v.url ? `<a href="${v.url}" target="_blank" class="video-link">View ↗</a>` : '<span style="font-size:11px;color:var(--text3);">No link</span>'}
+          </div>`).join('')}
+        </div>`}
+
+    ${c.notes ? `<div class="divider"></div><div class="detail-card"><div class="detail-label">Notes</div><div style="font-size:14px;color:var(--text2);margin-top:4px;">${c.notes}</div></div>` : ''}`;
+}
+
+// ════════════════════════════════════════════════
+// EMAIL GENERATOR
+// ════════════════════════════════════════════════
+
+function renderEmailGenerator() {
+  return `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;" class="email-two-col">
+      <div>
+        <div class="settings-card">
+          <div class="settings-title">Generate Response Email</div>
+          <div class="settings-sub">Fill in brand details and RetainerHQ writes the perfect response using your rates.</div>
+          <div class="form-group">
+            <label class="form-label">Brand Name *</label>
+            <input type="text" class="form-input" id="email-brand" placeholder="e.g. GlowSkin Co." oninput="generateEmail()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Their Offered Amount ($)</label>
+            <input type="number" class="form-input" id="email-offer" placeholder="Optional — e.g. 800" oninput="generateEmail()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Their Offered Video Count</label>
+            <input type="number" class="form-input" id="email-videos" placeholder="Optional — e.g. 5" oninput="generateEmail()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Response Type</label>
+            <select class="form-input" id="email-type" onchange="generateEmail()">
+              <option value="standard">Send My Rates (Standard)</option>
+              <option value="counter">Counter Their Offer</option>
+              <option value="accept">Accept Their Offer</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-header" style="margin-bottom:12px;">
+          <div class="section-title">Email Preview</div>
+          <button class="btn btn-secondary" onclick="copyEmail()" id="copy-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+        <div class="email-preview" id="email-preview">${buildEmail('standard','[Brand Name]',0,0)}</div>
+      </div>
+    </div>`;
+}
+
+function buildEmail(type, brand, offer, videos) {
+  const s = state.settings;
+  const pkgs = s.packages.map(p => `• ${p.videos} videos – $${p.price.toLocaleString()}`).join('\n');
+
+  if (type === 'accept' && offer > 0) {
+    return `Hi ${brand},\n\nThank you so much for reaching out — this sounds like a great fit!\n\nI'd love to move forward with your offer. Let's get the contract in place and I'll be ready to start creating content right away.\n\nLooking forward to working together!\n\n— ${s.name}`;
+  }
+
+  if (type === 'counter' && offer > 0) {
+    const nearest = s.packages.reduce((prev, curr) =>
+      Math.abs(curr.price - offer) < Math.abs(prev.price - offer) ? curr : prev
+    );
+    return `Hi ${brand},\n\nAppreciate you reaching out! I hope you are doing well!\n\nThank you for the offer — I can see we're not too far apart. Based on my rate card and the volume of content you're looking for, I'd like to propose:\n\n• ${nearest.videos} videos – $${nearest.price.toLocaleString()} (includes ${s.usageRights}-day paid usage rights for Spark Ads + Meta Ads)\n\nThis structure lets us test multiple angles, double down on what converts, and build consistent volume that drives real results.\n\nWould you be open to moving forward on these terms? I'm excited about the potential here!\n\n— ${s.name}`;
+  }
+
+  return `Hi ${brand},\n\nAppreciate you reaching out! I hope you are doing well!\n\nFor context, I've generated over ${s.gmv} in lifetime GMV and consistently drive over ${s.monthly} per month, so I focus on partnerships where we can scale through consistent content rather than one-off posts.\n\nI typically work on a retainer model so we can test multiple angles, double down on what converts, and build predictable volume.\n\nHere's how I usually structure it:\n${pkgs}\n\nAll packages include ${s.usageRights}-day paid usage rights for Spark Ads + Meta Ads.\n\nIf it makes sense, I would love to explore the next steps!\n\nLet me know what package you're leaning toward and we can get started!\n\n— ${s.name}`;
+}
+
+function generateEmail() {
+  const brand  = document.getElementById('email-brand').value || '[Brand Name]';
+  const offer  = parseInt(document.getElementById('email-offer').value) || 0;
+  const videos = parseInt(document.getElementById('email-videos').value) || 0;
+  const type   = document.getElementById('email-type').value;
+  document.getElementById('email-preview').textContent = buildEmail(type, brand, offer, videos);
+}
+
+function copyEmail() {
+  const text = document.getElementById('email-preview').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copied!';
+    btn.style.color = 'var(--accent)';
+    setTimeout(() => {
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy';
+      btn.style.color = '';
+    }, 2000);
+    showToast('Email copied to clipboard!', 'success');
+  });
+}
+
+// ════════════════════════════════════════════════
+// SETTINGS / RATE CARD
+// ════════════════════════════════════════════════
+
+function renderSettings() {
+  const s = state.settings;
+  return `
+    <div style="max-width:600px;">
+      <div class="settings-card">
+        <div class="settings-title">Creator Profile</div>
+        <div class="settings-sub">This powers your email responses and public profile.</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Your Name</label>
+            <input type="text" class="form-input" id="s-name" value="${s.name}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Default Commission (%)</label>
+            <input type="number" class="form-input" id="s-commission" value="${s.commission}" step="0.5">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Lifetime GMV</label>
+            <input type="text" class="form-input" id="s-gmv" value="${s.gmv}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Monthly GMV</label>
+            <input type="text" class="form-input" id="s-monthly" value="${s.monthly}">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Usage Rights Duration (days)</label>
+          <input type="number" class="form-input" id="s-usage" value="${s.usageRights}">
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <div class="settings-title">Video Packages</div>
+        <div class="settings-sub">Your standard retainer packages — used in all email responses.</div>
+        ${s.packages.map((p, i) => `
+          <div class="package-item">
+            <div class="package-videos">${p.videos} videos</div>
+            <div style="display:flex;align-items:center;gap:8px;flex:1;">
+              <span style="color:var(--text3);font-size:13px;">$</span>
+              <input type="number" class="form-input" style="flex:1;padding:6px 10px;" id="s-pkg-${i}" value="${p.price}" placeholder="Price">
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function saveSettingsFromForm() {
+  const s = state.settings;
+  s.name       = document.getElementById('s-name').value || s.name;
+  s.gmv        = document.getElementById('s-gmv').value || s.gmv;
+  s.monthly    = document.getElementById('s-monthly').value || s.monthly;
+  s.commission = parseFloat(document.getElementById('s-commission').value) || s.commission;
+  s.usageRights = parseInt(document.getElementById('s-usage').value) || s.usageRights;
+  s.packages   = s.packages.map((p, i) => ({
+    videos: p.videos,
+    price: parseInt(document.getElementById(`s-pkg-${i}`).value) || p.price
+  }));
+  saveSettings();
+  showToast('Rate card saved!', 'success');
+}
+
+// ════════════════════════════════════════════════
+// MODALS
+// ════════════════════════════════════════════════
+
+function openModal(name) {
+  const modal = document.getElementById(`modal-${name}`);
+  if (!modal) return;
+  modal.classList.add('open');
+  const dateInputs = modal.querySelectorAll('input[type="date"]');
+  dateInputs.forEach(d => { if (!d.value) d.value = today(); });
+}
+
+function closeModal(name) {
+  const modal = document.getElementById(`modal-${name}`);
+  if (modal) modal.classList.remove('open');
+}
+
+document.querySelectorAll('.modal-overlay').forEach(ov => {
+  ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); });
+});
+
+function addContract() {
+  const brand  = document.getElementById('inp-brand').value.trim();
+  const videos = parseInt(document.getElementById('inp-videos').value);
+  const pay    = parseInt(document.getElementById('inp-pay').value);
+  if (!brand || !videos || !pay) { showToast('Please fill in all required fields', 'error'); return; }
+
+  const contract = {
+    id: 'c' + Date.now(),
+    brand,
+    totalVideos: videos,
+    basePay: pay,
+    commission: parseFloat(document.getElementById('inp-commission').value) || state.settings.commission,
+    startDate: document.getElementById('inp-date').value || today(),
+    usage: parseInt(document.getElementById('inp-usage').value) || 365,
+    notes: document.getElementById('inp-notes').value,
+    status: 'active',
+    videos: []
+  };
+
+  state.contracts.unshift(contract);
+  saveData();
+  closeModal('add-contract');
+  ['inp-brand','inp-videos','inp-pay','inp-commission','inp-notes'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  showToast(`✓ Contract added for ${brand}!`, 'success');
+  renderPage();
+}
+
+function openLogVideo(contractId) {
+  state.currentContractId = contractId;
+  openModal('log-video');
+  document.getElementById('inp-video-date').value = today();
+  document.getElementById('inp-video-url').value = '';
+  document.getElementById('inp-video-notes').value = '';
+}
+
+function logVideo() {
+  const c = state.contracts.find(x => x.id === state.currentContractId);
+  if (!c) return;
+
+  c.videos.push({
+    id: 'v' + Date.now(),
+    date: document.getElementById('inp-video-date').value || today(),
+    url: document.getElementById('inp-video-url').value,
+    notes: document.getElementById('inp-video-notes').value || ''
+  });
+
+  const rem = c.totalVideos - c.videos.length;
+  if (rem <= 0) {
+    c.status = 'completed';
+    showToast('🎉 All videos posted! Contract complete!', 'success');
+  } else {
+    showToast(`✓ Video ${c.videos.length} logged! ${rem} remaining.`, 'success');
+  }
+
+  saveData();
+  closeModal('log-video');
+  renderPage();
+}
+
+function markComplete(contractId) {
+  const c = state.contracts.find(x => x.id === contractId);
+  if (c) {
+    c.status = 'completed';
+    saveData();
+    showToast('🎉 Contract marked complete!', 'success');
+    renderPage();
+  }
+}
+
+// ════════════════════════════════════════════════
+// TOAST & UTILS
+// ════════════════════════════════════════════════
+
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast toast-${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+function today() { return new Date().toISOString().split('T')[0]; }
+
+function fmtDate(dateStr) {
+  if (!dateStr) return 'N/A';
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// ════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════
+
+loadData();
+renderPage();
+</script>
+</body>
+</html>
+
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
