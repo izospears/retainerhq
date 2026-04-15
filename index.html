@@ -465,6 +465,11 @@
       white-space: pre-wrap;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       min-height: 300px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .email-preview:focus {
+      border-color: var(--accent);
     }
 
     /* ── SETTINGS ── */
@@ -1119,59 +1124,114 @@ function renderContractDetail(c) {
 function renderEmailGenerator() {
   return `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;" class="email-two-col">
+
+      <!-- LEFT PANEL -->
       <div>
-        <div class="settings-card">
-          <div class="settings-title">Generate Response Email</div>
-          <div class="settings-sub">Fill in brand details and RetainerHQ writes the perfect response using your rates.</div>
+        <!-- Input mode tabs -->
+        <div class="tabs" style="margin-bottom:16px;">
+          <button class="tab active" id="tab-manual" onclick="switchEmailTab('manual')">Manual Entry</button>
+          <button class="tab" id="tab-paste" onclick="switchEmailTab('paste')">Paste Their Email</button>
+        </div>
+
+        <!-- MANUAL ENTRY -->
+        <div id="email-panel-manual" class="settings-card">
+          <div class="settings-title">Build Your Response</div>
+          <div class="settings-sub">Fill in the details and RetainerHQ writes the perfect reply.</div>
           <div class="form-group">
             <label class="form-label">Brand Name *</label>
             <input type="text" class="form-input" id="email-brand" placeholder="e.g. GlowSkin Co." oninput="generateEmail()">
           </div>
-          <div class="form-group">
-            <label class="form-label">Their Offered Amount ($)</label>
-            <input type="number" class="form-input" id="email-offer" placeholder="Optional — e.g. 800" oninput="generateEmail()">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Their Offered Video Count</label>
-            <input type="number" class="form-input" id="email-videos" placeholder="Optional — e.g. 5" oninput="generateEmail()">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Their Offered Amount ($)</label>
+              <input type="number" class="form-input" id="email-offer" placeholder="e.g. 800" oninput="generateEmail()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Their Video Count Ask</label>
+              <input type="number" class="form-input" id="email-videos" placeholder="e.g. 1" oninput="generateEmail()">
+            </div>
           </div>
           <div class="form-group">
             <label class="form-label">Response Type</label>
             <select class="form-input" id="email-type" onchange="generateEmail()">
               <option value="standard">Send My Rates (Standard)</option>
+              <option value="push-package">Push to Package Deal 📦</option>
               <option value="counter">Counter Their Offer</option>
               <option value="accept">Accept Their Offer</option>
             </select>
           </div>
+          <div id="push-tip" style="display:none;background:var(--accent-glow);border:1px solid var(--accent);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--accent);margin-top:-8px;margin-bottom:16px;">
+            💡 Use this when a brand asks for a single video rate. This response redirects them to your packages.
+          </div>
+        </div>
+
+        <!-- PASTE EMAIL -->
+        <div id="email-panel-paste" class="settings-card" style="display:none;">
+          <div class="settings-title">Paste Their Email</div>
+          <div class="settings-sub">Copy and paste the brand's email below. RetainerHQ will read it and generate the right response.</div>
+          <div class="form-group">
+            <textarea class="form-input" id="email-paste-input" style="min-height:180px;font-size:13px;" placeholder="Paste the brand's email here...&#10;&#10;e.g. Hi, we're interested in working with you on a one-off video for our new product launch. We typically pay $300 per video. Would you be interested?"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Response Type</label>
+            <select class="form-input" id="email-paste-type" onchange="parsePastedEmail()">
+              <option value="standard">Send My Rates (Standard)</option>
+              <option value="push-package">Push to Package Deal 📦</option>
+              <option value="counter">Counter Their Offer</option>
+              <option value="accept">Accept Their Offer</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" style="width:100%;" onclick="parsePastedEmail()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+            Generate Response
+          </button>
         </div>
       </div>
 
+      <!-- RIGHT PANEL -->
       <div>
         <div class="section-header" style="margin-bottom:12px;">
-          <div class="section-title">Email Preview</div>
-          <button class="btn btn-secondary" onclick="copyEmail()" id="copy-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-            Copy
-          </button>
+          <div class="section-title">Response Email</div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-secondary" onclick="resetEmail()" style="font-size:12px;padding:6px 12px;">Reset</button>
+            <button class="btn btn-primary" onclick="copyEmail()" id="copy-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Copy
+            </button>
+          </div>
         </div>
-        <div class="email-preview" id="email-preview">${buildEmail('standard','[Brand Name]',0,0)}</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">✏️ Click anywhere in the email to edit before copying</div>
+        <textarea class="email-preview" id="email-preview" style="width:100%;min-height:420px;resize:vertical;cursor:text;">${buildEmail('standard','[Brand Name]',0,0)}</textarea>
       </div>
     </div>`;
+}
+
+function switchEmailTab(tab) {
+  document.getElementById('tab-manual').classList.toggle('active', tab === 'manual');
+  document.getElementById('tab-paste').classList.toggle('active', tab === 'paste');
+  document.getElementById('email-panel-manual').style.display = tab === 'manual' ? 'block' : 'none';
+  document.getElementById('email-panel-paste').style.display = tab === 'paste' ? 'block' : 'none';
 }
 
 function buildEmail(type, brand, offer, videos) {
   const s = state.settings;
   const pkgs = s.packages.map(p => `• ${p.videos} videos – $${p.price.toLocaleString()}`).join('\n');
+  const smallestPkg = s.packages[0];
+  const bestValuePkg = s.packages[s.packages.length - 1];
 
-  if (type === 'accept' && offer > 0) {
-    return `Hi ${brand},\n\nThank you so much for reaching out — this sounds like a great fit!\n\nI'd love to move forward with your offer. Let's get the contract in place and I'll be ready to start creating content right away.\n\nLooking forward to working together!\n\n— ${s.name}`;
+  if (type === 'accept') {
+    return `Hi ${brand},\n\nThank you so much for reaching out — this sounds like a great fit!\n\nI'd love to move forward. Let's get the contract in place and I'll be ready to start creating content right away.\n\nLooking forward to working together!\n\n— ${s.name}`;
+  }
+
+  if (type === 'push-package') {
+    return `Hi ${brand},\n\nAppreciate you reaching out! I hope you are doing well!\n\nI actually work exclusively on retainer packages rather than individual videos. This allows us to test multiple content angles, double down on what converts, and build consistent volume for your brand — one video rarely gives us enough data to really optimize performance.\n\nHere's how I structure my packages:\n${pkgs}\n\nAll packages include ${s.usageRights}-day paid usage rights for Spark Ads + Meta Ads, so you can run paid traffic on any content that performs well.\n\nThe ${smallestPkg.videos}-video package is a great starting point to see what resonates with my audience, and we can scale from there.\n\nWould any of these work for you?\n\n— ${s.name}`;
   }
 
   if (type === 'counter' && offer > 0) {
     const nearest = s.packages.reduce((prev, curr) =>
       Math.abs(curr.price - offer) < Math.abs(prev.price - offer) ? curr : prev
     );
-    return `Hi ${brand},\n\nAppreciate you reaching out! I hope you are doing well!\n\nThank you for the offer — I can see we're not too far apart. Based on my rate card and the volume of content you're looking for, I'd like to propose:\n\n• ${nearest.videos} videos – $${nearest.price.toLocaleString()} (includes ${s.usageRights}-day paid usage rights for Spark Ads + Meta Ads)\n\nThis structure lets us test multiple angles, double down on what converts, and build consistent volume that drives real results.\n\nWould you be open to moving forward on these terms? I'm excited about the potential here!\n\n— ${s.name}`;
+    return `Hi ${brand},\n\nAppreciate you reaching out! I hope you are doing well!\n\nThank you for the offer — I can see we're not too far apart. Based on my rate card and the volume of content you're looking for, here's what I'd propose:\n\n• ${nearest.videos} videos – $${nearest.price.toLocaleString()} (includes ${s.usageRights}-day paid usage rights for Spark Ads + Meta Ads)\n\nThis structure gives us enough runway to test multiple angles, find what converts, and build real volume for your brand.\n\nWould you be open to moving forward on these terms? I'm excited about the potential here!\n\n— ${s.name}`;
   }
 
   return `Hi ${brand},\n\nAppreciate you reaching out! I hope you are doing well!\n\nFor context, I've generated over ${s.gmv} in lifetime GMV and consistently drive over ${s.monthly} per month, so I focus on partnerships where we can scale through consistent content rather than one-off posts.\n\nI typically work on a retainer model so we can test multiple angles, double down on what converts, and build predictable volume.\n\nHere's how I usually structure it:\n${pkgs}\n\nAll packages include ${s.usageRights}-day paid usage rights for Spark Ads + Meta Ads.\n\nIf it makes sense, I would love to explore the next steps!\n\nLet me know what package you're leaning toward and we can get started!\n\n— ${s.name}`;
@@ -1182,18 +1242,63 @@ function generateEmail() {
   const offer  = parseInt(document.getElementById('email-offer').value) || 0;
   const videos = parseInt(document.getElementById('email-videos').value) || 0;
   const type   = document.getElementById('email-type').value;
-  document.getElementById('email-preview').textContent = buildEmail(type, brand, offer, videos);
+  const tip    = document.getElementById('push-tip');
+  if (tip) tip.style.display = type === 'push-package' ? 'block' : 'none';
+  document.getElementById('email-preview').value = buildEmail(type, brand, offer, videos);
+}
+
+function parsePastedEmail() {
+  const text = document.getElementById('email-paste-input').value;
+  const type = document.getElementById('email-paste-type').value;
+  if (!text.trim()) { showToast('Please paste an email first', 'error'); return; }
+
+  // Extract brand name — look for "from [Name]", "I'm [Name] from [Brand]", "[Brand] here", or fallback
+  let brand = '[Brand Name]';
+  const fromMatch = text.match(/(?:from|at|with)\s+([A-Z][a-zA-Z\s&]+?)(?:\.|,|\n|!|\s{2})/);
+  const iAmMatch  = text.match(/(?:I(?:'m| am)\s+\w+\s+(?:from|at|with)\s+)([A-Z][a-zA-Z\s&]+?)(?:\.|,|\n|!)/);
+  const teamMatch = text.match(/([A-Z][a-zA-Z\s&]+?)\s+(?:team|brand|company)/i);
+  if (iAmMatch) brand = iAmMatch[1].trim();
+  else if (fromMatch) brand = fromMatch[1].trim();
+  else if (teamMatch) brand = teamMatch[1].trim();
+
+  // Extract dollar amount
+  const dollarMatch = text.match(/\$\s*([\d,]+)/);
+  const offer = dollarMatch ? parseInt(dollarMatch[1].replace(',','')) : 0;
+
+  // Extract video count
+  const videoMatch = text.match(/(\d+)\s+(?:video|videos|post|posts|piece|pieces)/i);
+  const videos = videoMatch ? parseInt(videoMatch[1]) : 0;
+
+  // Auto-detect if they're asking for a single video
+  const singleVideoKeywords = /one.?off|single video|one video|per video|1 video|individual/i;
+  let resolvedType = type;
+  if (type === 'standard' && singleVideoKeywords.test(text)) {
+    resolvedType = 'push-package';
+    showToast('Detected single video request — switching to Package Push', 'success');
+  }
+
+  // Fill manual fields too for reference
+  if (document.getElementById('email-brand')) document.getElementById('email-brand').value = brand;
+  if (document.getElementById('email-offer')) document.getElementById('email-offer').value = offer || '';
+
+  document.getElementById('email-preview').value = buildEmail(resolvedType, brand, offer, videos);
+  showToast('Response generated!', 'success');
+}
+
+function resetEmail() {
+  document.getElementById('email-preview').value = buildEmail('standard', '[Brand Name]', 0, 0);
 }
 
 function copyEmail() {
-  const text = document.getElementById('email-preview').textContent;
+  const el = document.getElementById('email-preview');
+  const text = el.value || el.textContent;
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById('copy-btn');
     btn.textContent = '✓ Copied!';
-    btn.style.color = 'var(--accent)';
+    btn.style.background = 'var(--accent2)';
     setTimeout(() => {
       btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy';
-      btn.style.color = '';
+      btn.style.background = '';
     }, 2000);
     showToast('Email copied to clipboard!', 'success');
   });
