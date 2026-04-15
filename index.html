@@ -217,20 +217,21 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 8px;
+      padding-right: 48px;
     }
 
-    .stat-value { font-size: 28px; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 4px; }
+    .stat-value { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 4px; }
     .stat-sub { font-size: 12px; color: var(--text2); }
 
     .stat-icon {
       position: absolute;
       top: 16px; right: 16px;
-      width: 36px; height: 36px;
+      width: 32px; height: 32px;
       border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
     }
 
-    .stat-icon svg { width: 18px; height: 18px; }
+    .stat-icon svg { width: 16px; height: 16px; }
     .icon-green { background: rgba(16,185,129,0.15); color: var(--accent); }
     .icon-blue { background: rgba(96,165,250,0.15); color: var(--blue); }
     .icon-yellow { background: rgba(251,191,36,0.15); color: var(--yellow); }
@@ -1385,9 +1386,3 @@ renderPage();
 </script>
 </body>
 </html>
-
-{
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}
