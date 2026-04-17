@@ -1041,13 +1041,13 @@
 
 <script>
 const DEFAULT_CONTRACTS = [
-  { id:1, brand:'LumiSkin',  niche:'Skincare',     value:6000, videos:4, posted:2, status:'active',  start:'2026-03-01', expiry:'2026-06-30', contact:'collab@lumiskin.com' },
-  { id:2, brand:'FitFuel',   niche:'Supplements',  value:4500, videos:3, posted:3, status:'active',  start:'2026-03-15', expiry:'2026-07-15', contact:'creators@fitfuel.co' },
-  { id:3, brand:'GlowDrops', niche:'Beauty',       value:7500, videos:6, posted:1, status:'active',  start:'2026-04-01', expiry:'2026-08-01', contact:'influencer@glowdrops.com' },
-  { id:4, brand:'ZenWear',   niche:'Apparel',      value:3500, videos:4, posted:0, status:'pending', start:'2026-05-01', expiry:'2026-08-31', contact:'brand@zenwear.io' }
+  { id:1, brand:'Dr.Melaxin', niche:'Skincare',     value:6000, videos:30, posted:12, status:'active',  start:'2026-03-01', expiry:'2026-06-30', contact:'collab@drmelaxin.com' },
+  { id:2, brand:'Medicube',   niche:'K-Beauty',     value:4500, videos:25, posted:10, status:'active',  start:'2026-03-15', expiry:'2026-07-15', contact:'creators@medicube.com' },
+  { id:3, brand:'Skin1004',   niche:'Skincare',     value:5000, videos:20, posted:5,  status:'active',  start:'2026-04-01', expiry:'2026-08-01', contact:'influencer@skin1004.com' },
+  { id:4, brand:'Anua',       niche:'K-Beauty',     value:6000, videos:30, posted:0,  status:'pending', start:'2026-05-01', expiry:'2026-08-31', contact:'brand@anuaofficial.com' }
 ];
 
-const DATA_VERSION = '2';
+const DATA_VERSION = '4';
 if (localStorage.getItem('rhq_data_version') !== DATA_VERSION) {
   localStorage.removeItem('rhq_contracts');
   localStorage.setItem('rhq_data_version', DATA_VERSION);
