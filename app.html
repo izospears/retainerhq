@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1042,12 +1041,17 @@
 
 <script>
 const DEFAULT_CONTRACTS = [
-  { id:1, brand:'LumiSkin',  niche:'Skincare',     value:6000, videos:4, posted:2, status:'active',  start:'2025-05-01', expiry:'2025-07-31', contact:'collab@lumiskin.com' },
-  { id:2, brand:'FitFuel',   niche:'Supplements',  value:4500, videos:3, posted:3, status:'active',  start:'2025-04-15', expiry:'2025-07-15', contact:'creators@fitfuel.co' },
-  { id:3, brand:'GlowDrops', niche:'Beauty',       value:7500, videos:6, posted:1, status:'active',  start:'2025-05-10', expiry:'2025-08-10', contact:'influencer@glowdrops.com' },
-  { id:4, brand:'ZenWear',   niche:'Apparel',      value:3500, videos:4, posted:0, status:'pending', start:'2025-06-01', expiry:'2025-08-31', contact:'brand@zenwear.io' }
+  { id:1, brand:'LumiSkin',  niche:'Skincare',     value:6000, videos:4, posted:2, status:'active',  start:'2026-03-01', expiry:'2026-06-30', contact:'collab@lumiskin.com' },
+  { id:2, brand:'FitFuel',   niche:'Supplements',  value:4500, videos:3, posted:3, status:'active',  start:'2026-03-15', expiry:'2026-07-15', contact:'creators@fitfuel.co' },
+  { id:3, brand:'GlowDrops', niche:'Beauty',       value:7500, videos:6, posted:1, status:'active',  start:'2026-04-01', expiry:'2026-08-01', contact:'influencer@glowdrops.com' },
+  { id:4, brand:'ZenWear',   niche:'Apparel',      value:3500, videos:4, posted:0, status:'pending', start:'2026-05-01', expiry:'2026-08-31', contact:'brand@zenwear.io' }
 ];
 
+const DATA_VERSION = '2';
+if (localStorage.getItem('rhq_data_version') !== DATA_VERSION) {
+  localStorage.removeItem('rhq_contracts');
+  localStorage.setItem('rhq_data_version', DATA_VERSION);
+}
 let contracts = JSON.parse(localStorage.getItem('rhq_contracts') || 'null') || DEFAULT_CONTRACTS;
 if (!localStorage.getItem('rhq_contracts')) localStorage.setItem('rhq_contracts', JSON.stringify(contracts));
 
