@@ -764,7 +764,8 @@
   <a href="#" class="logo">Retainer<span>HQ</span> <span class="logo-badge">BETA</span></a>
   <div class="nav-right">
     <a href="/app.html" class="btn-ghost btn">Open App</a>
-    <button class="btn btn-primary" onclick="openWaitlist('creator')">Join Waitlist</button>
+    <button class="btn btn-outline" onclick="openWaitlist('brand')" style="font-size:13px;">I'm a Brand</button>
+    <button class="btn btn-primary" onclick="openWaitlist('creator')">I'm a Creator</button>
   </div>
 </nav>
 
@@ -774,19 +775,35 @@
 
   <div class="waitlist-counter">
     <div class="counter-dot"></div>
-    <span><span class="counter-num" id="waitlist-count">0</span> people on the waitlist</span>
+    <span><span class="counter-num" id="waitlist-count">0</span> creators &amp; brands on the waitlist</span>
   </div>
 
-  <h1>The Platform Built for<br><span class="highlight">TikTok Shop Affiliates</span></h1>
+  <h1>The Marketplace Where<br><span class="highlight">Brands Meet Affiliates</span></h1>
 
-  <p class="hero-sub">Automate your email responses, track every retainer contract, and manage all your brand deals — so you can focus on creating content that converts.</p>
+  <p class="hero-sub">Brands post retainer deals. TikTok Shop affiliates and UGC creators apply, manage contracts, and get paid — all in one place.</p>
 
-  <div class="hero-ctas">
-    <button class="btn btn-primary btn-xl" onclick="openWaitlist('creator')">
-      Join as a Creator
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-    </button>
-    <button class="btn btn-outline btn-xl" onclick="openWaitlist('brand')">Join as a Brand</button>
+  <!-- Role Cards -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:600px;margin:0 auto 24px;text-align:left;">
+    <div onclick="openWaitlist('creator')" style="background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:24px;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.background='var(--accent-glow2)'" onmouseout="this.style.borderColor='var(--border2)';this.style.background='var(--card)'">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="width:36px;height:36px;border-radius:9px;background:var(--accent-glow);border:1px solid rgba(16,185,129,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" width="17" height="17"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        </div>
+        <div style="font-size:15px;font-weight:800;color:var(--text);">I'm a Creator</div>
+      </div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:14px;">TikTok Shop affiliate or UGC creator looking for paid retainer deals with brands.</div>
+      <div style="font-size:12px;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:5px;">Join Creator Waitlist <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg></div>
+    </div>
+    <div onclick="openWaitlist('brand')" style="background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:24px;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='#60A5FA';this.style.background='rgba(96,165,250,.05)'" onmouseout="this.style.borderColor='var(--border2)';this.style.background='var(--card)'">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="width:36px;height:36px;border-radius:9px;background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2" width="17" height="17"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div style="font-size:15px;font-weight:800;color:var(--text);">I'm a Brand</div>
+      </div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:14px;">Looking to find and manage TikTok Shop affiliates for retainer content deals at scale.</div>
+      <div style="font-size:12px;font-weight:700;color:#60A5FA;display:flex;align-items:center;gap:5px;">Join Brand Waitlist <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg></div>
+    </div>
   </div>
 
   <p class="hero-note">Free during beta · No credit card required · Built by a $4M+ GMV affiliate</p>
@@ -854,11 +871,11 @@
 <div class="stats-bar">
   <div class="stats-bar-item">
     <div class="stats-bar-value">$4M+</div>
-    <div class="stats-bar-label">Lifetime GMV by our founder</div>
+    <div class="stats-bar-label">GMV generated by our founder</div>
   </div>
   <div class="stats-bar-item">
-    <div class="stats-bar-value">100%</div>
-    <div class="stats-bar-label">Built by affiliates, for affiliates</div>
+    <div class="stats-bar-value">2-sided</div>
+    <div class="stats-bar-label">Marketplace for brands & creators</div>
   </div>
   <div class="stats-bar-item">
     <div class="stats-bar-value">Free</div>
@@ -869,25 +886,31 @@
 <!-- ═══ PAIN POINTS ═══ -->
 <section class="pain-section">
   <div style="text-align:center;max-width:700px;margin:0 auto;">
-    <div class="section-label">Sound familiar?</div>
-    <h2>Managing retainer deals is a full-time job on its own</h2>
-    <p class="section-sub" style="margin:0 auto;">When the deals start coming in, the chaos starts too. Here's what top affiliates deal with every single day.</p>
+    <div class="section-label">The problem</div>
+    <h2>Retainer deals are broken on both sides</h2>
+    <p class="section-sub" style="margin:0 auto;">Creators are drowning in DMs. Brands are cold-emailing with no system. There's no dedicated place for any of this to happen.</p>
   </div>
   <div class="pain-grid">
     <div class="pain-card">
-      <div class="pain-icon">📧</div>
-      <div class="pain-title">Inbox overload</div>
-      <div class="pain-desc">Brands reach out constantly with retainer offers. Reading, evaluating, and responding to each one manually is unsustainable at scale.</div>
+      <div class="pain-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" width="28" height="28"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <div class="pain-title">Creators miss deals in their inbox</div>
+      <div class="pain-desc">Top affiliates get dozens of brand emails a week. There's no way to respond professionally to all of them — so real money gets left on the table.</div>
     </div>
     <div class="pain-card">
-      <div class="pain-icon">📊</div>
-      <div class="pain-title">Spreadsheet chaos</div>
-      <div class="pain-desc">Tracking contracts in spreadsheets means constantly checking which brand needs how many videos still — and things fall through the cracks.</div>
+      <div class="pain-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" width="28" height="28"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </div>
+      <div class="pain-title">No system to track contracts</div>
+      <div class="pain-desc">Spreadsheets break down fast. Which brand needs videos? When is the deadline? How many are left? Without a dedicated tool, things fall through the cracks.</div>
     </div>
     <div class="pain-card">
-      <div class="pain-icon">💸</div>
-      <div class="pain-title">Leaving money on the table</div>
-      <div class="pain-desc">Brands ask for single video rates. Without a system to push back toward packages, you're leaving significant revenue behind on every deal.</div>
+      <div class="pain-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" width="28" height="28"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <div class="pain-title">Brands can't find the right creators</div>
+      <div class="pain-desc">Brands spend hours cold-outreaching affiliates through TikTok DMs and emails with no centralized way to find, vet, and manage creator partnerships at scale.</div>
     </div>
   </div>
 </section>
@@ -900,27 +923,27 @@
   </div>
   <div class="features-grid">
     <div class="feature-card">
-      <div class="feature-icon">📋</div>
+      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" width="22" height="22"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
       <div class="feature-title">Contract Tracker</div>
-      <div class="feature-desc">Every retainer deal in one place. See your base pay, commission rate, videos posted, and videos remaining at a glance. Log a posted video in one tap.</div>
+      <div class="feature-desc">Every retainer deal in one place. See your contract value, videos posted, and videos remaining at a glance. Both creators and brands have full visibility.</div>
       <div class="feature-tag">No more spreadsheets</div>
     </div>
     <div class="feature-card">
-      <div class="feature-icon">✉️</div>
-      <div class="feature-title">AI Email Generator</div>
-      <div class="feature-desc">Paste a brand's email and RetainerHQ writes the perfect response — standard rates, counter offers, or a package push when they ask for a single video rate.</div>
+      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" width="22" height="22"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+      <div class="feature-title">Smart Email Generator</div>
+      <div class="feature-desc">Paste a brand's email and get the perfect response — standard rates, counter offers, or a package push. Built on templates from a $4M+ GMV affiliate.</div>
       <div class="feature-tag">Built on real winning templates</div>
     </div>
     <div class="feature-card">
-      <div class="feature-icon">💰</div>
-      <div class="feature-title">Rate Card</div>
-      <div class="feature-desc">Set your packages, GMV stats, and commission rates once. Every email response and negotiation is powered by your numbers automatically.</div>
+      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" width="22" height="22"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+      <div class="feature-title">Creator Rate Card</div>
+      <div class="feature-desc">Set your packages and GMV stats once. Every email and negotiation is powered by your numbers. Brands see exactly what you offer and at what price.</div>
       <div class="feature-tag">Your rates, your brand</div>
     </div>
     <div class="feature-card">
-      <div class="feature-icon">🏢</div>
-      <div class="feature-title">Brand Marketplace <span style="font-size:11px;color:var(--text3);font-weight:500;">Coming Soon</span></div>
-      <div class="feature-desc">Brands post retainer opportunities directly on the platform. Affiliates browse, apply, and manage everything in one place. The two-sided marketplace.</div>
+      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.8" width="22" height="22"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+      <div class="feature-title">Brand Marketplace <span style="font-size:11px;color:var(--text3);font-weight:500;background:var(--card2);padding:2px 7px;border-radius:10px;">Coming Soon</span></div>
+      <div class="feature-desc">Brands post retainer opportunities. Creators browse, apply, and manage contracts — all in one place. The infrastructure for the TikTok Shop creator economy.</div>
       <div class="feature-tag">In development</div>
     </div>
   </div>
@@ -1017,18 +1040,17 @@ function openWaitlist(role) {
   const content = document.getElementById('modal-content');
 
   content.innerHTML = `
-    <div class="modal-icon">${role === 'creator' ? '🎬' : '🏢'}</div>
     <div class="modal-title">Join the Waitlist</div>
     <div class="modal-sub">Get early access and lock in beta pricing. We'll reach out as soon as your spot is ready.</div>
 
     <div class="role-selector">
       <div class="role-option ${role === 'creator' ? 'selected' : ''}" onclick="selectRole('creator')" id="role-creator">
-        <div class="role-option-icon">🎬</div>
+        <div class="role-option-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
         <div class="role-option-label">Creator</div>
         <div class="role-option-sub">TikTok Shop affiliate or UGC creator</div>
       </div>
       <div class="role-option ${role === 'brand' ? 'selected' : ''}" onclick="selectRole('brand')" id="role-brand">
-        <div class="role-option-icon">🏢</div>
+        <div class="role-option-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
         <div class="role-option-label">Brand</div>
         <div class="role-option-sub">Looking to work with affiliates</div>
       </div>
@@ -1077,7 +1099,9 @@ function submitWaitlist() {
   // Show success
   document.getElementById('modal-content').innerHTML = `
     <div class="success-state">
-      <div class="success-icon">🎉</div>
+      <div style="width:56px;height:56px;border-radius:14px;background:var(--accent-glow);border:1px solid rgba(16,185,129,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" width="26" height="26"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
       <div class="success-title">You're on the list!</div>
       <div class="success-sub">
         We'll reach out to <strong style="color:var(--text)">${email}</strong> as soon as your ${selectedRole === 'creator' ? 'creator' : 'brand'} account is ready.<br><br>
