@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RetainerHQ — Sign In</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080C14;
+      --bg2: #0D1220;
+      --card: #111827;
+      --card2: #161F30;
+      --accent: #00E5A0;
+      --accent2: #00C88A;
+      --accent-dim: rgba(0,229,160,0.08);
+      --text: #F0F4FF;
+      --text2: #8896B3;
+      --text3: #4A5878;
+      --border: #1E2D45;
+      --border2: #253450;
+      --red: #FF6B6B;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container {
+      width: 100%;
+      max-width: 420px;
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .logo-mark {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--accent), #00B8FF);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 12px;
+    }
+    .logo-mark svg { width: 22px; height: 22px; }
+    .logo-name {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.5px;
+    }
+    .logo-sub {
+      font-size: 13px;
+      color: var(--text2);
+      margin-top: 4px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.4);
+    }
+    .tabs {
+      display: flex;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 3px;
+      margin-bottom: 24px;
+    }
+    .tab {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text2);
+      text-align: center;
+      transition: all .15s;
+      border: none;
+      background: none;
+      font-family: inherit;
+    }
+    .tab.active { background: var(--accent); color: #000; }
+    .form-group { margin-bottom: 14px; }
+    .form-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text2);
+      margin-bottom: 6px;
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+    }
+    .form-input {
+      width: 100%;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 11px 13px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,229,160,.08);
+    }
+    .form-input::placeholder { color: var(--text3); }
+    .role-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .role-option {
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all .15s;
+      text-align: center;
+      background: var(--bg2);
+    }
+    .role-option:hover { border-color: var(--border2); }
+    .role-option.selected { border-color: var(--accent); background: var(--accent-dim); }
+    .role-icon { margin-bottom: 6px; display: flex; justify-content: center; }
+    .role-icon svg { width: 20px; height: 20px; }
+    .role-label { font-size: 12px; font-weight: 700; color: var(--text); }
+    .role-sub { font-size: 10px; color: var(--text3); margin-top: 2px; }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      transition: all .15s;
+      margin-top: 4px;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+    }
+    .btn-primary:hover { background: #00f0a8; box-shadow: 0 0 20px rgba(0,229,160,.25); }
+    .btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 20px 0;
+      font-size: 12px; color: var(--text3);
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1;
+      height: 1px; background: var(--border);
+    }
+    .error-msg {
+      background: rgba(255,107,107,.1);
+      border: 1px solid rgba(255,107,107,.3);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--red);
+      margin-bottom: 14px;
+      display: none;
+    }
+    .back-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--text2);
+    }
+    .back-link a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .back-link a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <div class="logo-name">RetainerHQ</div>
+    <div class="logo-sub">The platform for TikTok Shop affiliates & brands</div>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" id="tab-signin" onclick="switchTab('signin')">Sign In</button>
+      <button class="tab" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+    </div>
+
+    <div id="error-msg" class="error-msg"></div>
+
+    <!-- SIGN IN -->
+    <div id="panel-signin">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="signin-email" placeholder="you@email.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="signin-password" placeholder="••••••••" />
+      </div>
+      <button class="btn btn-primary" id="signin-btn" onclick="signIn()">Sign In</button>
+    </div>
+
+    <!-- SIGN UP -->
+    <div id="panel-signup" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input class="form-input" type="text" id="signup-name" placeholder="e.g. Isaac Spears" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="signup-email" placeholder="you@email.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" id="signup-password" placeholder="Min. 6 characters" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">I am a...</label>
+        <div class="role-grid">
+          <div class="role-option selected" id="role-creator" onclick="selectRole('creator')">
+            <div class="role-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+            <div class="role-label">Creator</div>
+            <div class="role-sub">TikTok Shop affiliate or UGC creator</div>
+          </div>
+          <div class="role-option" id="role-brand" onclick="selectRole('brand')">
+            <div class="role-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--text2)" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div class="role-label">Brand</div>
+            <div class="role-sub">Looking to work with affiliates</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="signup-btn" onclick="signUp()">Create Account</button>
+    </div>
+  </div>
+
+  <div class="back-link">
+    <a href="/">← Back to RetainerHQ.io</a>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL  = 'https://tbfcwqcqpfbqaknktkyp.supabase.co';
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiZmN3cWNxcGZicWFrbmt0a3lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NDQyOTIsImV4cCI6MjA5MzIyMDI5Mn0.40OJm-heqGOiiGqE3QWHoafkRx8Snd3nH3cs19D7L4E';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let selectedRole = 'creator';
+
+// Redirect if already logged in
+supabase.auth.getSession().then(({ data: { session } }) => {
+  if (session) window.location.href = '/app.html';
+});
+
+function switchTab(tab) {
+  document.getElementById('tab-signin').classList.toggle('active', tab === 'signin');
+  document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+  document.getElementById('panel-signin').style.display = tab === 'signin' ? 'block' : 'none';
+  document.getElementById('panel-signup').style.display = tab === 'signup' ? 'block' : 'none';
+  hideError();
+}
+
+function selectRole(role) {
+  selectedRole = role;
+  document.getElementById('role-creator').classList.toggle('selected', role === 'creator');
+  document.getElementById('role-brand').classList.toggle('selected', role === 'brand');
+  document.getElementById('role-creator').querySelector('svg').setAttribute('stroke', role === 'creator' ? 'var(--accent)' : 'var(--text2)');
+  document.getElementById('role-brand').querySelector('svg').setAttribute('stroke', role === 'brand' ? 'var(--accent)' : 'var(--text2)');
+}
+
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function hideError() {
+  document.getElementById('error-msg').style.display = 'none';
+}
+
+async function signIn() {
+  const email    = document.getElementById('signin-email').value.trim();
+  const password = document.getElementById('signin-password').value;
+  if (!email || !password) { showError('Please enter your email and password.'); return; }
+
+  const btn = document.getElementById('signin-btn');
+  btn.textContent = 'Signing in...'; btn.disabled = true;
+  hideError();
+
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {
+    showError(error.message);
+    btn.textContent = 'Sign In'; btn.disabled = false;
+  } else {
+    window.location.href = '/app.html';
+  }
+}
+
+async function signUp() {
+  const name     = document.getElementById('signup-name').value.trim();
+  const email    = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value;
+
+  if (!name || !email || !password) { showError('Please fill in all fields.'); return; }
+  if (password.length < 6) { showError('Password must be at least 6 characters.'); return; }
+
+  const btn = document.getElementById('signup-btn');
+  btn.textContent = 'Creating account...'; btn.disabled = true;
+  hideError();
+
+  const { data, error } = await supabase.auth.signUp({ email, password });
+  if (error) {
+    showError(error.message);
+    btn.textContent = 'Create Account'; btn.disabled = false;
+    return;
+  }
+
+  // Save profile
+  if (data.user) {
+    await supabase.from('profiles').insert({
+      id: data.user.id,
+      email,
+      name,
+      role: selectedRole
+    });
+  }
+
+  window.location.href = '/app.html';
+}
+
+// Allow Enter key to submit
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const signinVisible = document.getElementById('panel-signin').style.display !== 'none';
+    if (signinVisible) signIn(); else signUp();
+  }
+});
+</script>
+</body>
+</html>
