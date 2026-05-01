@@ -264,13 +264,19 @@
 <script>
 const SUPABASE_URL  = 'https://tbfcwqcqpfbqaknktkyp.supabase.co';
 const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiZmN3cWNxcGZicWFrbmt0a3lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NDQyOTIsImV4cCI6MjA5MzIyMDI5Mn0.40OJm-heqGOiiGqE3QWHoafkRx8Snd3nH3cs19D7L4E';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+let sb;
 let selectedRole = 'creator';
 
-// Redirect if already logged in
-supabase.auth.getSession().then(({ data: { session } }) => {
-  if (session) window.location.href = '/app.html';
+window.addEventListener('load', () => {
+  try {
+    sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    sb.auth.getSession().then(({ data: { session } }) => {
+      if (session) window.location.href = '/app.html';
+    });
+  } catch(e) {
+    console.error('Supabase init error:', e);
+  }
 });
 
 function switchTab(tab) {
@@ -308,7 +314,7 @@ async function signIn() {
   btn.textContent = 'Signing in...'; btn.disabled = true;
   hideError();
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { error } = await sb.auth.signInWithPassword({ email, password });
   if (error) {
     showError(error.message);
     btn.textContent = 'Sign In'; btn.disabled = false;
@@ -329,7 +335,7 @@ async function signUp() {
   btn.textContent = 'Creating account...'; btn.disabled = true;
   hideError();
 
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  const { data, error } = await sb.auth.signUp({ email, password });
   if (error) {
     showError(error.message);
     btn.textContent = 'Create Account'; btn.disabled = false;
@@ -338,7 +344,7 @@ async function signUp() {
 
   // Save profile
   if (data.user) {
-    await supabase.from('profiles').insert({
+    await sb.from('profiles').insert({
       id: data.user.id,
       email,
       name,
