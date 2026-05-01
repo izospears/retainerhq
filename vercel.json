@@ -4,6 +4,8 @@
   "routes": [
     { "src": "/app.html", "dest": "/app.html" },
     { "src": "/app", "dest": "/app.html" },
+    { "src": "/auth.html", "dest": "/auth.html" },
+    { "src": "/auth", "dest": "/auth.html" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
