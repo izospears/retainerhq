@@ -1165,7 +1165,7 @@ function renderDashboard() {
         <td style="color:var(--text2);font-weight:600;">${c.posted}/${c.videos}</td>
         <td><span class="badge badge-${c.status}">${c.status.charAt(0).toUpperCase()+c.status.slice(1)}</span></td>
         <td><span class="deadline ${dClass}">${days !== null ? (days < 0 ? 'Expired' : days + 'd left') : '—'}</span></td>
-        <td><span class="row-action" onclick="openDetail(${c.id})">View <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg></span></td>
+        <td><span class="row-action" onclick="openDetail('${c.id}')">View <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg></span></td>
       </tr>`;
   });
 }
@@ -1197,13 +1197,13 @@ function renderContracts() {
         </td>
         <td><span class="badge badge-${c.status}">${c.status.charAt(0).toUpperCase()+c.status.slice(1)}</span></td>
         <td><span class="deadline ${dClass}" style="font-size:12px;">${c.expiry||'—'}</span></td>
-        <td><span class="row-action" onclick="openDetail(${c.id})">View <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg></span></td>
+        <td><span class="row-action" onclick="openDetail('${c.id}')">View <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg></span></td>
       </tr>`;
   });
 }
 
 function openDetail(id) {
-  const c = contracts.find(x=>x.id===id);
+  const c = contracts.find(x=>String(x.id)===String(id));
   if (!c) return;
   currentDetailId = id;
   document.getElementById('detail-icon').textContent = initials(c.brand);
@@ -1231,7 +1231,7 @@ function openDetail(id) {
   for (let i=1; i<=c.videos; i++) {
     const done = i <= c.posted;
     list.innerHTML += `
-      <li class="check-item" onclick="toggleVideo(${c.id},${i})">
+      <li class="check-item" onclick="toggleVideo('${c.id}',${i})">
         <div class="check-box ${done?'done':''}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
@@ -1240,12 +1240,12 @@ function openDetail(id) {
       </li>`;
   }
 
-  document.getElementById('detail-delete-btn').onclick = () => deleteContract(id);
+  document.getElementById('detail-delete-btn').onclick = () => deleteContract(c.id);
   navigate('detail');
 }
 
 async function toggleVideo(cid, num) {
-  const c = contracts.find(x=>x.id===cid);
+  const c = contracts.find(x=>String(x.id)===String(cid));
   if (!c) return;
   c.posted = (num <= c.posted) ? num - 1 : num;
   await sb.from('contracts').update({ posted: c.posted }).eq('id', cid);
@@ -1281,23 +1281,15 @@ async function addContract() {
     contact: document.getElementById('new-contact').value.trim()
   };
 
-  const { data, error } = await sb.from('contracts').insert(newContract).select().single();
+  const { error } = await sb.from('contracts').insert(newContract);
   if (error) {
     alert('Error adding contract: ' + error.message);
     return;
   }
 
-  if (data) {
-    contracts.unshift({
-      id: data.id, brand: data.brand, niche: data.niche || '',
-      value: data.value, videos: data.videos, posted: data.posted,
-      status: data.status, start: data.start_date, expiry: data.expiry_date,
-      contact: data.contact || ''
-    });
-  }
-
   closeAddModal();
   ['new-brand','new-niche','new-value','new-videos','new-start','new-expiry','new-contact'].forEach(id => document.getElementById(id).value='');
+  await loadContracts();
   navigate('contracts');
   showToast('Contract added');
 }
