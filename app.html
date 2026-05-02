@@ -637,6 +637,89 @@
     }
     .toast.show { opacity: 1; transform: translateY(0); }
     .toast-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+
+    /* ── ONBOARDING OVERLAY ── */
+    .onboarding-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .onboarding-overlay.show { display: flex; }
+    .onboarding-bg {
+      position: absolute;
+      inset: 0;
+      background: rgba(8,12,20,0.92);
+      backdrop-filter: blur(4px);
+    }
+    .onboarding-card {
+      position: relative;
+      z-index: 1;
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: 22px;
+      padding: 40px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 40px 80px rgba(0,0,0,.6);
+      text-align: center;
+    }
+    .onboarding-icon {
+      width: 56px; height: 56px;
+      background: linear-gradient(135deg, var(--accent), #00B8FF);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .onboarding-icon svg { width: 26px; height: 26px; color: #000; }
+    .onboarding-title {
+      font-size: 24px; font-weight: 800;
+      letter-spacing: -.5px;
+      margin-bottom: 10px;
+    }
+    .onboarding-sub {
+      font-size: 14px; color: var(--text2);
+      line-height: 1.6; margin-bottom: 28px;
+    }
+    .onboarding-steps {
+      display: flex; flex-direction: column; gap: 12px;
+      margin-bottom: 28px; text-align: left;
+    }
+    .onboarding-step {
+      display: flex; align-items: flex-start; gap: 14px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .step-num {
+      width: 26px; height: 26px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(0,229,160,.2);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .step-text { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.4; }
+    .step-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+    .onboarding-cta {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 15px; font-weight: 700;
+      cursor: pointer; border: none;
+      font-family: inherit;
+      background: var(--accent); color: #000;
+      transition: all .15s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .onboarding-cta:hover { background: #00f0a8; box-shadow: 0 0 28px rgba(0,229,160,.3); }
+    .onboarding-cta svg { width: 16px; height: 16px; }
   </style>
 </head>
 <body>
@@ -1044,6 +1127,47 @@
 <!-- TOAST -->
 <div class="toast" id="toast"><div class="toast-dot"></div><span id="toast-msg"></span></div>
 
+<!-- ONBOARDING OVERLAY -->
+<div class="onboarding-overlay" id="onboarding-overlay">
+  <div class="onboarding-bg"></div>
+  <div class="onboarding-card">
+    <div class="onboarding-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <div class="onboarding-title">Welcome to RetainerHQ</div>
+    <div class="onboarding-sub">Your command center for managing brand retainer deals. Track contracts, video deliverables, and deadlines — all in one place.</div>
+    <div class="onboarding-steps">
+      <div class="onboarding-step">
+        <div class="step-num">1</div>
+        <div>
+          <div class="step-text">Add your first brand deal</div>
+          <div class="step-sub">Enter the brand name, deal value, and how many videos are required</div>
+        </div>
+      </div>
+      <div class="onboarding-step">
+        <div class="step-num">2</div>
+        <div>
+          <div class="step-text">Track your video progress</div>
+          <div class="step-sub">Check off videos as you post them and monitor your deadlines</div>
+        </div>
+      </div>
+      <div class="onboarding-step">
+        <div class="step-num">3</div>
+        <div>
+          <div class="step-text">Negotiate better deals</div>
+          <div class="step-sub">Use the Email Generator to respond to brand offers like a pro</div>
+        </div>
+      </div>
+    </div>
+    <button class="onboarding-cta" onclick="startOnboarding()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Your First Contract
+    </button>
+  </div>
+</div>
+
 <script>
 const DEFAULT_CONTRACTS = [
   { id:1, brand:'Dr.Melaxin', niche:'Skincare',     value:6000, videos:30, posted:12, status:'active',  start:'2026-03-01', expiry:'2026-06-30', contact:'collab@drmelaxin.com' },
@@ -1139,7 +1263,22 @@ function deadlineClass(days) {
   return '';
 }
 
+function checkOnboarding() {
+  const overlay = document.getElementById('onboarding-overlay');
+  if (contracts.length === 0) {
+    overlay.classList.add('show');
+  } else {
+    overlay.classList.remove('show');
+  }
+}
+
+function startOnboarding() {
+  document.getElementById('onboarding-overlay').classList.remove('show');
+  openAddModal();
+}
+
 function renderDashboard() {
+  checkOnboarding();
   const active = contracts.filter(c => c.status === 'active');
   const videosLeft = active.reduce((s,c) => s + Math.max(0, c.videos - c.posted), 0);
   const avg = contracts.length ? Math.round(contracts.reduce((s,c)=>s+c.value,0) / contracts.length) : 0;
@@ -1290,6 +1429,7 @@ async function addContract() {
   closeAddModal();
   ['new-brand','new-niche','new-value','new-videos','new-start','new-expiry','new-contact'].forEach(id => document.getElementById(id).value='');
   await loadContracts();
+  checkOnboarding();
   navigate('contracts');
   showToast('Contract added');
 }
