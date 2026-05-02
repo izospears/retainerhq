@@ -1268,6 +1268,7 @@ async function addContract() {
   const value = parseFloat(document.getElementById('new-value').value);
   const videos = parseInt(document.getElementById('new-videos').value);
   if (!brand || isNaN(value) || isNaN(videos)) { alert('Please fill in Brand, Value, and Videos.'); return; }
+  if (!currentUser) { alert('Not logged in. Please refresh.'); return; }
 
   const newContract = {
     user_id: currentUser.id,
@@ -1281,7 +1282,12 @@ async function addContract() {
   };
 
   const { data, error } = await sb.from('contracts').insert(newContract).select().single();
-  if (!error && data) {
+  if (error) {
+    alert('Error adding contract: ' + error.message);
+    return;
+  }
+
+  if (data) {
     contracts.unshift({
       id: data.id, brand: data.brand, niche: data.niche || '',
       value: data.value, videos: data.videos, posted: data.posted,
