@@ -639,6 +639,14 @@
     .toast-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
 
     /* ── ONBOARDING OVERLAY ── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInBg {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
     .onboarding-overlay {
       display: none;
       position: fixed;
@@ -649,6 +657,12 @@
       padding: 20px;
     }
     .onboarding-overlay.show { display: flex; }
+    .onboarding-overlay.show .onboarding-bg {
+      animation: fadeInBg .3s ease forwards;
+    }
+    .onboarding-overlay.show .onboarding-card {
+      animation: fadeInUp .4s cubic-bezier(.16,1,.3,1) forwards;
+    }
     .onboarding-bg {
       position: absolute;
       inset: 0;
