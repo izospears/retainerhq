@@ -342,14 +342,9 @@ async function signUp() {
     return;
   }
 
-  // Save profile
+  // Update profile with name and role (trigger auto-creates the row)
   if (data.user) {
-    await sb.from('profiles').insert({
-      id: data.user.id,
-      email,
-      name,
-      role: selectedRole
-    });
+    await sb.from('profiles').update({ name, role: selectedRole, email }).eq('id', data.user.id);
   }
 
   window.location.href = '/app.html';
