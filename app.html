@@ -717,7 +717,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
           </div>
           <div class="stat-label">Total Active Value</div>
-          <div class="stat-value">$21,500</div>
+          <div class="stat-value" id="stat-total">$0</div>
           <div class="stat-sub">Across all retainers</div>
         </div>
         <div class="stat-card c-blue">
@@ -725,7 +725,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
           </div>
           <div class="stat-label">Active Contracts</div>
-          <div class="stat-value" id="stat-active">4</div>
+          <div class="stat-value" id="stat-active">0</div>
           <div class="stat-sub">Currently running</div>
         </div>
         <div class="stat-card c-yellow">
@@ -733,7 +733,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
           </div>
           <div class="stat-label">Videos Due</div>
-          <div class="stat-value" id="stat-videos">6</div>
+          <div class="stat-value" id="stat-videos">0</div>
           <div class="stat-sub">This month</div>
         </div>
         <div class="stat-card c-purple">
@@ -741,7 +741,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
           </div>
           <div class="stat-label">Avg Deal Size</div>
-          <div class="stat-value" id="stat-avg">$5,375</div>
+          <div class="stat-value" id="stat-avg">$0</div>
           <div class="stat-sub">Per retainer</div>
         </div>
       </div>
@@ -1143,10 +1143,12 @@ function renderDashboard() {
   const active = contracts.filter(c => c.status === 'active');
   const videosLeft = active.reduce((s,c) => s + Math.max(0, c.videos - c.posted), 0);
   const avg = contracts.length ? Math.round(contracts.reduce((s,c)=>s+c.value,0) / contracts.length) : 0;
+  const totalValue = active.reduce((s,c) => s + c.value, 0);
 
+  document.getElementById('stat-total').textContent = '$' + totalValue.toLocaleString();
   document.getElementById('stat-active').textContent = active.length;
   document.getElementById('stat-videos').textContent = videosLeft;
-  document.getElementById('stat-avg').textContent = '$' + avg.toLocaleString();
+  document.getElementById('stat-avg').textContent = avg ? '$' + avg.toLocaleString() : '$0';
 
   const tbody = document.getElementById('dashboard-contracts');
   tbody.innerHTML = '';
