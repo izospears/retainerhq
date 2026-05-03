@@ -618,6 +618,75 @@
       th, td { padding: 10px 12px; }
     }
 
+    /* ── INCOME TRACKER ── */
+    .income-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .payment-status-pending { color: var(--yellow); }
+    .payment-status-paid    { color: var(--accent); }
+    .payment-status-overdue { color: var(--red); }
+    .badge-paid    { background: rgba(0,229,160,.1);  color: var(--accent); }
+    .badge-paid::before    { background: var(--accent); }
+    .badge-overdue { background: rgba(255,107,107,.1); color: var(--red); }
+    .badge-overdue::before { background: var(--red); }
+
+    /* ── MEDIA KIT ── */
+    .kit-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .kit-form { display: flex; flex-direction: column; gap: 0; }
+    .kit-preview {
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: 18px;
+      padding: 28px;
+      position: sticky;
+      top: 88px;
+    }
+    .kit-preview-title {
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--text3); margin-bottom: 16px;
+    }
+    .kit-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .kit-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .kit-avatar {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, var(--accent), #00B8FF);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 800; color: #000;
+      flex-shrink: 0;
+    }
+    .kit-name { font-size: 16px; font-weight: 800; letter-spacing: -.3px; }
+    .kit-handle { font-size: 12px; color: var(--accent); margin-top: 2px; }
+    .kit-bio { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 16px; }
+    .kit-stats {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 10px; margin-bottom: 16px;
+    }
+    .kit-stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+    .kit-stat-val { font-size: 16px; font-weight: 800; color: var(--accent); letter-spacing: -.5px; }
+    .kit-stat-lbl { font-size: 9px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
+    .kit-niche-badge {
+      display: inline-flex; padding: 4px 10px;
+      border-radius: 20px; font-size: 11px; font-weight: 700;
+      background: var(--accent-dim); color: var(--accent);
+      border: 1px solid rgba(0,229,160,.2);
+    }
+    @media (max-width: 900px) { .kit-layout { grid-template-columns: 1fr; } .income-summary { grid-template-columns: 1fr 1fr; } }
+
     /* ── TOAST ── */
     .toast {
       position: fixed;
@@ -768,6 +837,14 @@
     <div class="nav-item" onclick="navigate('ratecard')" id="snav-ratecard">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       Rate Card
+    </div>
+    <div class="nav-item" onclick="navigate('income')" id="snav-income">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      Income Tracker
+    </div>
+    <div class="nav-item" onclick="navigate('mediakit')" id="snav-mediakit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+      Media Kit
     </div>
   </nav>
 
@@ -1060,6 +1137,106 @@
       </div>
     </div>
 
+    <!-- INCOME TRACKER -->
+    <div class="page" id="page-income">
+      <div class="income-summary">
+        <div class="stat-card c-green">
+          <div class="stat-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+          <div class="stat-label">Total Earned</div>
+          <div class="stat-value" id="inc-earned">$0</div>
+          <div class="stat-sub">Paid to date</div>
+        </div>
+        <div class="stat-card c-yellow">
+          <div class="stat-icon-wrap" style="background:rgba(255,209,102,.12);color:var(--yellow);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="stat-label">Outstanding</div>
+          <div class="stat-value" id="inc-outstanding" style="color:var(--yellow);">$0</div>
+          <div class="stat-sub">Awaiting payment</div>
+        </div>
+        <div class="stat-card c-purple" style="--purple:#FF6B6B;">
+          <div class="stat-icon-wrap" style="background:rgba(255,107,107,.12);color:var(--red);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div class="stat-label">Overdue</div>
+          <div class="stat-value" id="inc-overdue" style="color:var(--red);">$0</div>
+          <div class="stat-sub">Past due date</div>
+        </div>
+      </div>
+      <div class="section-header">
+        <div class="section-title">Payment Log</div>
+        <button class="btn btn-primary" onclick="openPaymentModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Log Payment
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Brand</th><th>Amount</th><th>Due Date</th><th>Paid Date</th><th>Status</th><th>Notes</th><th></th></tr></thead>
+          <tbody id="payments-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MEDIA KIT -->
+    <div class="page" id="page-mediakit">
+      <div class="section-header">
+        <div class="section-title">My Media Kit</div>
+        <button class="btn btn-primary" onclick="saveMediaKit()">Save Kit</button>
+      </div>
+      <div class="kit-layout">
+        <div class="kit-form">
+          <div class="form-group">
+            <label class="form-label">TikTok Handle</label>
+            <input class="form-input" id="kit-handle" placeholder="@yourhandle" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Niche</label>
+            <input class="form-input" id="kit-niche" placeholder="e.g. Beauty, Skincare, Lifestyle" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Followers</label>
+              <input class="form-input" id="kit-followers" type="number" placeholder="50000" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Avg Views / Video</label>
+              <input class="form-input" id="kit-avgviews" type="number" placeholder="25000" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lifetime GMV Generated ($)</label>
+            <input class="form-input" id="kit-gmv" type="number" placeholder="150000" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bio / Pitch</label>
+            <textarea class="form-textarea" id="kit-bio" rows="4" placeholder="I'm a TikTok Shop affiliate specializing in K-Beauty and skincare. I create authentic content that drives real conversions..."></textarea>
+          </div>
+        </div>
+        <div>
+          <div class="kit-preview">
+            <div class="kit-preview-title">Live Preview</div>
+            <div class="kit-card">
+              <div class="kit-header">
+                <div class="kit-avatar" id="kit-prev-avatar">IS</div>
+                <div>
+                  <div class="kit-name" id="kit-prev-name">Your Name</div>
+                  <div class="kit-handle" id="kit-prev-handle">@handle</div>
+                </div>
+              </div>
+              <div class="kit-bio" id="kit-prev-bio">Your bio will appear here...</div>
+              <div class="kit-stats">
+                <div class="kit-stat"><div class="kit-stat-val" id="kit-prev-followers">—</div><div class="kit-stat-lbl">Followers</div></div>
+                <div class="kit-stat"><div class="kit-stat-val" id="kit-prev-views">—</div><div class="kit-stat-lbl">Avg Views</div></div>
+                <div class="kit-stat"><div class="kit-stat-val" id="kit-prev-gmv">—</div><div class="kit-stat-lbl">Lifetime GMV</div></div>
+              </div>
+              <div><span class="kit-niche-badge" id="kit-prev-niche">Niche</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1138,6 +1315,49 @@
   </div>
 </div>
 
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="payment-modal">
+  <div class="modal">
+    <div class="modal-title">Log Payment</div>
+    <div class="form-group">
+      <label class="form-label">Contract</label>
+      <select class="form-select" id="pay-contract"></select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Amount ($) *</label>
+        <input class="form-input" id="pay-amount" type="number" placeholder="2000" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-select" id="pay-status">
+          <option value="pending">Pending</option>
+          <option value="paid">Paid</option>
+          <option value="overdue">Overdue</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Due Date</label>
+        <input class="form-input" id="pay-due" type="date" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Paid Date</label>
+        <input class="form-input" id="pay-paid" type="date" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes</label>
+      <input class="form-input" id="pay-notes" placeholder="e.g. Split payment, first installment" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closePaymentModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="addPayment()">Log Payment</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"><div class="toast-dot"></div><span id="toast-msg"></span></div>
 
@@ -1195,8 +1415,10 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let contracts = [];
+let payments = [];
 let currentUser = null;
 let currentDetailId = null;
+let mediaKitProfile = {};
 
 // Check auth — redirect to login if not signed in
 async function initAuth() {
@@ -1204,15 +1426,18 @@ async function initAuth() {
   if (!session) { window.location.href = '/auth.html'; return; }
   currentUser = session.user;
 
-  // Load profile name
-  const { data: profile } = await sb.from('profiles').select('name, role').eq('id', currentUser.id).single();
+  // Load profile
+  const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
   if (profile) {
     document.querySelector('.user-name').textContent = profile.name || currentUser.email;
     document.querySelector('.user-plan').textContent = profile.role === 'brand' ? 'Brand Account' : 'Pro Affiliate';
     document.querySelector('.avatar').textContent = (profile.name || 'U').slice(0,2).toUpperCase();
+    mediaKitProfile = profile;
+    loadMediaKitForm(profile);
   }
 
   await loadContracts();
+  await loadPayments();
   loadRates();
   renderDashboard();
 }
@@ -1245,14 +1470,14 @@ function initials(str) {
 
 function navigate(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  ['dashboard','contracts','email','ratecard'].forEach(id => {
+  ['dashboard','contracts','email','ratecard','income','mediakit'].forEach(id => {
     const s = document.getElementById('snav-' + id);
     const m = document.getElementById('mnav-' + id);
     if (s) s.classList.remove('active');
     if (m) m.classList.remove('active');
   });
   document.getElementById('page-' + page).classList.add('active');
-  const titles = { dashboard:'Dashboard', contracts:'Contracts', email:'Email Generator', ratecard:'Rate Card', detail:'Contract Detail' };
+  const titles = { dashboard:'Dashboard', contracts:'Contracts', email:'Email Generator', ratecard:'Rate Card', detail:'Contract Detail', income:'Income Tracker', mediakit:'Media Kit' };
   document.getElementById('topbar-title').textContent = titles[page] || '';
   const navKey = page === 'detail' ? null : page;
   if (navKey) {
@@ -1263,6 +1488,7 @@ function navigate(page) {
   }
   if (page === 'dashboard') renderDashboard();
   if (page === 'contracts') renderContracts();
+  if (page === 'income') renderIncome();
 }
 
 function daysLeft(expiry) {
@@ -1543,6 +1769,139 @@ function showToast(msg) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2500);
 }
+
+// ── INCOME TRACKER ──
+async function loadPayments() {
+  const { data, error } = await sb.from('payments').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+  if (!error && data) payments = data;
+}
+
+function fmt(n) { return n ? '$' + Number(n).toLocaleString() : '$0'; }
+
+function renderIncome() {
+  const earned = payments.filter(p=>p.status==='paid').reduce((s,p)=>s+Number(p.amount),0);
+  const outstanding = payments.filter(p=>p.status==='pending').reduce((s,p)=>s+Number(p.amount),0);
+  const overdue = payments.filter(p=>p.status==='overdue').reduce((s,p)=>s+Number(p.amount),0);
+  document.getElementById('inc-earned').textContent = fmt(earned);
+  document.getElementById('inc-outstanding').textContent = fmt(outstanding);
+  document.getElementById('inc-overdue').textContent = fmt(overdue);
+
+  const tbody = document.getElementById('payments-table');
+  tbody.innerHTML = '';
+  if (!payments.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:50px;color:var(--text3);font-size:13px;">No payments logged yet. Add your first payment record.</td></tr>`;
+    return;
+  }
+  payments.forEach(p => {
+    const contract = contracts.find(c=>String(c.id)===String(p.contract_id));
+    const brandName = contract ? contract.brand : '—';
+    tbody.innerHTML += `
+      <tr>
+        <td><div class="brand-name">${brandName}</div></td>
+        <td class="money">${fmt(p.amount)}</td>
+        <td style="color:var(--text2);font-size:12px;">${p.due_date||'—'}</td>
+        <td style="color:var(--text2);font-size:12px;">${p.paid_date||'—'}</td>
+        <td><span class="badge badge-${p.status}">${p.status.charAt(0).toUpperCase()+p.status.slice(1)}</span></td>
+        <td style="color:var(--text3);font-size:12px;">${p.notes||'—'}</td>
+        <td><span class="row-action" onclick="deletePayment('${p.id}')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="11" height="11"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </span></td>
+      </tr>`;
+  });
+}
+
+function openPaymentModal() {
+  const sel = document.getElementById('pay-contract');
+  sel.innerHTML = contracts.map(c=>`<option value="${c.id}">${c.brand}</option>`).join('');
+  document.getElementById('payment-modal').classList.add('open');
+}
+function closePaymentModal() { document.getElementById('payment-modal').classList.remove('open'); }
+
+async function addPayment() {
+  const amount = parseFloat(document.getElementById('pay-amount').value);
+  if (isNaN(amount)) { alert('Please enter an amount.'); return; }
+  const contractId = document.getElementById('pay-contract').value;
+  const newPayment = {
+    user_id: currentUser.id,
+    contract_id: contractId || null,
+    amount,
+    status: document.getElementById('pay-status').value,
+    due_date: document.getElementById('pay-due').value || null,
+    paid_date: document.getElementById('pay-paid').value || null,
+    notes: document.getElementById('pay-notes').value.trim()
+  };
+  const { error } = await sb.from('payments').insert(newPayment);
+  if (error) { alert('Error: ' + error.message); return; }
+  closePaymentModal();
+  ['pay-amount','pay-due','pay-paid','pay-notes'].forEach(id=>document.getElementById(id).value='');
+  await loadPayments();
+  renderIncome();
+  showToast('Payment logged');
+}
+
+async function deletePayment(id) {
+  if (!confirm('Remove this payment record?')) return;
+  await sb.from('payments').delete().eq('id', id);
+  payments = payments.filter(p=>p.id!==id);
+  renderIncome();
+  showToast('Payment removed');
+}
+
+// ── MEDIA KIT ──
+function fmtNum(n) {
+  if (!n) return '—';
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return String(n);
+}
+
+function loadMediaKitForm(profile) {
+  if (profile.tiktok_handle) document.getElementById('kit-handle').value = profile.tiktok_handle;
+  if (profile.niche) document.getElementById('kit-niche').value = profile.niche;
+  if (profile.followers) document.getElementById('kit-followers').value = profile.followers;
+  if (profile.avg_views) document.getElementById('kit-avgviews').value = profile.avg_views;
+  if (profile.total_gmv) document.getElementById('kit-gmv').value = profile.total_gmv;
+  if (profile.bio) document.getElementById('kit-bio').value = profile.bio;
+  updateKitPreview();
+}
+
+function updateKitPreview() {
+  const name = document.querySelector('.user-name').textContent;
+  const handle = document.getElementById('kit-handle').value || '@handle';
+  const niche = document.getElementById('kit-niche').value || 'Niche';
+  const followers = document.getElementById('kit-followers').value;
+  const views = document.getElementById('kit-avgviews').value;
+  const gmv = document.getElementById('kit-gmv').value;
+  const bio = document.getElementById('kit-bio').value || 'Your bio will appear here...';
+  document.getElementById('kit-prev-avatar').textContent = name.slice(0,2).toUpperCase();
+  document.getElementById('kit-prev-name').textContent = name;
+  document.getElementById('kit-prev-handle').textContent = handle.startsWith('@') ? handle : '@'+handle;
+  document.getElementById('kit-prev-bio').textContent = bio;
+  document.getElementById('kit-prev-followers').textContent = fmtNum(followers);
+  document.getElementById('kit-prev-views').textContent = fmtNum(views);
+  document.getElementById('kit-prev-gmv').textContent = gmv ? '$'+fmtNum(gmv) : '—';
+  document.getElementById('kit-prev-niche').textContent = niche;
+}
+
+async function saveMediaKit() {
+  const updates = {
+    tiktok_handle: document.getElementById('kit-handle').value.trim(),
+    niche: document.getElementById('kit-niche').value.trim(),
+    followers: parseInt(document.getElementById('kit-followers').value) || null,
+    avg_views: parseInt(document.getElementById('kit-avgviews').value) || null,
+    total_gmv: parseFloat(document.getElementById('kit-gmv').value) || null,
+    bio: document.getElementById('kit-bio').value.trim()
+  };
+  const { error } = await sb.from('profiles').update(updates).eq('id', currentUser.id);
+  if (error) { alert('Error saving: ' + error.message); return; }
+  showToast('Media kit saved');
+}
+
+// Live preview updates
+['kit-handle','kit-niche','kit-followers','kit-avgviews','kit-gmv','kit-bio'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', updateKitPreview);
+});
 
 initAuth();
 </script>
