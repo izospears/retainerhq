@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to Pro — RetainerHQ</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080C14;
+      --card: #111827;
+      --accent: #00E5A0;
+      --accent-dim: rgba(0,229,160,0.08);
+      --text: #F0F4FF;
+      --text2: #8896B3;
+      --border2: #253450;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container {
+      width: 100%;
+      max-width: 440px;
+      text-align: center;
+    }
+    .icon-wrap {
+      width: 80px; height: 80px;
+      background: var(--accent-dim);
+      border: 2px solid rgba(0,229,160,.3);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 28px;
+      animation: pop .4s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes pop {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .icon-wrap svg { width: 36px; height: 36px; }
+    h1 {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: -.5px;
+      margin-bottom: 10px;
+    }
+    h1 span { color: var(--accent); }
+    .sub {
+      font-size: 15px;
+      color: var(--text2);
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+    .features {
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 28px;
+      text-align: left;
+    }
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .feature-item:last-child { border-bottom: none; }
+    .check {
+      width: 22px; height: 22px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(0,229,160,.3);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .check svg { width: 11px; height: 11px; }
+    .btn {
+      display: inline-block;
+      background: var(--accent);
+      color: #000;
+      font-weight: 800;
+      font-size: 15px;
+      font-family: inherit;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 36px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .15s;
+    }
+    .btn:hover { background: #00f0a8; box-shadow: 0 0 24px rgba(0,229,160,.3); }
+    .countdown {
+      font-size: 12px;
+      color: var(--text2);
+      margin-top: 14px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="icon-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  </div>
+
+  <h1>You're now <span>Pro</span> 🎉</h1>
+  <p class="sub">Your RetainerHQ account has been upgraded. Welcome to the full platform — everything is unlocked.</p>
+
+  <div class="features">
+    <div class="feature-item">
+      <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      Unlimited contracts
+    </div>
+    <div class="feature-item">
+      <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      Income Tracker & payment logging
+    </div>
+    <div class="feature-item">
+      <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      Media Kit Generator
+    </div>
+    <div class="feature-item">
+      <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      AI Email Generator
+    </div>
+    <div class="feature-item">
+      <div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      Priority access to new features
+    </div>
+  </div>
+
+  <a href="/app.html" class="btn">Go to Dashboard →</a>
+  <div class="countdown" id="countdown">Redirecting in 10 seconds...</div>
+</div>
+
+<script>
+  // Auto-redirect after 10s
+  let secs = 10;
+  const cd = document.getElementById('countdown');
+  const timer = setInterval(() => {
+    secs--;
+    cd.textContent = `Redirecting in ${secs} seconds...`;
+    if (secs <= 0) { clearInterval(timer); window.location.href = '/app.html'; }
+  }, 1000);
+</script>
+</body>
+</html>
