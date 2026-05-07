@@ -1053,26 +1053,27 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Videos Requested</label>
-            <input class="form-input" id="m-videos" placeholder="e.g. 4" type="number" />
+            <input class="form-input" id="m-videos" placeholder="e.g. 5" type="number" />
           </div>
           <div class="form-group">
             <label class="form-label">Response Type</label>
-            <select class="form-select" id="m-type">
-              <option value="standard">Standard Accept</option>
+            <select class="form-select" id="m-type" onchange="toggleCounterField('m')">
+              <option value="pitch">Retainer Pitch</option>
               <option value="counter">Counter Offer</option>
-              <option value="package">Push to Package Deal</option>
+              <option value="negotiate">Negotiate Up to Package</option>
               <option value="decline">Polite Decline</option>
             </select>
           </div>
         </div>
         <div class="form-group" id="counter-group" style="display:none;">
           <label class="form-label">Your Counter Offer ($)</label>
-          <input class="form-input" id="m-counter" placeholder="e.g. 800" type="number" />
+          <input class="form-input" id="m-counter" placeholder="e.g. 1500" type="number" />
         </div>
         <div class="form-group">
           <label class="form-label">Your Name</label>
-          <input class="form-input" id="m-name" value="Isaac" />
+          <input class="form-input" id="m-name" placeholder="Your name" />
         </div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Stats (GMV, followers, niche) are pulled automatically from your Media Kit.</div>
         <button class="btn btn-primary" onclick="generateEmail('manual')">
           Generate Email
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
@@ -1087,10 +1088,10 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Response Type</label>
-            <select class="form-select" id="p-type">
-              <option value="standard">Standard Accept</option>
+            <select class="form-select" id="p-type" onchange="toggleCounterField('p')">
+              <option value="pitch">Retainer Pitch</option>
               <option value="counter">Counter Offer</option>
-              <option value="package">Push to Package Deal</option>
+              <option value="negotiate">Negotiate Up to Package</option>
               <option value="decline">Polite Decline</option>
             </select>
           </div>
@@ -1739,46 +1740,81 @@ document.getElementById('p-type').addEventListener('change', function() {
   document.getElementById('p-counter-group').style.display = this.value==='counter'?'block':'none';
 });
 
-function generateEmail(mode) {
+function toggleCounterField(prefix) {
+  const type = document.getElementById(prefix + '-type').value;
+  const grp  = document.getElementById(prefix === 'm' ? 'counter-group' : 'p-counter-group');
+  if (grp) grp.style.display = type === 'counter' ? 'block' : 'none';
+}
+
+async function generateEmail(mode) {
   let brand, offer, videos, type, counter, myName;
-  if (mode==='manual') {
-    brand   = document.getElementById('m-brand').value.trim() || 'your team';
+  if (mode === 'manual') {
+    brand   = document.getElementById('m-brand').value.trim() || '';
     offer   = document.getElementById('m-offer').value;
     videos  = document.getElementById('m-videos').value;
     type    = document.getElementById('m-type').value;
     counter = document.getElementById('m-counter').value;
-    myName  = document.getElementById('m-name').value.trim() || 'Isaac';
+    myName  = document.getElementById('m-name').value.trim() || (mediaKitProfile.name || 'me');
   } else {
     const raw = document.getElementById('p-email').value;
     type    = document.getElementById('p-type').value;
     counter = document.getElementById('p-counter').value;
-    myName  = 'Isaac';
+    myName  = mediaKitProfile.name || 'me';
     const bm = raw.match(/from\s+([A-Z][a-zA-Z\s&]+?)[\.\,\!]/);
-    brand = bm ? bm[1].trim() : 'your brand';
+    brand = bm ? bm[1].trim() : '';
     const om = raw.match(/\$[\d,]+/);
     offer = om ? om[0].replace(/\D/g,'') : '';
     const vm = raw.match(/(\d+)\s+videos?/i);
     videos = vm ? vm[1] : '';
   }
-  document.getElementById('email-text').value = buildEmail(type, brand, offer, videos, counter, myName);
-  document.getElementById('email-output').style.display = 'block';
-  document.getElementById('email-output').scrollIntoView({ behavior:'smooth', block:'nearest' });
-}
 
-function buildEmail(type, brand, offer, videos, counter, name) {
-  const offerFmt   = offer   ? '$' + Number(offer).toLocaleString()   : 'the amount discussed';
-  const vidStr     = videos  ? videos + ' video' + (videos>1?'s':'')  : 'the videos';
-  const counterFmt = counter ? '$' + Number(counter).toLocaleString() : '[your counter]';
+  // Build packages string from rate card
+  const r1 = document.getElementById('rate-1')?.value || '';
+  const r2 = document.getElementById('rate-2')?.value || '';
+  const r4 = document.getElementById('rate-4')?.value || '';
+  const r8 = document.getElementById('rate-8')?.value || '';
+  const packages = [
+    r1 ? `• 1 video/month — ${r1}` : '',
+    r2 ? `• 2 videos/month — ${r2}` : '',
+    r4 ? `• 4 videos/month — ${r4}` : '',
+    r8 ? `• 8 videos/month — ${r8}` : '',
+  ].filter(Boolean).join('\n') || '• 5 videos – $1,500\n• 10 videos – $2,000\n• 15 videos – $3,000';
 
-  if (type==='standard') return `Hi,\n\nAppreciate you reaching out — this sounds like a great fit.\n\nI'm happy to move forward with ${offerFmt} for ${vidStr}. Before we lock it in, I just need to confirm:\n\n- Payment method and timeline (I require payment before filming begins)\n- Posting schedule and any hard deadlines\n- Specific talking points or creative requirements\n\nOnce we're aligned I can get started right away.\n\nLooking forward to it!\n\nBest,\n${name}`;
+  // Show loading state
+  const outputEl = document.getElementById('email-output');
+  const textEl   = document.getElementById('email-text');
+  textEl.value = 'Generating your email...';
+  outputEl.style.display = 'block';
+  outputEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-  if (type==='counter') return `Hi,\n\nThank you for reaching out — I love what you're building and would genuinely enjoy promoting it.\n\nI've reviewed the offer of ${offerFmt} for ${vidStr}. I'm interested, but based on my current rates and the results I drive for brands in this space, I'd need ${counterFmt} to make this work.\n\nThis reflects the quality of content I produce, my engaged audience, and the time investment involved. I'm confident you'll see strong returns.\n\nIf ${counterFmt} works, I'm ready to move forward quickly.\n\nBest,\n${name}`;
-
-  if (type==='package') return `Hi,\n\nThanks for reaching out — I'd love to work together!\n\nI actually prefer retainer packages over one-off deals since consistency is what really drives results for brands. Here's what I offer:\n\n• 2 videos/month — $900\n• 4 videos/month — $1,600\n• 8 videos/month — $2,800\n\nRetainer clients get priority scheduling and I go much deeper into the brand story versus a single post. Brands I work with on retainer see significantly better conversion and repeat engagement.\n\nWould any of these work for your goals? Happy to customize.\n\nBest,\n${name}`;
-
-  if (type==='decline') return `Hi,\n\nThank you so much for thinking of me — I genuinely appreciate the outreach.\n\nAfter reviewing the details, I don't think this particular partnership is the right fit right now. I want to make sure any brand I work with is one I can authentically represent, and I'd rather be upfront than over-promise.\n\nI wish you all the best and hope we can find an opportunity to work together in the future.\n\nBest,\n${name}`;
-
-  return '';
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const res = await fetch('https://tbfcwqcqpfbqaknktkyp.supabase.co/functions/v1/generate-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + session.access_token
+      },
+      body: JSON.stringify({
+        type,
+        brand,
+        offer,
+        videos,
+        counter,
+        name:      myName,
+        gmv:       mediaKitProfile.total_gmv       || '',
+        followers: mediaKitProfile.followers        || '',
+        avg_views: mediaKitProfile.avg_views        || '',
+        niche:     mediaKitProfile.niche            || '',
+        packages,
+      })
+    });
+    const { email, error } = await res.json();
+    if (error) throw new Error(error);
+    textEl.value = email || 'Could not generate email. Please try again.';
+  } catch(e) {
+    textEl.value = 'Error generating email: ' + e.message;
+  }
 }
 
 function copyEmail() {
