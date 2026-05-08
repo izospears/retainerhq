@@ -847,6 +847,21 @@
       transition: all .15s;
     }
     .ob-tag.sel { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .ob-tile-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; margin-bottom: 14px; }
+    .ob-tile {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text2);
+      cursor: pointer;
+      background: var(--bg2);
+      text-align: center;
+      transition: all .15s;
+    }
+    .ob-tile:hover { border-color: var(--border2); color: var(--text); }
+    .ob-tile.sel { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
     .ob-btn { width: 100%; background: var(--accent); color: #000; border: none; border-radius: 10px; padding: 13px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: inherit; transition: all .15s; margin-top: 4px; }
     .ob-btn:hover { background: #00f0a8; }
     .ob-btn:disabled { opacity: .6; cursor: not-allowed; }
@@ -854,6 +869,65 @@
     .ob-step.active { display: block; }
     .ob-success-icon { width: 60px; height: 60px; border-radius: 50%; background: var(--accent-dim); border: 2px solid rgba(0,229,160,.3); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
     .ob-success-icon svg { width: 28px; height: 28px; }
+
+    /* ── MOTIVATIONAL FLASH ── */
+    .motiv-flash {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 600;
+      align-items: center;
+      justify-content: center;
+      background: rgba(8,12,20,0.88);
+      backdrop-filter: blur(6px);
+      padding: 24px;
+    }
+    .motiv-flash.show { display: flex; }
+    .motiv-card {
+      text-align: center;
+      max-width: 400px;
+      animation: motivCreep .8s cubic-bezier(.16,1,.3,1) forwards;
+    }
+    .motiv-flash.hide .motiv-card {
+      animation: motivFade .6s ease forwards;
+    }
+    @keyframes motivCreep {
+      from { opacity: 0; transform: scale(.92) translateY(12px); }
+      to   { opacity: 1; transform: scale(1)  translateY(0); }
+    }
+    @keyframes motivFade {
+      from { opacity: 1; transform: scale(1); }
+      to   { opacity: 0; transform: scale(.96); }
+    }
+    .motiv-icon {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      border: 1px solid rgba(0,229,160,.25);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 22px;
+    }
+    .motiv-icon svg { width: 24px; height: 24px; }
+    .motiv-quote {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.45;
+      letter-spacing: -.3px;
+      margin-bottom: 16px;
+    }
+    .motiv-ref {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .motiv-sub {
+      font-size: 12px;
+      color: var(--text3);
+      margin-top: 24px;
+    }
 
     .onboarding-overlay {
       display: none;
@@ -1540,24 +1614,11 @@
       <div class="ob-step-label">Step 2 of 4</div>
       <div class="ob-title" id="ob-s1-title">Your TikTok presence</div>
       <div class="ob-sub" id="ob-s1-sub">Tell us about your account so we can personalize your experience.</div>
+      <!-- Step 1 Creator -->
       <div id="ob-s1-creator">
         <div class="form-group">
-          <label class="form-label">TikTok Handle</label>
-          <input class="form-input" id="ob-handle" placeholder="@yourhandle" />
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <div class="form-group">
-            <label class="form-label">Followers</label>
-            <input class="form-input" id="ob-followers" placeholder="e.g. 45,000" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Avg Views / Video</label>
-            <input class="form-input" id="ob-avgviews" placeholder="e.g. 12,000" />
-          </div>
-        </div>
-        <div class="form-group">
           <label class="form-label">Your Niche</label>
-          <div class="ob-tag-row" id="ob-niche-tags">
+          <div class="ob-tag-row">
             <div class="ob-tag" onclick="obSelTag(this,'niche')">Beauty</div>
             <div class="ob-tag" onclick="obSelTag(this,'niche')">Fashion</div>
             <div class="ob-tag" onclick="obSelTag(this,'niche')">Tech</div>
@@ -1568,12 +1629,19 @@
             <div class="ob-tag" onclick="obSelTag(this,'niche')">Other</div>
           </div>
         </div>
-      </div>
-      <div id="ob-s1-brand" style="display:none;">
         <div class="form-group">
-          <label class="form-label">Brand / Company Name</label>
-          <input class="form-input" id="ob-brandname" placeholder="e.g. GlowUp Cosmetics" />
+          <label class="form-label">Follower Count</label>
+          <div class="ob-tile-row">
+            <div class="ob-tile" onclick="obSelTile(this,'followers')">Under 10K</div>
+            <div class="ob-tile" onclick="obSelTile(this,'followers')">10K–50K</div>
+            <div class="ob-tile" onclick="obSelTile(this,'followers')">50K–100K</div>
+            <div class="ob-tile" onclick="obSelTile(this,'followers')">100K–500K</div>
+            <div class="ob-tile" onclick="obSelTile(this,'followers')">500K+</div>
+          </div>
         </div>
+      </div>
+      <!-- Step 1 Brand -->
+      <div id="ob-s1-brand" style="display:none;">
         <div class="form-group">
           <label class="form-label">Product Category</label>
           <div class="ob-tag-row">
@@ -1586,6 +1654,15 @@
             <div class="ob-tag" onclick="obSelTag(this,'cat')">Other</div>
           </div>
         </div>
+        <div class="form-group">
+          <label class="form-label">Monthly Creator Budget</label>
+          <div class="ob-tile-row">
+            <div class="ob-tile" onclick="obSelTile(this,'budget')">Under $1K</div>
+            <div class="ob-tile" onclick="obSelTile(this,'budget')">$1K–$5K</div>
+            <div class="ob-tile" onclick="obSelTile(this,'budget')">$5K–$20K</div>
+            <div class="ob-tile" onclick="obSelTile(this,'budget')">$20K+</div>
+          </div>
+        </div>
       </div>
       <button class="ob-btn" onclick="obNext(1)">Continue →</button>
     </div>
@@ -1594,53 +1671,36 @@
     <div class="ob-step" id="ob-s2">
       <div class="ob-step-label">Step 3 of 4</div>
       <div class="ob-title" id="ob-s2-title">Your numbers</div>
-      <div class="ob-sub">This personalizes your email templates and dashboard.</div>
+      <div class="ob-sub">This personalizes your email templates.</div>
       <div id="ob-s2-creator">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <div class="form-group">
-            <label class="form-label">Last 30-Day GMV</label>
-            <input class="form-input" id="ob-30dgmv" placeholder="e.g. $8,500" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Lifetime GMV</label>
-            <input class="form-input" id="ob-gmv" placeholder="e.g. $120,000" />
+        <div class="form-group">
+          <label class="form-label">Last 30-Day GMV</label>
+          <div class="ob-tile-row">
+            <div class="ob-tile" onclick="obSelTile(this,'gmv30')">Under $1K</div>
+            <div class="ob-tile" onclick="obSelTile(this,'gmv30')">$1K–$5K</div>
+            <div class="ob-tile" onclick="obSelTile(this,'gmv30')">$5K–$15K</div>
+            <div class="ob-tile" onclick="obSelTile(this,'gmv30')">$15K–$50K</div>
+            <div class="ob-tile" onclick="obSelTile(this,'gmv30')">$50K+</div>
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <div class="form-group">
-            <label class="form-label">Active Brand Deals / Mo</label>
-            <select class="form-select" id="ob-deals">
-              <option value="0">0 — just starting</option>
-              <option value="1-3">1–3</option>
-              <option value="4-10">4–10</option>
-              <option value="10+">10+</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Time on TikTok Shop</label>
-            <select class="form-select" id="ob-tenure">
-              <option>Less than 6 months</option>
-              <option>6–12 months</option>
-              <option>1–2 years</option>
-              <option>2+ years</option>
-            </select>
+        <div class="form-group">
+          <label class="form-label">Active Brand Deals Per Month</label>
+          <div class="ob-tile-row">
+            <div class="ob-tile" onclick="obSelTile(this,'deals')">0</div>
+            <div class="ob-tile" onclick="obSelTile(this,'deals')">1–3</div>
+            <div class="ob-tile" onclick="obSelTile(this,'deals')">4–10</div>
+            <div class="ob-tile" onclick="obSelTile(this,'deals')">10+</div>
           </div>
         </div>
       </div>
       <div id="ob-s2-brand" style="display:none;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <div class="form-group">
-            <label class="form-label">Monthly Creator Budget</label>
-            <input class="form-input" id="ob-budget" placeholder="e.g. $5,000" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Creators to Hire</label>
-            <select class="form-select" id="ob-hiring">
-              <option>1–5</option>
-              <option>5–20</option>
-              <option>20–50</option>
-              <option>50+</option>
-            </select>
+        <div class="form-group">
+          <label class="form-label">How many creators are you looking to work with?</label>
+          <div class="ob-tile-row">
+            <div class="ob-tile" onclick="obSelTile(this,'hiring')">1–5</div>
+            <div class="ob-tile" onclick="obSelTile(this,'hiring')">5–20</div>
+            <div class="ob-tile" onclick="obSelTile(this,'hiring')">20–50</div>
+            <div class="ob-tile" onclick="obSelTile(this,'hiring')">50+</div>
           </div>
         </div>
       </div>
@@ -1655,43 +1715,43 @@
       <div id="ob-s3-creator">
         <div class="form-group">
           <label class="form-label">Desired Monthly TikTok Shop Income</label>
-          <select class="form-select" id="ob-income">
-            <option value="$1K-$3K">$1,000 – $3,000/mo</option>
-            <option value="$3K-$5K">$3,000 – $5,000/mo</option>
-            <option value="$5K-$10K">$5,000 – $10,000/mo</option>
-            <option value="$10K-$25K">$10,000 – $25,000/mo</option>
-            <option value="$25K+">$25,000+/mo</option>
-          </select>
+          <div class="ob-tile-row">
+            <div class="ob-tile" onclick="obSelTile(this,'income')">$1K–$3K</div>
+            <div class="ob-tile" onclick="obSelTile(this,'income')">$3K–$5K</div>
+            <div class="ob-tile" onclick="obSelTile(this,'income')">$5K–$10K</div>
+            <div class="ob-tile" onclick="obSelTile(this,'income')">$10K–$25K</div>
+            <div class="ob-tile" onclick="obSelTile(this,'income')">$25K+</div>
+          </div>
         </div>
         <div class="form-group">
           <label class="form-label">Biggest Challenge Right Now</label>
-          <select class="form-select" id="ob-challenge">
-            <option>Getting more brand deals</option>
-            <option>Pricing my services confidently</option>
-            <option>Tracking income and contracts</option>
-            <option>Creating consistent content</option>
-            <option>Scaling past my current income</option>
-          </select>
+          <div class="ob-tag-row">
+            <div class="ob-tag" onclick="obSelTag(this,'challenge')">Getting brand deals</div>
+            <div class="ob-tag" onclick="obSelTag(this,'challenge')">Pricing confidently</div>
+            <div class="ob-tag" onclick="obSelTag(this,'challenge')">Tracking income</div>
+            <div class="ob-tag" onclick="obSelTag(this,'challenge')">Consistent content</div>
+            <div class="ob-tag" onclick="obSelTag(this,'challenge')">Scaling income</div>
+          </div>
         </div>
       </div>
       <div id="ob-s3-brand" style="display:none;">
         <div class="form-group">
           <label class="form-label">Primary Goal</label>
-          <select class="form-select" id="ob-goal">
-            <option>Drive GMV / conversions</option>
-            <option>Build brand awareness</option>
-            <option>Launch a new product</option>
-            <option>Scale existing creator program</option>
-          </select>
+          <div class="ob-tile-row">
+            <div class="ob-tile" onclick="obSelTile(this,'goal')">Drive GMV</div>
+            <div class="ob-tile" onclick="obSelTile(this,'goal')">Brand Awareness</div>
+            <div class="ob-tile" onclick="obSelTile(this,'goal')">New Product Launch</div>
+            <div class="ob-tile" onclick="obSelTile(this,'goal')">Scale Program</div>
+          </div>
         </div>
         <div class="form-group">
           <label class="form-label">Biggest Challenge</label>
-          <select class="form-select" id="ob-bchallenge">
-            <option>Finding the right creators</option>
-            <option>Managing multiple partnerships</option>
-            <option>Tracking ROI from creators</option>
-            <option>Negotiating fair rates</option>
-          </select>
+          <div class="ob-tag-row">
+            <div class="ob-tag" onclick="obSelTag(this,'bchallenge')">Finding creators</div>
+            <div class="ob-tag" onclick="obSelTag(this,'bchallenge')">Managing partnerships</div>
+            <div class="ob-tag" onclick="obSelTag(this,'bchallenge')">Tracking ROI</div>
+            <div class="ob-tag" onclick="obSelTag(this,'bchallenge')">Negotiating rates</div>
+          </div>
         </div>
       </div>
       <button class="ob-btn" id="ob-finish-btn" onclick="obFinish()">Complete Setup →</button>
@@ -1704,8 +1764,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
         <div class="ob-title">You're all set!</div>
-        <div class="ob-sub" style="margin-top:8px;">Your account is personalized. Your email templates and dashboard now reflect your stats.</div>
-        <button class="ob-btn" style="margin-top:8px;" onclick="obDone()">Go to Dashboard →</button>
+        <div class="ob-sub" style="margin-top:8px;">Welcome to RetainerHQ. Let's get to work.</div>
       </div>
     </div>
   </div>
@@ -1748,6 +1807,20 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Add Your First Contract
     </button>
+  </div>
+</div>
+
+<!-- MOTIVATIONAL FLASH -->
+<div class="motiv-flash" id="motiv-flash" onclick="this.classList.add('hide');setTimeout(()=>this.classList.remove('show','hide'),600)">
+  <div class="motiv-card">
+    <div class="motiv-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+    </div>
+    <div class="motiv-quote" id="motiv-quote"></div>
+    <div class="motiv-ref" id="motiv-ref"></div>
+    <div class="motiv-sub">Tap anywhere to continue</div>
   </div>
 </div>
 
@@ -1868,6 +1941,7 @@ function deadlineClass(days) {
 }
 
 function checkOnboarding() {
+  if (window._justOnboarded) return;
   const overlay = document.getElementById('onboarding-overlay');
   if (contracts.length === 0) {
     overlay.classList.add('show');
@@ -1885,6 +1959,7 @@ let _obNiche = '';
 function showProfileOnboarding(currentRole) {
   _obRole = currentRole || 'creator';
   _obStep = 0;
+  _obData = {};
   obSelectRole(_obRole);
   obRenderProgress();
   document.querySelectorAll('.ob-step').forEach(s => s.classList.remove('active'));
@@ -1908,11 +1983,18 @@ function obSelectRole(r) {
   document.getElementById('ob-r-brand').classList.toggle('sel', r === 'brand');
 }
 
+let _obData = {};
+
 function obSelTag(el, group) {
-  // Only one tag selected per group
   el.closest('.ob-tag-row').querySelectorAll('.ob-tag').forEach(t => t.classList.remove('sel'));
   el.classList.add('sel');
-  if (group === 'niche') _obNiche = el.textContent;
+  _obData[group] = el.textContent.trim();
+}
+
+function obSelTile(el, group) {
+  el.closest('.ob-tile-row').querySelectorAll('.ob-tile').forEach(t => t.classList.remove('sel'));
+  el.classList.add('sel');
+  _obData[group] = el.textContent.trim();
 }
 
 function obNext(fromStep) {
@@ -1945,50 +2027,91 @@ async function obFinish() {
   const btn = document.getElementById('ob-finish-btn');
   btn.textContent = 'Saving...'; btn.disabled = true;
 
-  const updates = {
-    role: _obRole,
-    onboarded: true,
-  };
+  const updates = { role: _obRole, onboarded: true };
 
   if (_obRole === 'creator') {
-    const handle = document.getElementById('ob-handle').value.trim();
-    const followers = document.getElementById('ob-followers').value.trim();
-    const avgviews = document.getElementById('ob-avgviews').value.trim();
-    const gmv30d = document.getElementById('ob-30dgmv').value.trim();
-    const gmv = document.getElementById('ob-gmv').value.trim();
-    const deals = document.getElementById('ob-deals').value;
-    const income = document.getElementById('ob-income').value;
-    const challenge = document.getElementById('ob-challenge').value;
-
-    if (handle) updates.tiktok_handle = handle;
-    if (followers) updates.followers = followers;
-    if (avgviews) updates.avg_views = avgviews;
-    if (_obNiche) updates.niche = _obNiche;
-    if (gmv30d) updates.last_30d_gmv = gmv30d;
-    if (gmv) updates.total_gmv = gmv;
-    if (deals) updates.current_deals_per_month = deals;
-    if (income) updates.desired_monthly_income = income;
-    if (challenge) updates.biggest_challenge = challenge;
+    if (_obData.niche)     updates.niche = _obData.niche;
+    if (_obData.followers) updates.followers = _obData.followers;
+    if (_obData.gmv30)     updates.last_30d_gmv = _obData.gmv30;
+    if (_obData.deals)     updates.current_deals_per_month = _obData.deals;
+    if (_obData.income)    updates.desired_monthly_income = _obData.income;
+    if (_obData.challenge) updates.biggest_challenge = _obData.challenge;
+  } else {
+    if (_obData.cat)     updates.niche = _obData.cat;
+    if (_obData.budget)  updates.desired_monthly_income = _obData.budget;
+    if (_obData.hiring)  updates.current_deals_per_month = _obData.hiring;
+    if (_obData.goal)    updates.desired_monthly_income = _obData.goal;
+    if (_obData.bchallenge) updates.biggest_challenge = _obData.bchallenge;
   }
 
   await sb.from('profiles').update(updates).eq('id', currentUser.id);
-
-  // Update local profile cache
   Object.assign(mediaKitProfile, updates);
 
-  // Go to success step
   document.getElementById('ob-s3').classList.remove('active');
   _obStep = 4;
   obRenderProgress();
   document.getElementById('ob-s4').classList.add('active');
+  setTimeout(() => obDone(), 1500);
 }
 
 function obDone() {
   document.getElementById('ob-full').classList.remove('show');
-  // Update sidebar plan label if role changed
   if (_obRole === 'brand') {
     document.querySelector('.user-plan').textContent = 'Brand Account';
   }
+  window._justOnboarded = true;
+  showMotivationalFlash();
+}
+
+const _VERSES = [
+  { quote: "Whatever you do, work at it with all your heart.", ref: "Colossians 3:23" },
+  { quote: "The plans of the diligent lead surely to abundance.", ref: "Proverbs 21:5" },
+  { quote: "Commit your work to the Lord, and your plans will be established.", ref: "Proverbs 16:3" },
+  { quote: "Do not grow weary in doing good.", ref: "Galatians 6:9" },
+  { quote: "All hard work brings a profit.", ref: "Proverbs 14:23" },
+  { quote: "Be steadfast, immovable, always abounding in the work.", ref: "1 Corinthians 15:58" },
+  { quote: "The soul of the diligent is richly supplied.", ref: "Proverbs 13:4" },
+  { quote: "Though your beginning was small, your latter days will be very great.", ref: "Job 8:7" },
+  { quote: "Be strong and courageous.", ref: "Joshua 1:9" },
+  { quote: "For God gave us a spirit not of fear but of power.", ref: "2 Timothy 1:7" },
+  { quote: "I can do all things through Christ who strengthens me.", ref: "Philippians 4:13" },
+  { quote: "With God all things are possible.", ref: "Matthew 19:26" },
+  { quote: "Fear not, for I am with you.", ref: "Isaiah 41:10" },
+  { quote: "The righteous are bold as a lion.", ref: "Proverbs 28:1" },
+  { quote: "For I know the plans I have for you.", ref: "Jeremiah 29:11" },
+  { quote: "Walk worthy of the calling you have received.", ref: "Ephesians 4:1" },
+  { quote: "Forget what lies behind and press forward.", ref: "Philippians 3:13-14" },
+  { quote: "We walk by faith, not by sight.", ref: "2 Corinthians 5:7" },
+  { quote: "Those who hope in the Lord will renew their strength.", ref: "Isaiah 40:31" },
+  { quote: "The blessing of the Lord makes rich.", ref: "Proverbs 10:22" },
+  { quote: "Give, and it will be given to you.", ref: "Luke 6:38" },
+  { quote: "The generous will prosper.", ref: "Proverbs 11:25" },
+  { quote: "Remember the Lord, for it is He who gives you power to get wealth.", ref: "Deuteronomy 8:18" },
+  { quote: "A faithful man will abound with blessings.", ref: "Proverbs 28:20" },
+  { quote: "Run with endurance the race set before us.", ref: "Hebrews 12:1" },
+  { quote: "Be faithful over little, and I will set you over much.", ref: "Matthew 25:21" },
+  { quote: "Discipline today. Abundance tomorrow.", ref: "Proverbs 21:5" },
+  { quote: "You were built for more.", ref: "Jeremiah 29:11" },
+  { quote: "Small beginnings. Great endings.", ref: "Job 8:7" },
+  { quote: "Stay diligent. Stay faithful.", ref: "Proverbs 13:4" },
+  { quote: "Purpose over fear.", ref: "2 Timothy 1:7" },
+  { quote: "Move with faith.", ref: "Hebrews 11:1" },
+  { quote: "Keep building.", ref: "1 Corinthians 15:58" },
+  { quote: "The joy of the Lord is your strength.", ref: "Nehemiah 8:10" },
+  { quote: "Weeping may endure for a night, but joy comes in the morning.", ref: "Psalm 30:5" },
+];
+
+function showMotivationalFlash() {
+  const verse = _VERSES[Math.floor(Math.random() * _VERSES.length)];
+  const el = document.getElementById('motiv-flash');
+  document.getElementById('motiv-quote').textContent = '“' + verse.quote + '”';
+  document.getElementById('motiv-ref').textContent = '— ' + verse.ref;
+  el.classList.add('show');
+  // Auto-dismiss after 4.5s
+  setTimeout(() => {
+    el.classList.add('hide');
+    setTimeout(() => { el.classList.remove('show','hide'); }, 600);
+  }, 4500);
 }
 
 
