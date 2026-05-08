@@ -793,6 +793,64 @@
       to   { opacity: 1; }
     }
 
+    /* ── FEATURE TOUR ── */
+    .tour-wrap {
+      position: fixed;
+      inset: 0;
+      z-index: 400;
+      pointer-events: none;
+    }
+    .tour-wrap.active { pointer-events: all; }
+    .tour-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(8,12,20,0.7);
+      opacity: 0;
+      transition: opacity .4s;
+    }
+    .tour-wrap.active .tour-backdrop { opacity: 1; }
+    .tour-card {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: 18px;
+      padding: 24px 28px;
+      width: 360px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.5);
+      opacity: 0;
+      transition: opacity .4s, transform .4s cubic-bezier(.16,1,.3,1);
+    }
+    .tour-wrap.active .tour-card {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .tour-dots { display: flex; gap: 5px; margin-bottom: 14px; }
+    .tour-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); transition: background .3s; }
+    .tour-dot.on { background: var(--accent); }
+    .tour-emoji { font-size: 28px; margin-bottom: 10px; }
+    .tour-title { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+    .tour-desc { font-size: 13px; color: var(--text2); line-height: 1.55; margin-bottom: 20px; }
+    .tour-actions { display: flex; align-items: center; justify-content: space-between; }
+    .tour-skip { font-size: 12px; color: var(--text3); cursor: pointer; font-weight: 600; background: none; border: none; font-family: inherit; padding: 0; }
+    .tour-skip:hover { color: var(--text2); }
+    .tour-next { background: var(--accent); color: #000; border: none; border-radius: 8px; padding: 9px 20px; font-size: 13px; font-weight: 800; cursor: pointer; font-family: inherit; transition: background .15s; }
+    .tour-next:hover { background: #00f0a8; }
+    .tour-highlight {
+      position: absolute;
+      border-radius: 10px;
+      box-shadow: 0 0 0 3px var(--accent), 0 0 0 6px rgba(0,229,160,.15);
+      pointer-events: none;
+      transition: all .4s cubic-bezier(.16,1,.3,1);
+      animation: tourPulse 2s ease-in-out infinite;
+    }
+    @keyframes tourPulse {
+      0%,100% { box-shadow: 0 0 0 3px var(--accent), 0 0 0 6px rgba(0,229,160,.15); }
+      50%      { box-shadow: 0 0 0 3px var(--accent), 0 0 0 10px rgba(0,229,160,.08); }
+    }
+
     /* ── PROFILE ONBOARDING ── */
     .ob-full {
       display: none;
@@ -1760,48 +1818,26 @@
   </div>
 </div>
 
-<div class="onboarding-overlay" id="onboarding-overlay">
-  <div class="onboarding-bg"></div>
-  <div class="onboarding-card">
-    <div class="onboarding-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
-      </svg>
+<div id="onboarding-overlay" style="display:none;"></div>
+
+<!-- FEATURE TOUR -->
+<div class="tour-wrap" id="tour-wrap">
+  <div class="tour-backdrop" onclick="endTour()"></div>
+  <div class="tour-highlight" id="tour-highlight"></div>
+  <div class="tour-card">
+    <div class="tour-dots" id="tour-dots"></div>
+    <div class="tour-emoji" id="tour-emoji"></div>
+    <div class="tour-title" id="tour-title"></div>
+    <div class="tour-desc" id="tour-desc"></div>
+    <div class="tour-actions">
+      <button class="tour-skip" onclick="endTour()">Skip tour</button>
+      <button class="tour-next" id="tour-next-btn" onclick="tourNext()">Next →</button>
     </div>
-    <div class="onboarding-title">Welcome to RetainerHQ</div>
-    <div class="onboarding-sub">Your command center for managing brand retainer deals. Track contracts, video deliverables, and deadlines — all in one place.</div>
-    <div class="onboarding-steps">
-      <div class="onboarding-step">
-        <div class="step-num">1</div>
-        <div>
-          <div class="step-text">Add your first brand deal</div>
-          <div class="step-sub">Enter the brand name, deal value, and how many videos are required</div>
-        </div>
-      </div>
-      <div class="onboarding-step">
-        <div class="step-num">2</div>
-        <div>
-          <div class="step-text">Track your video progress</div>
-          <div class="step-sub">Check off videos as you post them and monitor your deadlines</div>
-        </div>
-      </div>
-      <div class="onboarding-step">
-        <div class="step-num">3</div>
-        <div>
-          <div class="step-text">Negotiate better deals</div>
-          <div class="step-sub">Use the Email Generator to respond to brand offers like a pro</div>
-        </div>
-      </div>
-    </div>
-    <button class="onboarding-cta" onclick="startOnboarding()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Add Your First Contract
-    </button>
   </div>
 </div>
 
 <!-- MOTIVATIONAL FLASH -->
-<div class="motiv-flash" id="motiv-flash" onclick="this.classList.add('hide');setTimeout(()=>this.classList.remove('show','hide'),600)">
+<div class="motiv-flash" id="motiv-flash" onclick="this.classList.add('hide');setTimeout(()=>{this.classList.remove('show','hide');startTour();},600)">
   <div class="motiv-card">
     <div class="motiv-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1930,15 +1966,7 @@ function deadlineClass(days) {
   return '';
 }
 
-function checkOnboarding() {
-  if (window._justOnboarded) return;
-  const overlay = document.getElementById('onboarding-overlay');
-  if (contracts.length === 0) {
-    overlay.classList.add('show');
-  } else {
-    overlay.classList.remove('show');
-  }
-}
+function checkOnboarding() { /* retired — tour replaces this */ }
 
 /* ── PROFILE ONBOARDING ── */
 let _obRole = 'creator';
@@ -2053,6 +2081,65 @@ function obDone() {
   showMotivationalFlash();
 }
 
+/* ── FEATURE TOUR ── */
+const _TOUR_STEPS = [
+  { page: 'dashboard', navId: 'snav-dashboard', emoji: '📊', title: 'Your Mission Control', desc: 'See your active contracts, total earnings, video progress, and upcoming deadlines — all at a glance.' },
+  { page: 'contracts', navId: 'snav-contracts', emoji: '📋', title: 'Track Every Deal', desc: 'Add brand deals, mark videos as posted, and stay on top of every deadline. Never lose track of a retainer again.' },
+  { page: 'email',     navId: 'snav-email',     emoji: '✉️', title: 'Pitch Like a Pro', desc: 'AI writes professional retainer pitches, counter offers, and negotiation emails using your actual stats.' },
+  { page: 'income',    navId: 'snav-income',     emoji: '💰', title: 'Get Paid on Time', desc: 'Log payments, see what\'s owed, and track your monthly income so you always know where your money stands.' },
+];
+let _tourStep = 0;
+
+function startTour() {
+  _tourStep = 0;
+  document.getElementById('tour-wrap').classList.add('active');
+  renderTourStep();
+}
+
+function renderTourStep() {
+  const s = _TOUR_STEPS[_tourStep];
+  const total = _TOUR_STEPS.length;
+
+  // Navigate to the page
+  navigate(s.page);
+
+  // Dots
+  const dots = document.getElementById('tour-dots');
+  dots.innerHTML = _TOUR_STEPS.map((_,i) => `<div class="tour-dot${i===_tourStep?' on':''}"></div>`).join('');
+
+  // Content
+  document.getElementById('tour-emoji').textContent = s.emoji;
+  document.getElementById('tour-title').textContent = s.title;
+  document.getElementById('tour-desc').textContent = s.desc;
+  document.getElementById('tour-next-btn').textContent = _tourStep === total - 1 ? 'Done ✓' : 'Next →';
+
+  // Highlight the nav item
+  setTimeout(() => {
+    const navEl = document.getElementById(s.navId);
+    const hl = document.getElementById('tour-highlight');
+    if (navEl) {
+      const r = navEl.getBoundingClientRect();
+      hl.style.left   = (r.left - 4) + 'px';
+      hl.style.top    = (r.top - 4) + 'px';
+      hl.style.width  = (r.width + 8) + 'px';
+      hl.style.height = (r.height + 8) + 'px';
+      hl.style.display = 'block';
+    }
+  }, 100);
+}
+
+function tourNext() {
+  _tourStep++;
+  if (_tourStep >= _TOUR_STEPS.length) { endTour(); return; }
+  renderTourStep();
+}
+
+function endTour() {
+  document.getElementById('tour-wrap').classList.remove('active');
+  document.getElementById('tour-highlight').style.display = 'none';
+  navigate('dashboard');
+}
+
 const _VERSES = [
   { quote: "Whatever you do, work at it with all your heart.", ref: "Colossians 3:23" },
   { quote: "The plans of the diligent lead surely to abundance.", ref: "Proverbs 21:5" },
@@ -2097,11 +2184,14 @@ function showMotivationalFlash() {
   document.getElementById('motiv-quote').textContent = '“' + verse.quote + '”';
   document.getElementById('motiv-ref').textContent = '— ' + verse.ref;
   el.classList.add('show');
-  // Auto-dismiss after 4.5s
+  // Auto-dismiss after 4s then start tour
   setTimeout(() => {
     el.classList.add('hide');
-    setTimeout(() => { el.classList.remove('show','hide'); }, 600);
-  }, 4500);
+    setTimeout(() => {
+      el.classList.remove('show','hide');
+      startTour();
+    }, 600);
+  }, 4000);
 }
 
 
