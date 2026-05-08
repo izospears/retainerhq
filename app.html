@@ -1105,10 +1105,6 @@
       Email Generator
     </div>
     <div class="nav-section-label">Tools</div>
-    <div class="nav-item" onclick="navigate('ratecard')" id="snav-ratecard">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-      Rate Card
-    </div>
     <div class="nav-item" onclick="navigate('income')" id="snav-income">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
       Income Tracker
@@ -1403,13 +1399,6 @@
           <div class="rate-row"><span class="rate-label">4 Videos / Month</span><input class="rate-input" id="rate-4" value="$1,600" /></div>
           <div class="rate-row"><span class="rate-label">8 Videos / Month</span><input class="rate-input" id="rate-8" value="$2,800" /></div>
         </div>
-        <div class="rate-card">
-          <div class="rate-card-title">Add-Ons</div>
-          <div class="rate-row"><span class="rate-label">Exclusivity Fee</span><input class="rate-input" id="rate-excl" value="$500" /></div>
-          <div class="rate-row"><span class="rate-label">Rush Delivery (48hr)</span><input class="rate-input" id="rate-rush" value="$200" /></div>
-          <div class="rate-row"><span class="rate-label">Usage Rights (30 days)</span><input class="rate-input" id="rate-usage" value="$350" /></div>
-          <div class="rate-row"><span class="rate-label">Whitelisting</span><input class="rate-input" id="rate-white" value="$400" /></div>
-        </div>
       </div>
       <div class="rate-card">
         <div class="rate-card-title">Notes & Minimums</div>
@@ -1534,10 +1523,6 @@
     <div class="mobile-nav-item" onclick="navigate('email')" id="mnav-email">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       Email
-    </div>
-    <div class="mobile-nav-item" onclick="navigate('ratecard')" id="mnav-ratecard">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-      Rates
     </div>
   </div>
 </nav>
@@ -1933,14 +1918,14 @@ function initials(str) {
 
 function navigate(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  ['dashboard','contracts','email','ratecard','income','mediakit'].forEach(id => {
+  ['dashboard','contracts','email','income','mediakit'].forEach(id => {
     const s = document.getElementById('snav-' + id);
     const m = document.getElementById('mnav-' + id);
     if (s) s.classList.remove('active');
     if (m) m.classList.remove('active');
   });
   document.getElementById('page-' + page).classList.add('active');
-  const titles = { dashboard:'Dashboard', contracts:'Contracts', email:'Email Generator', ratecard:'Rate Card', detail:'Contract Detail', income:'Income Tracker', mediakit:'Media Kit' };
+  const titles = { dashboard:'Dashboard', contracts:'Contracts', email:'Email Generator', detail:'Contract Detail', income:'Income Tracker', mediakit:'Media Kit' };
   document.getElementById('topbar-title').textContent = titles[page] || '';
   const navKey = page === 'detail' ? null : page;
   if (navKey) {
@@ -2087,6 +2072,7 @@ const _TOUR_STEPS = [
   { page: 'contracts', navId: 'snav-contracts', emoji: '📋', title: 'Track Every Deal', desc: 'Add brand deals, mark videos as posted, and stay on top of every deadline. Never lose track of a retainer again.' },
   { page: 'email',     navId: 'snav-email',     emoji: '✉️', title: 'Pitch Like a Pro', desc: 'AI writes professional retainer pitches, counter offers, and negotiation emails using your actual stats.' },
   { page: 'income',    navId: 'snav-income',     emoji: '💰', title: 'Get Paid on Time', desc: 'Log payments, see what\'s owed, and track your monthly income so you always know where your money stands.' },
+  { page: 'mediakit',  navId: 'snav-mediakit',   emoji: '🪪', title: 'Your Media Kit', desc: 'Build a shareable media kit with your stats, niche, and packages — ready to send to any brand.' },
 ];
 let _tourStep = 0;
 
@@ -2494,10 +2480,6 @@ function saveRates() {
     r2: document.getElementById('rate-2').value,
     r4: document.getElementById('rate-4').value,
     r8: document.getElementById('rate-8').value,
-    excl: document.getElementById('rate-excl').value,
-    rush: document.getElementById('rate-rush').value,
-    usage: document.getElementById('rate-usage').value,
-    white: document.getElementById('rate-white').value,
     notes: document.getElementById('rate-notes').value,
   }));
   showToast('Rates saved');
@@ -2507,7 +2489,6 @@ function loadRates() {
   const r = JSON.parse(localStorage.getItem('rhq_rates') || 'null');
   if (!r) return;
   ['1','2','4','8'].forEach(k => { if(r['r'+k]) document.getElementById('rate-'+k).value = r['r'+k]; });
-  ['excl','rush','usage','white'].forEach(k => { if(r[k]) document.getElementById('rate-'+k).value = r[k]; });
   if (r.notes) document.getElementById('rate-notes').value = r.notes;
 }
 
