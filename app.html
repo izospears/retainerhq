@@ -2705,7 +2705,7 @@ async function generateEmail(mode) {
 
   try {
     const { data: { session } } = await sb.auth.getSession();
-    const res = await fetch('https://tbfcwqcqpfbqaknktkyp.supabase.co/functions/v1/generate-email', {
+    const res = await fetch('https://tbfcwqcqpfbqaknktkyp.supabase.co/functions/v1/index-ts', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
