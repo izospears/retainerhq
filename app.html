@@ -1633,15 +1633,9 @@
             <label class="form-label">Niche</label>
             <input class="form-input" id="kit-niche" placeholder="e.g. Beauty, Skincare, Lifestyle" />
           </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label">Followers</label>
-              <input class="form-input" id="kit-followers" type="number" placeholder="50000" />
-            </div>
-            <div class="form-group">
-              <label class="form-label">Avg Views / Video</label>
-              <input class="form-input" id="kit-avgviews" type="number" placeholder="25000" />
-            </div>
+          <div class="form-group">
+            <label class="form-label">Followers</label>
+            <input class="form-input" id="kit-followers" type="number" placeholder="50000" />
           </div>
           <div class="form-group">
             <label class="form-label">Lifetime GMV Generated ($)</label>
@@ -1666,7 +1660,6 @@
               <div class="kit-bio" id="kit-prev-bio">Your bio will appear here...</div>
               <div class="kit-stats">
                 <div class="kit-stat"><div class="kit-stat-val" id="kit-prev-followers">—</div><div class="kit-stat-lbl">Followers</div></div>
-                <div class="kit-stat"><div class="kit-stat-val" id="kit-prev-views">—</div><div class="kit-stat-lbl">Avg Views</div></div>
                 <div class="kit-stat"><div class="kit-stat-val" id="kit-prev-gmv">—</div><div class="kit-stat-lbl">Lifetime GMV</div></div>
               </div>
               <div><span class="kit-niche-badge" id="kit-prev-niche">Niche</span></div>
@@ -2847,7 +2840,6 @@ function loadMediaKitForm(profile) {
   if (profile.tiktok_handle) document.getElementById('kit-handle').value = profile.tiktok_handle;
   if (profile.niche) document.getElementById('kit-niche').value = profile.niche;
   if (profile.followers) document.getElementById('kit-followers').value = profile.followers;
-  if (profile.avg_views) document.getElementById('kit-avgviews').value = profile.avg_views;
   if (profile.total_gmv) document.getElementById('kit-gmv').value = profile.total_gmv;
   if (profile.bio) document.getElementById('kit-bio').value = profile.bio;
   updateKitPreview();
@@ -2858,7 +2850,6 @@ function updateKitPreview() {
   const handle = document.getElementById('kit-handle').value || '@handle';
   const niche = document.getElementById('kit-niche').value || 'Niche';
   const followers = document.getElementById('kit-followers').value;
-  const views = document.getElementById('kit-avgviews').value;
   const gmv = document.getElementById('kit-gmv').value;
   const bio = document.getElementById('kit-bio').value || 'Your bio will appear here...';
   document.getElementById('kit-prev-avatar').textContent = name.slice(0,2).toUpperCase();
@@ -2876,7 +2867,6 @@ async function saveMediaKit() {
     tiktok_handle: document.getElementById('kit-handle').value.trim(),
     niche: document.getElementById('kit-niche').value.trim(),
     followers: parseInt(document.getElementById('kit-followers').value) || null,
-    avg_views: parseInt(document.getElementById('kit-avgviews').value) || null,
     total_gmv: parseFloat(document.getElementById('kit-gmv').value) || null,
     bio: document.getElementById('kit-bio').value.trim()
   };
@@ -2886,7 +2876,7 @@ async function saveMediaKit() {
 }
 
 // Live preview updates
-['kit-handle','kit-niche','kit-followers','kit-avgviews','kit-gmv','kit-bio'].forEach(id => {
+['kit-handle','kit-niche','kit-followers','kit-gmv','kit-bio'].forEach(id => {
   const el = document.getElementById(id);
   if (el) el.addEventListener('input', updateKitPreview);
 });
