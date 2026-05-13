@@ -2208,30 +2208,37 @@ function closeRatesPopup2() {
 
 function loadRatesData() {
   const d = JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
-  if (d.gmv30d) document.getElementById('rate-gmv-30d').value = d.gmv30d;
-  if (d.gmvLifetime) document.getElementById('rate-gmv-lifetime').value = d.gmvLifetime;
-  if (d.pkg1qty)   document.getElementById('rate-pkg1-qty').value   = d.pkg1qty;
-  if (d.pkg1price) document.getElementById('rate-pkg1-price').value = d.pkg1price;
-  if (d.pkg2qty)   document.getElementById('rate-pkg2-qty').value   = d.pkg2qty;
-  if (d.pkg2price) document.getElementById('rate-pkg2-price').value = d.pkg2price;
-  if (d.pkg3qty)   document.getElementById('rate-pkg3-qty').value   = d.pkg3qty;
-  if (d.pkg3price) document.getElementById('rate-pkg3-price').value = d.pkg3price;
-  if (d.pkg4qty)   document.getElementById('rate-pkg4-qty').value   = d.pkg4qty;
-  if (d.pkg4price) document.getElementById('rate-pkg4-price').value = d.pkg4price;
+  const setVal = function(id, val) { const el = document.getElementById(id); if (el && val) el.value = val; };
+  setVal('rate-gmv-30d',       d.gmv30d);
+  setVal('rate-gmv-lifetime',  d.gmvLifetime);
+  setVal('rate-pkg1-qty',      d.pkg1qty);
+  setVal('rate-pkg1-price',    d.pkg1price);
+  setVal('rate-pkg2-qty',      d.pkg2qty);
+  setVal('rate-pkg2-price',    d.pkg2price);
+  setVal('rate-pkg3-qty',      d.pkg3qty);
+  setVal('rate-pkg3-price',    d.pkg3price);
+  setVal('rate-pkg4-qty',      d.pkg4qty);
+  setVal('rate-pkg4-price',    d.pkg4price);
 }
 
 async function saveRatesData() {
+  // Read value; if empty fall back to placeholder so visible numbers always get saved
+  const rv = function(id) {
+    const el = document.getElementById(id);
+    if (!el) return '';
+    return (el.value && el.value.trim()) ? el.value.trim() : (el.placeholder || '');
+  };
   const d = {
-    gmv30d:      document.getElementById('rate-gmv-30d').value,
-    gmvLifetime: document.getElementById('rate-gmv-lifetime').value,
-    pkg1qty:     document.getElementById('rate-pkg1-qty').value,
-    pkg1price:   document.getElementById('rate-pkg1-price').value,
-    pkg2qty:     document.getElementById('rate-pkg2-qty').value,
-    pkg2price:   document.getElementById('rate-pkg2-price').value,
-    pkg3qty:     document.getElementById('rate-pkg3-qty').value,
-    pkg3price:   document.getElementById('rate-pkg3-price').value,
-    pkg4qty:     document.getElementById('rate-pkg4-qty').value,
-    pkg4price:   document.getElementById('rate-pkg4-price').value,
+    gmv30d:      document.getElementById('rate-gmv-30d').value.trim(),
+    gmvLifetime: document.getElementById('rate-gmv-lifetime').value.trim(),
+    pkg1qty:     rv('rate-pkg1-qty'),
+    pkg1price:   rv('rate-pkg1-price'),
+    pkg2qty:     rv('rate-pkg2-qty'),
+    pkg2price:   rv('rate-pkg2-price'),
+    pkg3qty:     rv('rate-pkg3-qty'),
+    pkg3price:   rv('rate-pkg3-price'),
+    pkg4qty:     rv('rate-pkg4-qty'),
+    pkg4price:   rv('rate-pkg4-price'),
   };
   // Save to localStorage for immediate access
   localStorage.setItem('rhq_rates_data', JSON.stringify(d));
@@ -2751,7 +2758,9 @@ async function generateEmail(mode) {
   // Read rates: live form inputs → localStorage → Supabase (rates_data on profile)
   function getLiveVal(id) {
     const el = document.getElementById(id);
-    return (el && el.value.trim()) ? el.value.trim() : null;
+    if (!el) return null;
+    const v = el.value && el.value.trim();
+    return v ? v : (el.placeholder || null);
   }
   const storedRates = mediaKitProfile.rates_data || JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
   const ratesGmv = getLiveVal('rate-gmv-30d') || storedRates.gmv30d || '';
