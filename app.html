@@ -2240,7 +2240,8 @@ async function saveRatesData() {
   // Keep in-memory profile GMV in sync
   if (d.gmv30d) mediaKitProfile = { ...mediaKitProfile, last_30d_gmv: d.gmv30d, rates_data: d };
   else mediaKitProfile = { ...mediaKitProfile, rates_data: d };
-  showToast('Rates saved!');
+  const pkgCount = [d.pkg1qty, d.pkg2qty, d.pkg3qty, d.pkg4qty].filter(function(v){ return v && v !== ''; }).length;
+  showToast('Saved! ' + pkgCount + ' package(s) stored');
 }
 
 function daysLeft(expiry) {
@@ -2771,10 +2772,10 @@ async function generateEmail(mode) {
   // Pull GMV: rates page first, then media kit profile
   const gmvOverride = ratesGmv || mediaKitProfile.total_gmv || mediaKitProfile.last_30d_gmv || '';
 
-  // Show loading state
+  // Show loading state with debug info
   const outputEl = document.getElementById('email-output');
   const textEl   = document.getElementById('email-text');
-  textEl.value = 'Generating your email...';
+  textEl.value = 'Generating...\n\n[DEBUG] GMV: ' + (gmvOverride || 'none') + '\n[DEBUG] Packages:\n' + packages;
   outputEl.style.display = 'block';
   outputEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
