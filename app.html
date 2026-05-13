@@ -2229,6 +2229,8 @@ function saveRatesData() {
     pkg4price:   document.getElementById('rate-pkg4-price').value,
   };
   localStorage.setItem('rhq_rates_data', JSON.stringify(d));
+  // Keep in-memory profile GMV in sync
+  if (d.gmv30d) mediaKitProfile = { ...mediaKitProfile, last_30d_gmv: d.gmv30d };
   showToast('Rates saved!');
 }
 
@@ -2921,6 +2923,8 @@ async function saveMediaKit() {
   };
   const { error } = await sb.from('profiles').update(updates).eq('id', currentUser.id);
   if (error) { alert('Error saving: ' + error.message); return; }
+  // Update in-memory profile so email generator picks up new values immediately
+  mediaKitProfile = { ...mediaKitProfile, ...updates };
   showToast('Media kit saved');
 }
 
