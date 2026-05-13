@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RetainerHQ — The Platform Built for TikTok Shop Affiliates</title>
   <meta name="description" content="Automate email responses, track retainer contracts, and manage brand deals — all in one place. Built for TikTok Shop affiliates." />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1023,15 +1024,22 @@
 
 <script>
 // ════════════════════════════════════════════════
-// WAITLIST
+// SUPABASE + WAITLIST
 // ════════════════════════════════════════════════
+
+const SUPABASE_URL = 'https://tbfcwqcqpfbqaknktkyp.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiZmN3cWNxcGZicWFrbmt0a3lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NDQyOTIsImV4cCI6MjA5MzIyMDI5Mn0.40OJm-heqGOiiGqE3QWHoafkRx8Snd3nH3cs19D7L4E';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let selectedRole = 'creator';
 
-function loadCount() {
-  const list = JSON.parse(localStorage.getItem('rhq_waitlist') || '[]');
-  const base = 150; // seed number for social proof
-  document.getElementById('waitlist-count').textContent = list.length + base;
+async function loadCount() {
+  try {
+    const { count } = await sb.from('waitlist').select('*', { count: 'exact', head: true });
+    document.getElementById('waitlist-count').textContent = count || 150;
+  } catch(e) {
+    document.getElementById('waitlist-count').textContent = 150;
+  }
 }
 
 function openWaitlist(role) {
@@ -1092,7 +1100,14 @@ async function submitWaitlist() {
   const btn = document.querySelector('#modal-content .btn-primary');
   if (btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
 
-  // Send to Formspree
+  // Save to Supabase waitlist table
+  try {
+    await sb.from('waitlist').insert({ email, name, role: selectedRole });
+  } catch(e) {
+    // fail silently — still show success
+  }
+
+  // Also send to Formspree for email notifications
   try {
     await fetch('https://formspree.io/f/xkokvqgq', {
       method: 'POST',
@@ -1100,15 +1115,7 @@ async function submitWaitlist() {
       body: JSON.stringify({ email, name, role: selectedRole })
     });
   } catch(e) {
-    // fail silently — still show success and save locally
-  }
-
-  // Save to localStorage
-  const list = JSON.parse(localStorage.getItem('rhq_waitlist') || '[]');
-  const existing = list.find(e => e.email === email);
-  if (!existing) {
-    list.push({ email, name, role: selectedRole, date: new Date().toISOString() });
-    localStorage.setItem('rhq_waitlist', JSON.stringify(list));
+    // fail silently
   }
 
   // Show success
