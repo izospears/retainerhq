@@ -2105,6 +2105,11 @@ async function initAuth() {
     mediaKitProfile = profile;
     loadMediaKitForm(profile);
     window._userPlan = isPro ? 'pro' : 'free';
+    // Load saved rates from Supabase into localStorage and the rates form
+    if (profile.rates_data) {
+      localStorage.setItem('rhq_rates_data', JSON.stringify(profile.rates_data));
+      loadRatesData();
+    }
 
     // Show onboarding for new users
     if (!profile.onboarded) {
@@ -2215,7 +2220,7 @@ function loadRatesData() {
   if (d.pkg4price) document.getElementById('rate-pkg4-price').value = d.pkg4price;
 }
 
-function saveRatesData() {
+async function saveRatesData() {
   const d = {
     gmv30d:      document.getElementById('rate-gmv-30d').value,
     gmvLifetime: document.getElementById('rate-gmv-lifetime').value,
@@ -2228,9 +2233,13 @@ function saveRatesData() {
     pkg4qty:     document.getElementById('rate-pkg4-qty').value,
     pkg4price:   document.getElementById('rate-pkg4-price').value,
   };
+  // Save to localStorage for immediate access
   localStorage.setItem('rhq_rates_data', JSON.stringify(d));
+  // Save to Supabase so it persists across devices and sessions
+  await sb.from('profiles').update({ rates_data: d }).eq('id', currentUser.id);
   // Keep in-memory profile GMV in sync
-  if (d.gmv30d) mediaKitProfile = { ...mediaKitProfile, last_30d_gmv: d.gmv30d };
+  if (d.gmv30d) mediaKitProfile = { ...mediaKitProfile, last_30d_gmv: d.gmv30d, rates_data: d };
+  else mediaKitProfile = { ...mediaKitProfile, rates_data: d };
   showToast('Rates saved!');
 }
 
@@ -2738,12 +2747,12 @@ async function generateEmail(mode) {
     videos = vm ? vm[1] : '';
   }
 
-  // Read rates directly from the form inputs (most up-to-date), fall back to localStorage
+  // Read rates: live form inputs → localStorage → Supabase (rates_data on profile)
   function getLiveVal(id) {
     const el = document.getElementById(id);
     return (el && el.value.trim()) ? el.value.trim() : null;
   }
-  const storedRates = JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
+  const storedRates = mediaKitProfile.rates_data || JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
   const ratesGmv = getLiveVal('rate-gmv-30d') || storedRates.gmv30d || '';
   const pkgLines = [];
   const pkgDefs = [
