@@ -2740,11 +2740,12 @@ async function generateEmail(mode) {
 
   // Build packages string from user's saved rate card
   const ratesData = JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
+  console.log('[RHQ] ratesData from localStorage:', JSON.stringify(ratesData));
   const pkgLines = [];
   for (let i = 1; i <= 4; i++) {
-    const qty   = ratesData[`pkg${i}qty`];
-    const price = ratesData[`pkg${i}price`];
-    if (qty && price) pkgLines.push(`• ${qty} videos – $${Number(price).toLocaleString()}`);
+    const qty   = ratesData['pkg' + i + 'qty'];
+    const price = ratesData['pkg' + i + 'price'];
+    if (qty && price) pkgLines.push('• ' + qty + ' videos – $' + Number(price).toLocaleString());
   }
   const packages = pkgLines.length
     ? pkgLines.join('\n')
@@ -2752,6 +2753,8 @@ async function generateEmail(mode) {
 
   // Pull GMV from rate card if available (more up-to-date than media kit)
   const gmvOverride = ratesData.gmv30d || mediaKitProfile.total_gmv || mediaKitProfile.last_30d_gmv || '';
+  console.log('[RHQ] gmvOverride:', gmvOverride, '| packages:', packages);
+  console.log('[RHQ] mediaKitProfile snapshot:', JSON.stringify({ total_gmv: mediaKitProfile.total_gmv, last_30d_gmv: mediaKitProfile.last_30d_gmv }));
 
   // Show loading state
   const outputEl = document.getElementById('email-output');
