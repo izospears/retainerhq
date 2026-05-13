@@ -2738,23 +2738,29 @@ async function generateEmail(mode) {
     videos = vm ? vm[1] : '';
   }
 
-  // Build packages string from user's saved rate card
-  const ratesData = JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
-  console.log('[RHQ] ratesData from localStorage:', JSON.stringify(ratesData));
-  const pkgLines = [];
-  for (let i = 1; i <= 4; i++) {
-    const qty   = ratesData['pkg' + i + 'qty'];
-    const price = ratesData['pkg' + i + 'price'];
-    if (qty && price) pkgLines.push('• ' + qty + ' videos – $' + Number(price).toLocaleString());
+  // Read rates directly from the form inputs (most up-to-date), fall back to localStorage
+  function getLiveVal(id) {
+    const el = document.getElementById(id);
+    return (el && el.value.trim()) ? el.value.trim() : null;
   }
+  const storedRates = JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
+  const ratesGmv = getLiveVal('rate-gmv-30d') || storedRates.gmv30d || '';
+  const pkgLines = [];
+  const pkgDefs = [
+    { qty: getLiveVal('rate-pkg1-qty') || storedRates.pkg1qty, price: getLiveVal('rate-pkg1-price') || storedRates.pkg1price },
+    { qty: getLiveVal('rate-pkg2-qty') || storedRates.pkg2qty, price: getLiveVal('rate-pkg2-price') || storedRates.pkg2price },
+    { qty: getLiveVal('rate-pkg3-qty') || storedRates.pkg3qty, price: getLiveVal('rate-pkg3-price') || storedRates.pkg3price },
+    { qty: getLiveVal('rate-pkg4-qty') || storedRates.pkg4qty, price: getLiveVal('rate-pkg4-price') || storedRates.pkg4price },
+  ];
+  pkgDefs.forEach(function(p) {
+    if (p.qty && p.price) pkgLines.push('• ' + p.qty + ' videos – $' + Number(p.price).toLocaleString());
+  });
   const packages = pkgLines.length
     ? pkgLines.join('\n')
     : '• 5 videos – $1,500\n• 10 videos – $2,000\n• 15 videos – $3,000';
 
-  // Pull GMV from rate card if available (more up-to-date than media kit)
-  const gmvOverride = ratesData.gmv30d || mediaKitProfile.total_gmv || mediaKitProfile.last_30d_gmv || '';
-  console.log('[RHQ] gmvOverride:', gmvOverride, '| packages:', packages);
-  console.log('[RHQ] mediaKitProfile snapshot:', JSON.stringify({ total_gmv: mediaKitProfile.total_gmv, last_30d_gmv: mediaKitProfile.last_30d_gmv }));
+  // Pull GMV: rates page first, then media kit profile
+  const gmvOverride = ratesGmv || mediaKitProfile.total_gmv || mediaKitProfile.last_30d_gmv || '';
 
   // Show loading state
   const outputEl = document.getElementById('email-output');
