@@ -2466,6 +2466,15 @@ function renderDashboard() {
 
   const tbody = document.getElementById('dashboard-contracts');
   tbody.innerHTML = '';
+  if (!contracts.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:50px 20px;color:var(--text3);font-size:13px;">
+      <div style="margin-bottom:10px;font-size:28px;">📋</div>
+      <div style="font-weight:600;color:var(--text2);margin-bottom:6px;">No contracts yet</div>
+      <div style="margin-bottom:16px;">Add your first brand deal to get started.</div>
+      <button class="btn btn-primary" onclick="openAddModal()">+ Add First Contract</button>
+    </td></tr>`;
+    return;
+  }
   contracts.forEach(c => {
     const days = daysLeft(c.expiry);
     const dClass = deadlineClass(days);
@@ -2608,7 +2617,7 @@ async function addContract() {
 
   // Free plan: limit to 2 contracts
   if (window._userPlan !== 'pro' && contracts.length >= 2) {
-    closeModal('add-modal');
+    closeAddModal();
     alert('Free plan is limited to 2 contracts. Upgrade to Pro for unlimited contracts!');
     document.getElementById('upgrade-banner').style.display = 'block';
     return;
@@ -2633,6 +2642,10 @@ async function addContract() {
 
   closeAddModal();
   ['new-brand','new-niche','new-value','new-videos','new-start','new-expiry','new-contact'].forEach(id => document.getElementById(id).value='');
+  const statusSel = document.getElementById('new-status');
+  if (statusSel) statusSel.value = 'active';
+  const cselTrigger = statusSel && statusSel.closest('.csel-wrap') && statusSel.closest('.csel-wrap').querySelector('.csel-trigger span');
+  if (cselTrigger) cselTrigger.textContent = 'Active';
   await loadContracts();
   checkOnboarding();
   navigate('contracts');
