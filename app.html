@@ -2755,21 +2755,22 @@ async function generateEmail(mode) {
     videos = vm ? vm[1] : '';
   }
 
-  // Read rates: live form inputs → localStorage → Supabase (rates_data on profile)
-  function getLiveVal(id) {
-    const el = document.getElementById(id);
-    if (!el) return null;
-    const v = el.value && el.value.trim();
-    return v ? v : (el.placeholder || null);
-  }
+  // Priority: typed value → saved (Supabase/localStorage) → placeholder
   const storedRates = mediaKitProfile.rates_data || JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
-  const ratesGmv = getLiveVal('rate-gmv-30d') || storedRates.gmv30d || '';
+  function getRate(id, saved) {
+    const el = document.getElementById(id);
+    const typed = el && el.value && el.value.trim();
+    if (typed) return typed;
+    if (saved) return String(saved);
+    return (el && el.placeholder) || '';
+  }
+  const ratesGmv = getRate('rate-gmv-30d', storedRates.gmv30d);
   const pkgLines = [];
   const pkgDefs = [
-    { qty: getLiveVal('rate-pkg1-qty') || storedRates.pkg1qty, price: getLiveVal('rate-pkg1-price') || storedRates.pkg1price },
-    { qty: getLiveVal('rate-pkg2-qty') || storedRates.pkg2qty, price: getLiveVal('rate-pkg2-price') || storedRates.pkg2price },
-    { qty: getLiveVal('rate-pkg3-qty') || storedRates.pkg3qty, price: getLiveVal('rate-pkg3-price') || storedRates.pkg3price },
-    { qty: getLiveVal('rate-pkg4-qty') || storedRates.pkg4qty, price: getLiveVal('rate-pkg4-price') || storedRates.pkg4price },
+    { qty: getRate('rate-pkg1-qty', storedRates.pkg1qty), price: getRate('rate-pkg1-price', storedRates.pkg1price) },
+    { qty: getRate('rate-pkg2-qty', storedRates.pkg2qty), price: getRate('rate-pkg2-price', storedRates.pkg2price) },
+    { qty: getRate('rate-pkg3-qty', storedRates.pkg3qty), price: getRate('rate-pkg3-price', storedRates.pkg3price) },
+    { qty: getRate('rate-pkg4-qty', storedRates.pkg4qty), price: getRate('rate-pkg4-price', storedRates.pkg4price) },
   ];
   pkgDefs.forEach(function(p) {
     if (p.qty && p.price) pkgLines.push('• ' + p.qty + ' videos – $' + Number(p.price).toLocaleString());
