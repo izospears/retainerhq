@@ -1030,7 +1030,7 @@ let selectedRole = 'creator';
 
 function loadCount() {
   const list = JSON.parse(localStorage.getItem('rhq_waitlist') || '[]');
-  const base = 47; // seed number for social proof
+  const base = 150; // seed number for social proof
   document.getElementById('waitlist-count').textContent = list.length + base;
 }
 
