@@ -6,6 +6,10 @@
     { "src": "/app", "dest": "/app.html" },
     { "src": "/auth.html", "dest": "/auth.html" },
     { "src": "/auth", "dest": "/auth.html" },
+    { "src": "/creator-signup.html", "dest": "/creator-signup.html" },
+    { "src": "/creator-signup", "dest": "/creator-signup.html" },
+    { "src": "/brand.html", "dest": "/brand.html" },
+    { "src": "/brand", "dest": "/brand.html" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
