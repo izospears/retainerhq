@@ -4471,27 +4471,10 @@ setTimeout(() => initCustomDropdowns(), 300);
 
 
 /* ── MEDIA KIT PDF ── */
-async function downloadMediaKitPDF() {
+function downloadMediaKitPDF() {
   const btn = document.getElementById('mk-dl-btn');
   btn.disabled = true;
-  btn.textContent = 'Generating…';
-
-  // Reset template to the original positioning that html2canvas handles correctly
-  const tpl = document.getElementById('mk-pdf-tpl');
-  tpl.style.cssText = 'position:fixed;left:-9999px;top:0;display:none;z-index:-1;';
-
-  // Helper — inject html, capture with the exact settings that worked originally
-  async function capturePage(html) {
-    tpl.innerHTML = html;
-    tpl.style.display = 'block';
-    await new Promise(r => setTimeout(r, 250));
-    const canvas = await html2canvas(tpl.querySelector('div'), {
-      scale: 2, useCORS: true, backgroundColor: '#080C14', logging: false, width: 800,
-    });
-    tpl.style.display = 'none';
-    tpl.innerHTML = '';
-    return canvas;
-  }
+  btn.textContent = 'Opening…';
 
   // ── Gather data ──────────────────────────────────────────────
   const handle    = document.getElementById('kit-handle').value.trim() || '@handle';
@@ -4513,131 +4496,165 @@ async function downloadMediaKitPDF() {
     { qty: rates.pkg4qty, price: rates.pkg4price },
   ].filter(p => p.qty && p.price);
 
-  // ── Template helpers ─────────────────────────────────────────
-  const fmtN = n => { const x = parseInt(n); if (!x) return '—'; if (x>=1e6) return (x/1e6).toFixed(1)+'M'; if (x>=1000) return (x/1000).toFixed(1)+'K'; return String(x); };
-
-  // ── Shared template pieces (same style as original working version) ──
-  const FONT = `font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;`;
+  const fmtN = n => { const x=parseInt(n); if(!x) return '—'; if(x>=1e6) return (x/1e6).toFixed(1)+'M'; if(x>=1000) return (x/1000).toFixed(1)+'K'; return String(x); };
 
   const pkgHTML = pkgs.map(p =>
-    `<div style="background:#111827;border:1px solid #1E2D45;border-radius:12px;padding:20px;text-align:center;">
-      <div style="font-size:28px;font-weight:900;color:#00E5A0;letter-spacing:-1px;">$${Number(p.price).toLocaleString()}</div>
-      <div style="font-size:11px;color:#4A5878;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:4px;">per month</div>
-      <div style="font-size:13px;color:#8896B3;margin-top:8px;font-weight:500;">${p.qty} videos / mo</div>
+    `<div class="pkg-card">
+      <div class="pkg-price">$${Number(p.price).toLocaleString()}</div>
+      <div class="pkg-label">per month</div>
+      <div class="pkg-qty">${p.qty} videos / mo</div>
     </div>`
   ).join('');
 
-  const headerHTML = `
-    <div style="background:linear-gradient(135deg,#0D1220 0%,#111827 100%);padding:48px;border-bottom:1px solid #1E2D45;position:relative;overflow:hidden;">
-      <div style="position:absolute;top:-60px;right:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(0,229,160,.12),transparent 65%);border-radius:50%;"></div>
-      <div style="display:flex;align-items:flex-start;gap:24px;${bio ? 'margin-bottom:24px;' : ''}">
-        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#00E5A0,#00C88A);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#000;flex-shrink:0;">${initials}</div>
-        <div style="flex:1;">
-          <div style="font-size:30px;font-weight:900;letter-spacing:-.6px;line-height:1.1;">${fullName}</div>
-          <div style="font-size:15px;color:#00E5A0;margin-top:5px;font-weight:700;">${handle.startsWith('@') ? handle : '@'+handle}</div>
-          ${niche ? `<div style="margin-top:10px;"><span style="background:rgba(0,229,160,.12);color:#00E5A0;border:1px solid rgba(0,229,160,.28);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;">${niche}</span></div>` : ''}
-        </div>
-        <div style="text-align:right;flex-shrink:0;">
-          <div style="font-size:10px;color:#253450;font-weight:700;letter-spacing:.8px;text-transform:uppercase;">BUILT WITH</div>
-          <div style="font-size:18px;font-weight:900;color:#00E5A0;">RetainerHQ</div>
-          <div style="font-size:10px;color:#253450;margin-top:2px;">retainerhq.io</div>
-        </div>
-      </div>
-      ${bio ? `<div style="font-size:14px;color:#8896B3;line-height:1.75;max-width:620px;">${bio}</div>` : ''}
-    </div>`;
-
-  const statsHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;background:#0D1220;">
-      <div style="padding:32px 36px;border-right:1px solid #1E2D45;">
-        <div style="font-size:38px;font-weight:900;color:#00E5A0;letter-spacing:-1.5px;line-height:1;">${fmtN(followers)}</div>
-        <div style="font-size:10px;color:#4A5878;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-top:6px;">Followers</div>
-      </div>
-      <div style="padding:32px 36px;border-right:1px solid #1E2D45;">
-        <div style="font-size:38px;font-weight:900;color:#00E5A0;letter-spacing:-1.5px;line-height:1;">${gmv ? '$'+fmtN(gmv) : '—'}</div>
-        <div style="font-size:10px;color:#4A5878;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-top:6px;">Lifetime GMV</div>
-      </div>
-      <div style="padding:32px 36px;">
-        <div style="font-size:38px;font-weight:900;color:#F0F4FF;letter-spacing:-1.5px;line-height:1;">TikTok</div>
-        <div style="font-size:10px;color:#4A5878;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-top:6px;">Platform</div>
-      </div>
-    </div>`;
-
-  const footerHTML = `
-    <div style="padding:22px 48px;border-top:1px solid #1E2D45;display:flex;align-items:center;justify-content:space-between;background:#0D1220;">
-      <div style="font-size:12px;color:#4A5878;">Available for brand partnerships · TikTok Shop Affiliate</div>
-      <div style="font-size:11px;color:#253450;font-weight:600;">retainerhq.io</div>
-    </div>`;
-
-  // Page 1: original layout, same as what worked
-  const pg1HTML = `<div style="background:#080C14;color:#F0F4FF;${FONT}width:800px;">
-    ${headerHTML}
-    ${statsHTML}
-    ${pkgs.length ? `<div style="padding:36px 48px;border-top:1px solid #1E2D45;background:#080C14;">
-      <div style="font-size:10px;color:#4A5878;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:20px;">Retainer Packages</div>
-      <div style="display:grid;grid-template-columns:repeat(${Math.min(pkgs.length,4)},1fr);gap:14px;">${pkgHTML}</div>
-    </div>` : ''}
-    ${footerHTML}
-  </div>`;
-
-  // Page 2: videos
   const videoCardsHTML = window._topVideos.map((v, i) => {
-    if (!v.screenshot) return `<div></div>`;
+    if (!v.screenshot) return '';
     const views = document.getElementById('vviews-' + i).value.trim();
     const url   = document.getElementById('vurl-'   + i).value.trim();
-    return `<div>
-      <div style="position:relative;border-radius:12px;overflow:hidden;background:#111827;border:1px solid #1E2D45;">
-        <img src="${v.screenshot}" style="width:100%;height:auto;display:block;" />
-        ${views ? `<div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.88));padding:28px 10px 10px;font-size:14px;font-weight:800;color:#fff;text-align:center;">👁 ${views}</div>` : ''}
+    return `<div class="vid-card">
+      <div class="vid-thumb">
+        <img src="${v.screenshot}" />
+        ${views ? `<div class="vid-views">👁 ${views}</div>` : ''}
       </div>
-      ${url ? `<div style="margin-top:8px;font-size:10px;color:#4A5878;text-align:center;word-break:break-all;">🔗 ${url.replace(/^https?:\/\//,'')}</div>` : ''}
+      ${url ? `<div class="vid-url">🔗 ${url.replace(/^https?:\/\//,'')}</div>` : ''}
     </div>`;
   }).join('');
 
-  const pg2HTML = `<div style="background:#080C14;color:#F0F4FF;${FONT}width:800px;">
-    ${headerHTML}
-    <div style="padding:40px 48px 48px;background:#080C14;">
-      <div style="font-size:10px;color:#4A5878;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:24px;">Top Videos</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;">${videoCardsHTML}</div>
-    </div>
-    ${footerHTML}
-  </div>`;
+  const hasVidCards = videoCardsHTML.trim().length > 0;
 
-  try {
-    // Capture page 1 using the exact original method
-    const canvas1 = await capturePage(pg1HTML);
-    const pw = canvas1.width / 2, ph1 = canvas1.height / 2;
-
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ unit: 'px', format: [pw, ph1] });
-    pdf.addImage(canvas1.toDataURL('image/png'), 'PNG', 0, 0, pw, ph1);
-
-    // Capture page 2 only if there are videos
-    if (hasVideos) {
-      const canvas2 = await capturePage(pg2HTML);
-      const ph2 = canvas2.height / 2;
-      pdf.addPage([pw, ph2]);
-      pdf.addImage(canvas2.toDataURL('image/png'), 'PNG', 0, 0, pw, ph2);
-    }
-
-    const safeName = fullName.replace(/\s+/g,'-').toLowerCase();
-    pdf.save(`${safeName}-media-kit.pdf`);
-    showToast('✅ Media kit downloaded!');
-  } catch (e) {
-    showToast('Error: ' + e.message);
-  } finally {
-    tpl.style.display = 'none';
-    btn.disabled = false;
-    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:13px;height:13px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF`;
+  const fullHTML = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  @page { margin: 0; size: auto; }
+  @media print {
+    html, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page-break { page-break-before: always; }
   }
+  body {
+    background: #080C14;
+    color: #F0F4FF;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .page { width: 100%; background: #080C14; }
+  /* Header */
+  .hdr { background: linear-gradient(135deg,#0D1220,#111827); padding: 40px; border-bottom: 1px solid #1E2D45; }
+  .hdr-row { display: flex; align-items: flex-start; gap: 20px; ${bio ? 'margin-bottom:20px;' : ''} }
+  .avatar { width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#00E5A0,#00C88A);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#000;flex-shrink:0; }
+  .hdr-info { flex: 1; }
+  .hdr-name { font-size: 28px; font-weight: 900; letter-spacing: -.5px; line-height: 1.1; }
+  .hdr-handle { font-size: 14px; color: #00E5A0; margin-top: 4px; font-weight: 700; }
+  .hdr-niche { display:inline-block;margin-top:9px;background:rgba(0,229,160,.12);color:#00E5A0;border:1px solid rgba(0,229,160,.28);border-radius:20px;padding:3px 13px;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase; }
+  .hdr-brand { text-align:right;flex-shrink:0; }
+  .hdr-brand-label { font-size:9px;color:#253450;font-weight:700;letter-spacing:.7px;text-transform:uppercase; }
+  .hdr-brand-name { font-size:16px;font-weight:900;color:#00E5A0; }
+  .hdr-brand-url { font-size:9px;color:#253450;margin-top:1px; }
+  .hdr-bio { font-size:13px;color:#8896B3;line-height:1.7; }
+  /* Stats */
+  .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; background: #0D1220; }
+  .stat { padding: 28px 32px; border-right: 1px solid #1E2D45; }
+  .stat:last-child { border-right: none; }
+  .stat-val { font-size: 34px; font-weight: 900; color: #00E5A0; letter-spacing: -1.5px; line-height: 1; }
+  .stat-val.white { color: #F0F4FF; }
+  .stat-lbl { font-size: 9px; color: #4A5878; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase; margin-top: 5px; }
+  /* Packages */
+  .pkgs-section { padding: 32px 40px; border-top: 1px solid #1E2D45; background: #080C14; }
+  .section-lbl { font-size: 9px; color: #4A5878; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; margin-bottom: 16px; }
+  .pkgs-grid { display: grid; grid-template-columns: repeat(${Math.min(pkgs.length||1,4)}, 1fr); gap: 12px; }
+  .pkg-card { background:#111827;border:1px solid #1E2D45;border-radius:10px;padding:16px;text-align:center; }
+  .pkg-price { font-size:24px;font-weight:900;color:#00E5A0;letter-spacing:-1px; }
+  .pkg-label { font-size:9px;color:#4A5878;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:3px; }
+  .pkg-qty { font-size:12px;color:#8896B3;margin-top:6px;font-weight:500; }
+  /* Videos */
+  .vids-section { padding: 32px 40px 40px; background: #080C14; }
+  .vids-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .vid-card {}
+  .vid-thumb { position:relative;border-radius:10px;overflow:hidden;background:#111827;border:1px solid #1E2D45; }
+  .vid-thumb img { width:100%;height:auto;display:block; }
+  .vid-views { position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.88));padding:24px 8px 8px;font-size:13px;font-weight:800;color:#fff;text-align:center; }
+  .vid-url { margin-top:7px;font-size:9px;color:#4A5878;text-align:center;word-break:break-all; }
+  /* Footer */
+  .footer { padding:18px 40px;border-top:1px solid #1E2D45;display:flex;align-items:center;justify-content:space-between;background:#0D1220; }
+  .footer-left { font-size:11px;color:#4A5878; }
+  .footer-right { font-size:10px;color:#253450;font-weight:600; }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-row">
+      <div class="avatar">${initials}</div>
+      <div class="hdr-info">
+        <div class="hdr-name">${fullName}</div>
+        <div class="hdr-handle">${handle.startsWith('@') ? handle : '@'+handle}</div>
+        ${niche ? `<span class="hdr-niche">${niche}</span>` : ''}
+      </div>
+      <div class="hdr-brand">
+        <div class="hdr-brand-label">Built with</div>
+        <div class="hdr-brand-name">RetainerHQ</div>
+        <div class="hdr-brand-url">retainerhq.io</div>
+      </div>
+    </div>
+    ${bio ? `<div class="hdr-bio">${bio}</div>` : ''}
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-val">${fmtN(followers)}</div><div class="stat-lbl">Followers</div></div>
+    <div class="stat"><div class="stat-val">${gmv ? '$'+fmtN(gmv) : '—'}</div><div class="stat-lbl">Lifetime GMV</div></div>
+    <div class="stat"><div class="stat-val white">TikTok</div><div class="stat-lbl">Platform</div></div>
+  </div>
+  ${pkgs.length ? `<div class="pkgs-section"><div class="section-lbl">Retainer Packages</div><div class="pkgs-grid">${pkgHTML}</div></div>` : ''}
+  <div class="footer">
+    <div class="footer-left">Available for brand partnerships · TikTok Shop Affiliate</div>
+    <div class="footer-right">retainerhq.io</div>
+  </div>
+</div>
+
+${hasVidCards ? `<!-- PAGE 2 -->
+<div class="page page-break">
+  <div class="hdr">
+    <div class="hdr-row">
+      <div class="avatar">${initials}</div>
+      <div class="hdr-info">
+        <div class="hdr-name">${fullName}</div>
+        <div class="hdr-handle">${handle.startsWith('@') ? handle : '@'+handle}</div>
+      </div>
+      <div class="hdr-brand">
+        <div class="hdr-brand-label">Built with</div>
+        <div class="hdr-brand-name">RetainerHQ</div>
+        <div class="hdr-brand-url">retainerhq.io</div>
+      </div>
+    </div>
+  </div>
+  <div class="vids-section">
+    <div class="section-lbl">Top Videos</div>
+    <div class="vids-grid">${videoCardsHTML}</div>
+  </div>
+  <div class="footer">
+    <div class="footer-left">Available for brand partnerships · TikTok Shop Affiliate</div>
+    <div class="footer-right">retainerhq.io</div>
+  </div>
+</div>` : ''}
+
+<script>window.onload = () => { window.print(); };<\/script>
+</body>
+</html>`;
+
+  const blob = new Blob([fullHTML], { type: 'text/html' });
+  const url  = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+
+  showToast('📄 Save as PDF in the print dialog');
+  btn.disabled = false;
+  btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:13px;height:13px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF`;
 }
 </script>
 
-<!-- PDF libraries -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<!-- Hidden PDF template -->
-<div id="mk-pdf-tpl" style="position:fixed;left:-9999px;top:0;display:none;z-index:-1;"></div>
 
 </body>
 </html>
