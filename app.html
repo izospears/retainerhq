@@ -441,13 +441,13 @@
     }
     .detail-row {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 9px 0;
+      padding: 10px 0;
       border-bottom: 1px solid var(--border);
-      font-size: 13px;
+      font-size: 13px; min-height: 38px;
     }
     .detail-row:last-child { border-bottom: none; padding-bottom: 0; }
-    .d-key { color: var(--text2); font-size: 12px; }
-    .d-val { font-weight: 600; font-size: 13px; }
+    .d-key { color: var(--text2); font-size: 12px; font-weight: 500; flex-shrink: 0; }
+    .d-val { font-weight: 600; font-size: 13px; text-align: right; min-width: 80px; color: var(--text); }
     .d-val.green { color: var(--accent); }
     .d-val.yellow { color: var(--yellow); }
     .d-editable { cursor: pointer; border-radius: 8px; transition: background .15s; padding-left: 6px; margin-left: -6px; }
@@ -1722,13 +1722,13 @@
       <div class="detail-grid">
         <div class="detail-card">
           <div class="detail-card-title">Deal Terms <span style="font-size:10px;color:var(--text3);font-weight:500;letter-spacing:.3px;">· tap any field to edit</span></div>
-          <div class="detail-row d-editable" onclick="editField('value')"><span class="d-key">Contract Value</span><span class="d-val green" id="d-value">—</span><span class="d-edit-icon">✎</span></div>
-          <div class="detail-row d-editable" onclick="editField('videos')"><span class="d-key">Videos Required</span><span class="d-val" id="d-videos">—</span><span class="d-edit-icon">✎</span></div>
+          <div class="detail-row d-editable" onclick="editField('value')"><span class="d-key">Contract Value</span><div style="display:flex;align-items:center;gap:8px;"><span class="d-val green" id="d-value">—</span><span class="d-edit-icon">✎</span></div></div>
+          <div class="detail-row d-editable" onclick="editField('videos')"><span class="d-key">Videos Required</span><div style="display:flex;align-items:center;gap:8px;"><span class="d-val" id="d-videos">—</span><span class="d-edit-icon">✎</span></div></div>
           <div class="detail-row"><span class="d-key">Per Video</span><span class="d-val" id="d-per-video">—</span></div>
-          <div class="detail-row d-editable" onclick="editField('start')"><span class="d-key">Start Date</span><span class="d-val" id="d-start">—</span><span class="d-edit-icon">✎</span></div>
-          <div class="detail-row d-editable" onclick="editField('expiry')"><span class="d-key">Expiry Date</span><span class="d-val yellow" id="d-expiry">—</span><span class="d-edit-icon">✎</span></div>
-          <div class="detail-row d-editable" onclick="editField('contact')"><span class="d-key">Contact</span><span class="d-val" id="d-contact" style="font-size:12px;color:var(--text2);">—</span><span class="d-edit-icon">✎</span></div>
-          <div class="detail-row d-editable" onclick="editField('status')"><span class="d-key">Status</span><span class="d-val" id="d-status-val">—</span><span class="d-edit-icon">✎</span></div>
+          <div class="detail-row d-editable" onclick="editField('start')"><span class="d-key">Start Date</span><div style="display:flex;align-items:center;gap:8px;"><span class="d-val" id="d-start">—</span><span class="d-edit-icon">✎</span></div></div>
+          <div class="detail-row d-editable" onclick="editField('expiry')"><span class="d-key">Expiry Date</span><div style="display:flex;align-items:center;gap:8px;"><span class="d-val yellow" id="d-expiry">—</span><span class="d-edit-icon">✎</span></div></div>
+          <div class="detail-row d-editable" onclick="editField('contact')"><span class="d-key">Contact</span><div style="display:flex;align-items:center;gap:8px;"><span class="d-val" id="d-contact" style="font-size:12px;">—</span><span class="d-edit-icon">✎</span></div></div>
+          <div class="detail-row d-editable" onclick="editField('status')"><span class="d-key">Status</span><div style="display:flex;align-items:center;gap:8px;"><span class="d-val" id="d-status-val">—</span><span class="d-edit-icon">✎</span></div></div>
         </div>
         <div class="detail-card">
           <div class="detail-card-title">Progress</div>
