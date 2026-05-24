@@ -450,6 +450,17 @@
     .d-val { font-weight: 600; font-size: 13px; }
     .d-val.green { color: var(--accent); }
     .d-val.yellow { color: var(--yellow); }
+    .d-editable { cursor: pointer; border-radius: 8px; transition: background .15s; padding-left: 6px; margin-left: -6px; }
+    .d-editable:hover { background: rgba(255,255,255,.04); }
+    .d-edit-icon { font-size: 12px; color: var(--text3); opacity: 0; transition: opacity .15s; margin-left: 6px; }
+    .d-editable:hover .d-edit-icon { opacity: 1; }
+    .d-inline-edit {
+      background: var(--card2); border: 1.5px solid var(--accent);
+      border-radius: 8px; padding: 4px 10px;
+      font-size: 13px; font-weight: 600; color: var(--text);
+      font-family: inherit; outline: none; width: 140px;
+      box-shadow: 0 0 0 3px rgba(0,229,160,.12);
+    }
 
     .checklist { list-style: none; }
     .check-item {
@@ -1710,13 +1721,14 @@
 
       <div class="detail-grid">
         <div class="detail-card">
-          <div class="detail-card-title">Deal Terms</div>
-          <div class="detail-row"><span class="d-key">Contract Value</span><span class="d-val green" id="d-value">—</span></div>
-          <div class="detail-row"><span class="d-key">Videos Required</span><span class="d-val" id="d-videos">—</span></div>
+          <div class="detail-card-title">Deal Terms <span style="font-size:10px;color:var(--text3);font-weight:500;letter-spacing:.3px;">· tap any field to edit</span></div>
+          <div class="detail-row d-editable" onclick="editField('value')"><span class="d-key">Contract Value</span><span class="d-val green" id="d-value">—</span><span class="d-edit-icon">✎</span></div>
+          <div class="detail-row d-editable" onclick="editField('videos')"><span class="d-key">Videos Required</span><span class="d-val" id="d-videos">—</span><span class="d-edit-icon">✎</span></div>
           <div class="detail-row"><span class="d-key">Per Video</span><span class="d-val" id="d-per-video">—</span></div>
-          <div class="detail-row"><span class="d-key">Start Date</span><span class="d-val" id="d-start">—</span></div>
-          <div class="detail-row"><span class="d-key">Expiry Date</span><span class="d-val yellow" id="d-expiry">—</span></div>
-          <div class="detail-row"><span class="d-key">Contact</span><span class="d-val" id="d-contact" style="font-size:12px;color:var(--text2);">—</span></div>
+          <div class="detail-row d-editable" onclick="editField('start')"><span class="d-key">Start Date</span><span class="d-val" id="d-start">—</span><span class="d-edit-icon">✎</span></div>
+          <div class="detail-row d-editable" onclick="editField('expiry')"><span class="d-key">Expiry Date</span><span class="d-val yellow" id="d-expiry">—</span><span class="d-edit-icon">✎</span></div>
+          <div class="detail-row d-editable" onclick="editField('contact')"><span class="d-key">Contact</span><span class="d-val" id="d-contact" style="font-size:12px;color:var(--text2);">—</span><span class="d-edit-icon">✎</span></div>
+          <div class="detail-row d-editable" onclick="editField('status')"><span class="d-key">Status</span><span class="d-val" id="d-status-val">—</span><span class="d-edit-icon">✎</span></div>
         </div>
         <div class="detail-card">
           <div class="detail-card-title">Progress</div>
@@ -3060,6 +3072,7 @@ function openDetail(id) {
   document.getElementById('d-start').textContent = c.start || '—';
   document.getElementById('d-expiry').textContent = c.expiry || '—';
   document.getElementById('d-contact').textContent = c.contact || '—';
+  document.getElementById('d-status-val').textContent = c.status ? c.status.charAt(0).toUpperCase()+c.status.slice(1) : '—';
   document.getElementById('d-posted').textContent = c.posted + ' / ' + c.videos;
   document.getElementById('d-remaining').textContent = Math.max(0, c.videos - c.posted) + ' videos left';
   const days = daysLeft(c.expiry);
@@ -3157,6 +3170,77 @@ async function deleteContract(id) {
   contracts = contracts.filter(c=>c.id!==id);
   navigate('contracts');
   showToast('Contract removed');
+}
+
+async function editField(field) {
+  const c = contracts.find(x => String(x.id) === String(currentDetailId));
+  if (!c) return;
+
+  const fieldMap = {
+    value:   { elId: 'd-value',   type: 'number', dbKey: 'value',       current: c.value },
+    videos:  { elId: 'd-videos',  type: 'number', dbKey: 'videos',      current: c.videos },
+    start:   { elId: 'd-start',   type: 'date',   dbKey: 'start_date',  current: c.start || '' },
+    expiry:  { elId: 'd-expiry',  type: 'date',   dbKey: 'expiry_date', current: c.expiry || '' },
+    contact: { elId: 'd-contact', type: 'email',  dbKey: 'contact',     current: c.contact || '' },
+    status:  { elId: 'd-status-val', type: 'select', dbKey: 'status',   current: c.status || 'active' },
+  };
+
+  const cfg = fieldMap[field];
+  if (!cfg) return;
+  const el = document.getElementById(cfg.elId);
+  const originalText = el.textContent;
+
+  if (cfg.type === 'select') {
+    // inline status picker
+    el.innerHTML = `
+      <select class="d-inline-edit" id="d-inline-input" style="width:auto;">
+        <option value="active" ${c.status==='active'?'selected':''}>Active</option>
+        <option value="pending" ${c.status==='pending'?'selected':''}>Pending</option>
+        <option value="expired" ${c.status==='expired'?'selected':''}>Expired</option>
+      </select>`;
+    const sel = document.getElementById('d-inline-input');
+    sel.focus();
+    const save = async () => {
+      const val = sel.value;
+      c.status = val;
+      await sb.from('contracts').update({ status: val }).eq('id', c.id);
+      openDetail(c.id);
+      renderDashboard();
+      showToast('Status updated');
+    };
+    sel.addEventListener('change', save);
+    sel.addEventListener('blur', () => { el.textContent = originalText; });
+    return;
+  }
+
+  el.innerHTML = `<input class="d-inline-edit" id="d-inline-input" type="${cfg.type}" value="${cfg.current}" />`;
+  const input = document.getElementById('d-inline-input');
+  input.focus();
+  if (cfg.type !== 'date') input.select();
+
+  const save = async () => {
+    let val = input.value.trim();
+    if (!val) { el.textContent = originalText; return; }
+    if (cfg.type === 'number') val = parseFloat(val);
+    c[field === 'start' ? 'start' : field === 'expiry' ? 'expiry' : field] = val;
+    // fix key mapping
+    if (field === 'start') c.start = val;
+    if (field === 'expiry') c.expiry = val;
+    if (field === 'value') c.value = val;
+    if (field === 'videos') c.videos = val;
+    if (field === 'contact') c.contact = val;
+    await sb.from('contracts').update({ [cfg.dbKey]: val }).eq('id', c.id);
+    openDetail(c.id);
+    renderDashboard();
+    showToast('Saved');
+  };
+
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') save(); if (e.key === 'Escape') el.textContent = originalText; });
+  input.addEventListener('blur', () => { setTimeout(() => { if (document.getElementById('d-inline-input')) el.textContent = originalText; }, 150); });
+  // small delay so blur doesn't fire before Enter
+  input.addEventListener('change', () => {});
+  const saveBtn = () => { save(); };
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); saveBtn(); } });
 }
 
 // openAddModal and closeAddModal defined in wizard section above
