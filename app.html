@@ -751,6 +751,150 @@
     .modal-title { font-size: 18px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 20px; }
     .modal-actions { display: flex; gap: 8px; margin-top: 20px; justify-content: flex-end; }
 
+    /* ── CONTRACT WIZARD ── */
+    .wizard-card {
+      background: var(--card); border: 1px solid var(--border2);
+      border-radius: 24px; padding: 36px 32px 28px;
+      width: 100%; max-width: 460px;
+      box-shadow: 0 40px 80px rgba(0,0,0,.6);
+      position: relative; overflow: hidden;
+    }
+    .wiz-progress-track {
+      height: 3px; background: var(--border); border-radius: 3px;
+      margin-bottom: 20px; overflow: hidden;
+    }
+    .wiz-progress-fill {
+      height: 100%; background: var(--accent);
+      border-radius: 3px;
+      transition: width .4s cubic-bezier(.4,0,.2,1);
+      box-shadow: 0 0 8px rgba(0,229,160,.5);
+    }
+    .wiz-step-counter {
+      font-size: 11px; font-weight: 700; color: var(--text3);
+      letter-spacing: .8px; text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .wiz-step-counter span { color: var(--accent); }
+    .wiz-steps { position: relative; min-height: 280px; }
+    .wiz-step {
+      display: none; flex-direction: column; gap: 14px;
+      animation: wizFadeIn .35s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    .wiz-step.active { display: flex; }
+    .wiz-step.exit-left {
+      display: flex;
+      animation: wizExitLeft .25s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    .wiz-step.enter-right {
+      display: flex;
+      animation: wizEnterRight .35s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    .wiz-step.exit-right {
+      display: flex;
+      animation: wizExitRight .25s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    .wiz-step.enter-left {
+      display: flex;
+      animation: wizEnterLeft .35s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    @keyframes wizFadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes wizExitLeft {
+      from { opacity: 1; transform: translateX(0); }
+      to { opacity: 0; transform: translateX(-40px); }
+    }
+    @keyframes wizEnterRight {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes wizExitRight {
+      from { opacity: 1; transform: translateX(0); }
+      to { opacity: 0; transform: translateX(40px); }
+    }
+    @keyframes wizEnterLeft {
+      from { opacity: 0; transform: translateX(-40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .wiz-emoji { font-size: 36px; line-height: 1; }
+    .wiz-q { font-size: 22px; font-weight: 900; letter-spacing: -.4px; color: var(--text); line-height: 1.2; }
+    .wiz-sub { font-size: 13px; color: var(--text3); margin-top: -6px; margin-bottom: 4px; }
+    .wiz-input {
+      width: 100%; background: var(--card2); border: 1.5px solid var(--border2);
+      border-radius: 12px; padding: 13px 16px;
+      font-size: 15px; font-weight: 600; color: var(--text);
+      font-family: inherit; outline: none; box-sizing: border-box;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .wiz-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,229,160,.12);
+    }
+    .wiz-input::placeholder { color: var(--text3); font-weight: 400; }
+    .wiz-input-row { display: flex; gap: 10px; }
+    .wiz-input-group { flex: 1; position: relative; display: flex; flex-direction: column; gap: 6px; }
+    .wiz-input-label { font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: .5px; text-transform: uppercase; }
+    .wiz-input-prefix {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      font-size: 15px; font-weight: 700; color: var(--text3); pointer-events: none;
+    }
+    .wiz-input-has-prefix { padding-left: 28px; }
+    .wiz-status-group { margin-top: 4px; }
+    .wiz-status-pills { display: flex; gap: 8px; }
+    .wiz-status-pill {
+      flex: 1; text-align: center; padding: 10px;
+      border: 1.5px solid var(--border2); border-radius: 10px;
+      font-size: 13px; font-weight: 700; color: var(--text3);
+      cursor: pointer; transition: all .2s;
+    }
+    .wiz-status-pill:hover { border-color: var(--border2); color: var(--text); background: var(--card2); }
+    .wiz-status-pill.active { border-color: var(--accent); color: var(--accent); background: rgba(0,229,160,.08); box-shadow: 0 0 12px rgba(0,229,160,.15); }
+    .wiz-draft-options { display: flex; flex-direction: column; gap: 10px; }
+    .wiz-draft-card {
+      border: 1.5px solid var(--border2); border-radius: 14px;
+      padding: 16px; cursor: pointer;
+      transition: all .25s cubic-bezier(.4,0,.2,1);
+      background: var(--card2);
+    }
+    .wiz-draft-card:hover { border-color: var(--border2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+    .wiz-draft-card.active { border-color: var(--accent); background: rgba(0,229,160,.06); box-shadow: 0 0 20px rgba(0,229,160,.15); }
+    .wiz-draft-icon { font-size: 22px; margin-bottom: 6px; }
+    .wiz-draft-title { font-size: 14px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+    .wiz-draft-desc { font-size: 12px; color: var(--text3); margin-bottom: 8px; }
+    .wiz-draft-pipeline {
+      font-size: 11px; font-weight: 700; color: var(--accent);
+      letter-spacing: .3px; opacity: .8;
+    }
+    .wiz-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 28px; gap: 10px;
+    }
+    .wiz-back-btn {
+      background: none; border: 1.5px solid var(--border2);
+      border-radius: 10px; padding: 10px 18px;
+      font-size: 13px; font-weight: 700; color: var(--text3);
+      cursor: pointer; transition: all .2s; font-family: inherit;
+    }
+    .wiz-back-btn:hover { border-color: var(--border2); color: var(--text); background: var(--card2); }
+    .wiz-next-btn {
+      flex: 1; background: var(--accent); color: #000;
+      border: none; border-radius: 10px; padding: 12px 24px;
+      font-size: 14px; font-weight: 900; cursor: pointer;
+      transition: all .2s; font-family: inherit; letter-spacing: -.2px;
+    }
+    .wiz-next-btn:hover { background: #00f0a8; box-shadow: 0 0 20px rgba(0,229,160,.35); transform: translateY(-1px); }
+    .wiz-next-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+    .wiz-close {
+      position: absolute; top: 16px; right: 16px;
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 8px; width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: var(--text3); cursor: pointer;
+      transition: all .15s; font-family: inherit;
+    }
+    .wiz-close:hover { background: var(--border2); color: var(--text); }
+
     /* ── MOBILE ── */
     .mobile-nav {
       display: none;
@@ -1788,64 +1932,106 @@
   </div>
 </nav>
 
-<!-- ADD MODAL -->
+<!-- ADD CONTRACT WIZARD -->
 <div class="modal-overlay" id="add-modal">
-  <div class="modal">
-    <div class="modal-title">New Contract</div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Brand Name *</label>
-        <input class="form-input" id="new-brand" placeholder="e.g. GlowUp Cosmetics" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Niche</label>
-        <input class="form-input" id="new-niche" placeholder="e.g. Beauty" />
-      </div>
+  <div class="wizard-card">
+    <!-- Progress bar -->
+    <div class="wiz-progress-track">
+      <div class="wiz-progress-fill" id="wiz-progress"></div>
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Deal Value ($) *</label>
-        <input class="form-input" id="new-value" type="number" placeholder="2000" />
+    <!-- Step counter -->
+    <div class="wiz-step-counter"><span id="wiz-step-num">1</span> of 5</div>
+    <!-- Steps container -->
+    <div class="wiz-steps" id="wiz-steps">
+
+      <!-- Step 1: Brand -->
+      <div class="wiz-step active" id="wiz-step-1">
+        <div class="wiz-emoji">🏷️</div>
+        <div class="wiz-q">Who's the brand?</div>
+        <div class="wiz-sub">Enter the brand name and niche</div>
+        <input class="wiz-input" id="new-brand" placeholder="e.g. GlowUp Cosmetics" autocomplete="off" onkeydown="if(event.key==='Enter')wizNext()" />
+        <input class="wiz-input" id="new-niche" placeholder="Niche (e.g. Skincare)" autocomplete="off" onkeydown="if(event.key==='Enter')wizNext()" />
       </div>
-      <div class="form-group">
-        <label class="form-label">Videos Required *</label>
-        <input class="form-input" id="new-videos" type="number" placeholder="4" />
+
+      <!-- Step 2: Deal Terms -->
+      <div class="wiz-step" id="wiz-step-2">
+        <div class="wiz-emoji">💰</div>
+        <div class="wiz-q">What are the terms?</div>
+        <div class="wiz-sub">Deal value and number of videos</div>
+        <div class="wiz-input-row">
+          <div class="wiz-input-group">
+            <span class="wiz-input-prefix">$</span>
+            <input class="wiz-input wiz-input-has-prefix" id="new-value" type="number" placeholder="2,000" onkeydown="if(event.key==='Enter')wizNext()" />
+          </div>
+          <div class="wiz-input-group">
+            <input class="wiz-input" id="new-videos" type="number" placeholder="# of videos" onkeydown="if(event.key==='Enter')wizNext()" />
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Start Date</label>
-        <input class="form-input" id="new-start" type="date" />
+
+      <!-- Step 3: Dates -->
+      <div class="wiz-step" id="wiz-step-3">
+        <div class="wiz-emoji">📅</div>
+        <div class="wiz-q">When does it run?</div>
+        <div class="wiz-sub">Start and end dates for this retainer</div>
+        <div class="wiz-input-row">
+          <div class="wiz-input-group">
+            <label class="wiz-input-label">Start Date</label>
+            <input class="wiz-input" id="new-start" type="date" onkeydown="if(event.key==='Enter')wizNext()" />
+          </div>
+          <div class="wiz-input-group">
+            <label class="wiz-input-label">Expiry Date</label>
+            <input class="wiz-input" id="new-expiry" type="date" onkeydown="if(event.key==='Enter')wizNext()" />
+          </div>
+        </div>
       </div>
-      <div class="form-group">
-        <label class="form-label">Expiry Date</label>
-        <input class="form-input" id="new-expiry" type="date" />
+
+      <!-- Step 4: Contact + Status -->
+      <div class="wiz-step" id="wiz-step-4">
+        <div class="wiz-emoji">📬</div>
+        <div class="wiz-q">Brand contact details</div>
+        <div class="wiz-sub">Who do you reach out to at this brand?</div>
+        <input class="wiz-input" id="new-contact" placeholder="partnerships@brand.com" autocomplete="off" onkeydown="if(event.key==='Enter')wizNext()" />
+        <div class="wiz-status-group">
+          <div class="wiz-input-label" style="margin-bottom:10px;">Contract Status</div>
+          <div class="wiz-status-pills">
+            <div class="wiz-status-pill active" id="sp-active" onclick="selectWizStatus('active')">Active</div>
+            <div class="wiz-status-pill" id="sp-pending" onclick="selectWizStatus('pending')">Pending</div>
+            <div class="wiz-status-pill" id="sp-expired" onclick="selectWizStatus('expired')">Expired</div>
+          </div>
+        </div>
+        <input type="hidden" id="new-status" value="active" />
       </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Brand Contact Email</label>
-      <input class="form-input" id="new-contact" placeholder="partnerships@brand.com" />
-    </div>
-    <div class="form-group">
-      <label class="form-label">Status</label>
-      <select class="form-select" id="new-status">
-        <option value="active">Active</option>
-        <option value="pending">Pending</option>
-        <option value="expired">Expired</option>
-      </select>
-    </div>
-    <div class="draft-toggle-wrap">
-      <div class="draft-toggle-label">Does this brand require draft approval?</div>
-      <div class="pill-toggle" id="draft-toggle-pill" onclick="toggleDraftPill()">
-        <div class="pill-option active" id="draft-opt-no">No — Post freely</div>
-        <div class="pill-option" id="draft-opt-yes">Yes — Send drafts first</div>
-        <div class="pill-slider" id="draft-pill-slider"></div>
+
+      <!-- Step 5: Draft approval -->
+      <div class="wiz-step" id="wiz-step-5">
+        <div class="wiz-emoji">✍️</div>
+        <div class="wiz-q">Do they review drafts first?</div>
+        <div class="wiz-sub">This sets your video pipeline stages</div>
+        <div class="wiz-draft-options">
+          <div class="wiz-draft-card active" id="wdc-no" onclick="selectWizDraft(false)">
+            <div class="wiz-draft-icon">🚀</div>
+            <div class="wiz-draft-title">No — Post Freely</div>
+            <div class="wiz-draft-desc">Film it, post it. No approval needed.</div>
+            <div class="wiz-draft-pipeline">Filmed → Posted</div>
+          </div>
+          <div class="wiz-draft-card" id="wdc-yes" onclick="selectWizDraft(true)">
+            <div class="wiz-draft-icon">📋</div>
+            <div class="wiz-draft-title">Yes — Send Drafts</div>
+            <div class="wiz-draft-desc">Brand reviews before you post.</div>
+            <div class="wiz-draft-pipeline">Filmed → Draft Sent → Approved → Posted</div>
+          </div>
+        </div>
       </div>
+
     </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeAddModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="addContract()">Add Contract</button>
+
+    <!-- Nav buttons -->
+    <div class="wiz-nav">
+      <button class="wiz-back-btn" id="wiz-back" onclick="wizBack()">← Back</button>
+      <button class="wiz-next-btn" id="wiz-next" onclick="wizNext()">Next →</button>
     </div>
+    <button class="wiz-close" onclick="closeAddModal()">✕</button>
   </div>
 </div>
 
@@ -2793,11 +2979,7 @@ async function deleteContract(id) {
   showToast('Contract removed');
 }
 
-function openAddModal() {
-  document.getElementById('add-modal').classList.add('open');
-  setTimeout(() => initCustomDropdowns(document.getElementById('add-modal')), 50);
-}
-function closeAddModal() { document.getElementById('add-modal').classList.remove('open'); }
+// openAddModal and closeAddModal defined in wizard section above
 
 function showUpgradePopup() {
   const el = document.getElementById('upgrade-popup');
@@ -2829,14 +3011,100 @@ async function startCheckout() {
   }
 }
 
+// ── CONTRACT WIZARD ──
+let _wizStep = 1;
+const _WIZ_TOTAL = 5;
 let _draftRequired = false;
-function toggleDraftPill() {
-  _draftRequired = !_draftRequired;
-  document.getElementById('draft-opt-no').classList.toggle('active', !_draftRequired);
-  document.getElementById('draft-opt-yes').classList.toggle('active', _draftRequired);
-  const slider = document.getElementById('draft-pill-slider');
-  slider.classList.toggle('right', _draftRequired);
+
+function openAddModal() {
+  _wizStep = 1;
+  _draftRequired = false;
+  document.getElementById('add-modal').classList.add('open');
+  document.querySelectorAll('.wiz-step').forEach(s => s.classList.remove('active','exit-left','exit-right','enter-left','enter-right'));
+  document.getElementById('wiz-step-1').classList.add('active');
+  updateWizUI();
+  setTimeout(() => document.getElementById('new-brand').focus(), 100);
 }
+
+function closeAddModal() {
+  document.getElementById('add-modal').classList.remove('open');
+}
+
+function updateWizUI() {
+  document.getElementById('wiz-step-num').textContent = _wizStep;
+  document.getElementById('wiz-progress').style.width = ((_wizStep / _WIZ_TOTAL) * 100) + '%';
+  document.getElementById('wiz-back').style.visibility = _wizStep === 1 ? 'hidden' : 'visible';
+  document.getElementById('wiz-next').textContent = _wizStep === _WIZ_TOTAL ? 'Add Contract ✓' : 'Next →';
+}
+
+function wizTransition(fromStep, toStep, direction) {
+  const from = document.getElementById('wiz-step-' + fromStep);
+  const to = document.getElementById('wiz-step-' + toStep);
+  const exitClass = direction === 'forward' ? 'exit-left' : 'exit-right';
+  const enterClass = direction === 'forward' ? 'enter-right' : 'enter-left';
+  from.classList.remove('active');
+  from.classList.add(exitClass);
+  to.style.display = 'flex';
+  to.classList.add(enterClass);
+  setTimeout(() => {
+    from.classList.remove(exitClass);
+    from.style.display = '';
+    to.classList.remove(enterClass);
+    to.classList.add('active');
+  }, 320);
+}
+
+function wizNext() {
+  if (_wizStep === 1) {
+    if (!document.getElementById('new-brand').value.trim()) {
+      document.getElementById('new-brand').focus();
+      document.getElementById('new-brand').style.borderColor = '#F87171';
+      setTimeout(() => document.getElementById('new-brand').style.borderColor = '', 1200);
+      return;
+    }
+  }
+  if (_wizStep === 2) {
+    const v = document.getElementById('new-value').value;
+    const n = document.getElementById('new-videos').value;
+    if (!v || !n) {
+      const el = !v ? 'new-value' : 'new-videos';
+      document.getElementById(el).focus();
+      document.getElementById(el).style.borderColor = '#F87171';
+      setTimeout(() => document.getElementById(el).style.borderColor = '', 1200);
+      return;
+    }
+  }
+  if (_wizStep === _WIZ_TOTAL) { addContract(); return; }
+  const prev = _wizStep;
+  _wizStep++;
+  wizTransition(prev, _wizStep, 'forward');
+  updateWizUI();
+  const focusMap = { 2: 'new-value', 3: 'new-start', 4: 'new-contact' };
+  if (focusMap[_wizStep]) setTimeout(() => document.getElementById(focusMap[_wizStep]).focus(), 350);
+}
+
+function wizBack() {
+  if (_wizStep === 1) return;
+  const prev = _wizStep;
+  _wizStep--;
+  wizTransition(prev, _wizStep, 'back');
+  updateWizUI();
+}
+
+function selectWizStatus(val) {
+  document.getElementById('new-status').value = val;
+  ['active','pending','expired'].forEach(s => {
+    document.getElementById('sp-' + s).classList.toggle('active', s === val);
+  });
+}
+
+function selectWizDraft(val) {
+  _draftRequired = val;
+  document.getElementById('wdc-no').classList.toggle('active', !val);
+  document.getElementById('wdc-yes').classList.toggle('active', val);
+}
+
+function toggleDraftPill() {}
 
 async function addContract() {
   const brand = document.getElementById('new-brand').value.trim();
@@ -2866,10 +3134,6 @@ async function addContract() {
   }
 
   closeAddModal();
-  _draftRequired = false;
-  document.getElementById('draft-opt-no').classList.add('active');
-  document.getElementById('draft-opt-yes').classList.remove('active');
-  document.getElementById('draft-pill-slider').classList.remove('right');
   ['new-brand','new-niche','new-value','new-videos','new-start','new-expiry','new-contact'].forEach(id => document.getElementById(id).value='');
   const statusSel = document.getElementById('new-status');
   if (statusSel) statusSel.value = 'active';
