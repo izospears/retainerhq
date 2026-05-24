@@ -918,6 +918,174 @@
     }
     .email-body:focus { outline: none; }
 
+    /* ── EMAIL GENERATOR HERO ── */
+    .email-hero {
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: 18px;
+      padding: 28px 28px 24px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .email-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 90% 50%, rgba(0,229,160,.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .email-hero::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent 10%, rgba(0,229,160,.4) 50%, transparent 90%);
+    }
+    .email-hero-inner { display: flex; align-items: center; gap: 20px; position: relative; }
+    .email-hero-icon-wrap {
+      width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
+      background: rgba(0,229,160,.1);
+      border: 1px solid rgba(0,229,160,.2);
+      display: flex; align-items: center; justify-content: center;
+      animation: heroIconGlow 3s ease-in-out infinite;
+    }
+    @keyframes heroIconGlow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,229,160,.0); }
+      50% { box-shadow: 0 0 18px 4px rgba(0,229,160,.18); }
+    }
+    .email-hero-icon-wrap svg { width: 22px; height: 22px; color: var(--accent); }
+    .email-hero-text { flex: 1; }
+    .email-hero-title { font-size: 17px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 4px; }
+    .email-hero-title span { color: var(--accent); }
+    .email-hero-sub { font-size: 12px; color: var(--text3); line-height: 1.5; }
+    .email-hero-badges { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .email-badge {
+      font-size: 10px; font-weight: 700; letter-spacing: .4px;
+      padding: 4px 10px; border-radius: 20px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .email-badge-free {
+      background: rgba(0,229,160,.1); color: var(--accent);
+      border: 1px solid rgba(0,229,160,.2);
+    }
+    .email-badge-type {
+      background: rgba(255,255,255,.04); color: var(--text3);
+      border: 1px solid var(--border);
+    }
+    .email-hero-spark {
+      position: absolute; right: 28px; top: 50%; transform: translateY(-50%);
+      font-size: 42px; opacity: .07;
+      animation: sparkFloat 4s ease-in-out infinite;
+    }
+    @keyframes sparkFloat {
+      0%, 100% { transform: translateY(-50%) rotate(-5deg); opacity: .07; }
+      50% { transform: translateY(calc(-50% - 6px)) rotate(5deg); opacity: .12; }
+    }
+
+    /* ── EMAIL TYPE CHIPS ── */
+    .type-chip-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .type-chip {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px;
+      background: var(--card2);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all .18s;
+      position: relative;
+      overflow: hidden;
+    }
+    .type-chip:hover { border-color: var(--border2); background: var(--card3); }
+    .type-chip.selected {
+      border-color: rgba(0,229,160,.5);
+      background: rgba(0,229,160,.06);
+    }
+    .type-chip.selected::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(105deg, transparent 30%, rgba(0,229,160,.06) 50%, transparent 70%);
+      background-size: 200% 100%;
+      animation: chipShine 2.5s ease-in-out infinite;
+    }
+    @keyframes chipShine {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .type-chip-icon {
+      width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+      background: var(--card3);
+      transition: background .18s;
+    }
+    .type-chip.selected .type-chip-icon {
+      background: rgba(0,229,160,.15);
+    }
+    .type-chip-info { flex: 1; min-width: 0; }
+    .type-chip-label { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 1px; }
+    .type-chip.selected .type-chip-label { color: var(--accent); }
+    .type-chip-desc { font-size: 10px; color: var(--text3); line-height: 1.35; }
+    .type-chip-check {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 1.5px solid var(--border2);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .18s;
+    }
+    .type-chip.selected .type-chip-check {
+      background: var(--accent); border-color: var(--accent);
+    }
+    .type-chip.selected .type-chip-check::after {
+      content: '';
+      width: 5px; height: 3px;
+      border-left: 1.5px solid #000;
+      border-bottom: 1.5px solid #000;
+      transform: rotate(-45deg) translateY(-1px);
+      display: block;
+    }
+
+    /* ── GENERATE BUTTON ── */
+    .gen-btn-wrap { position: relative; display: inline-block; }
+    .btn-generate {
+      position: relative;
+      background: linear-gradient(135deg, var(--accent), #00C88A);
+      color: #000;
+      font-weight: 800;
+      font-size: 14px;
+      border: none;
+      border-radius: 12px;
+      padding: 13px 28px;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+      font-family: inherit;
+      letter-spacing: -.2px;
+      overflow: hidden;
+      transition: transform .15s, box-shadow .15s;
+      animation: btnGlow 3s ease-in-out infinite;
+    }
+    .btn-generate::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.2) 50%, transparent 70%);
+      background-size: 200% 100%;
+      animation: btnShine 2.2s ease-in-out infinite;
+    }
+    @keyframes btnShine {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    @keyframes btnGlow {
+      0%, 100% { box-shadow: 0 4px 20px rgba(0,229,160,.25); }
+      50% { box-shadow: 0 4px 32px rgba(0,229,160,.5); }
+    }
+    .btn-generate:hover { transform: translateY(-1px); }
+    .btn-generate:active { transform: translateY(0); }
+    .btn-generate svg { width: 16px; height: 16px; flex-shrink: 0; position: relative; }
+
     /* ── RATE CARD ── */
     .rate-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
     .rate-card {
@@ -1929,6 +2097,26 @@
 
     <!-- EMAIL GENERATOR -->
     <div class="page" id="page-email">
+
+      <!-- Hero Strip -->
+      <div class="email-hero">
+        <div class="email-hero-inner">
+          <div class="email-hero-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="email-hero-text">
+            <div class="email-hero-title">Turn any offer into a <span>pro-level reply</span></div>
+            <div class="email-hero-sub">Paste a brand's email or fill in the offer — we write the response for you in seconds.</div>
+            <div class="email-hero-badges">
+              <div class="email-badge email-badge-free">✦ 3 free · Unlimited on Pro</div>
+              <div class="email-badge email-badge-type">📊 Uses your Media Kit stats</div>
+              <div class="email-badge email-badge-type">⚡ AI-powered</div>
+            </div>
+          </div>
+        </div>
+        <div class="email-hero-spark">✉</div>
+      </div>
+
       <div class="tabs">
         <div class="tab active" onclick="switchTab('manual')">Manual Entry</div>
         <div class="tab" onclick="switchTab('paste')">Paste Their Email</div>
@@ -1951,25 +2139,57 @@
             <input class="form-input" id="m-videos" placeholder="e.g. 5" type="number" />
           </div>
           <div class="form-group">
-            <label class="form-label">Response Type</label>
-            <select class="form-select" id="m-type" onchange="toggleCounterField('m')">
-              <option value="pitch">Retainer Pitch</option>
-              <option value="counter">Counter Offer</option>
-              <option value="negotiate">Negotiate Up to Package</option>
-              <option value="decline">Polite Decline</option>
-            </select>
+            <label class="form-label">Your Name</label>
+            <input class="form-input" id="m-name" placeholder="Your name" />
           </div>
         </div>
+
+        <!-- Response Type Chips -->
+        <div class="form-group">
+          <label class="form-label">Response Type</label>
+          <div class="type-chip-grid" id="m-type-chips">
+            <div class="type-chip selected" data-val="pitch" onclick="selectEmailType('m','pitch',this)">
+              <div class="type-chip-icon">🚀</div>
+              <div class="type-chip-info">
+                <div class="type-chip-label">Retainer Pitch</div>
+                <div class="type-chip-desc">Propose a monthly package deal</div>
+              </div>
+              <div class="type-chip-check"></div>
+            </div>
+            <div class="type-chip" data-val="counter" onclick="selectEmailType('m','counter',this)">
+              <div class="type-chip-icon">💰</div>
+              <div class="type-chip-info">
+                <div class="type-chip-label">Counter Offer</div>
+                <div class="type-chip-desc">Push back with your number</div>
+              </div>
+              <div class="type-chip-check"></div>
+            </div>
+            <div class="type-chip" data-val="negotiate" onclick="selectEmailType('m','negotiate',this)">
+              <div class="type-chip-icon">📈</div>
+              <div class="type-chip-info">
+                <div class="type-chip-label">Negotiate Up</div>
+                <div class="type-chip-desc">Upsell to a bigger package</div>
+              </div>
+              <div class="type-chip-check"></div>
+            </div>
+            <div class="type-chip" data-val="decline" onclick="selectEmailType('m','decline',this)">
+              <div class="type-chip-icon">🙏</div>
+              <div class="type-chip-info">
+                <div class="type-chip-label">Polite Decline</div>
+                <div class="type-chip-desc">Pass while keeping the door open</div>
+              </div>
+              <div class="type-chip-check"></div>
+            </div>
+          </div>
+        </div>
+
         <div class="form-group" id="counter-group" style="display:none;">
           <label class="form-label">Your Counter Offer ($)</label>
           <input class="form-input" id="m-counter" placeholder="e.g. 1500" type="number" />
         </div>
-        <div class="form-group">
-          <label class="form-label">Your Name</label>
-          <input class="form-input" id="m-name" placeholder="Your name" />
-        </div>
-        <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Stats (GMV, followers, niche) are pulled automatically from your Media Kit.</div>
-        <button class="btn btn-primary" onclick="generateEmail('manual')">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:14px;">GMV, followers, and niche pulled automatically from your Media Kit.</div>
+        <button class="btn-generate" onclick="generateEmail('manual')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
           Generate Email
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
         </button>
@@ -1978,24 +2198,54 @@
       <div class="tab-panel" id="tab-paste">
         <div class="form-group">
           <label class="form-label">Paste the brand's email</label>
-          <textarea class="form-textarea" id="p-email" rows="7" placeholder="Hi Isaac, we're reaching out from Brand XYZ. We'd love to offer you a retainer deal of $600 for 3 videos per month..."></textarea>
+          <textarea class="form-textarea" id="p-email" rows="6" placeholder="Hi Isaac, we're reaching out from Brand XYZ. We'd love to offer you a retainer deal of $600 for 3 videos per month..."></textarea>
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Response Type</label>
-            <select class="form-select" id="p-type" onchange="toggleCounterField('p')">
-              <option value="pitch">Retainer Pitch</option>
-              <option value="counter">Counter Offer</option>
-              <option value="negotiate">Negotiate Up to Package</option>
-              <option value="decline">Polite Decline</option>
-            </select>
-          </div>
-          <div class="form-group" id="p-counter-group" style="display:none;">
-            <label class="form-label">Your Counter Offer ($)</label>
-            <input class="form-input" id="p-counter" placeholder="e.g. 900" type="number" />
+
+        <!-- Response Type Chips -->
+        <div class="form-group">
+          <label class="form-label">Response Type</label>
+          <div class="type-chip-grid" id="p-type-chips">
+            <div class="type-chip selected" data-val="pitch" onclick="selectEmailType('p','pitch',this)">
+              <div class="type-chip-icon">🚀</div>
+              <div class="type-chip-info">
+                <div class="type-chip-label">Retainer Pitch</div>
+                <div class="type-chip-desc">Propose a monthly package deal</div>
+              </div>
+              <div class="type-chip-check"></div>
+            </div>
+            <div class="type-chip" data-val="counter" onclick="selectEmailType('p','counter',this)">
+              <div class="type-chip-icon">💰</div>
+              <div class="type-chip-info">
+                <div class="type-chip-label">Counter Offer</div>
+                <div class="type-chip-desc">Push back with your number</div>
+              </div>
+              <div class="type-chip-check"></div>
+            </div>
+            <div class="type-chip" data-val="negotiate" onclick="selectEmailType('p','negotiate',this)">
+              <div class="type-chip-icon">📈</div>
+              <div class="type-chip-info">
+                <div class="type-chip-label">Negotiate Up</div>
+                <div class="type-chip-desc">Upsell to a bigger package</div>
+              </div>
+              <div class="type-chip-check"></div>
+            </div>
+            <div class="type-chip" data-val="decline" onclick="selectEmailType('p','decline',this)">
+              <div class="type-chip-icon">🙏</div>
+              <div class="type-chip-info">
+                <div class="type-chip-label">Polite Decline</div>
+                <div class="type-chip-desc">Pass while keeping the door open</div>
+              </div>
+              <div class="type-chip-check"></div>
+            </div>
           </div>
         </div>
-        <button class="btn btn-primary" onclick="generateEmail('paste')">
+
+        <div class="form-group" id="p-counter-group" style="display:none;">
+          <label class="form-label">Your Counter Offer ($)</label>
+          <input class="form-input" id="p-counter" placeholder="e.g. 900" type="number" />
+        </div>
+        <button class="btn-generate" onclick="generateEmail('paste')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
           Generate Email
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
         </button>
@@ -3604,15 +3854,18 @@ function switchTab(tab) {
   document.getElementById('email-output').style.display = 'none';
 }
 
-document.getElementById('m-type').addEventListener('change', function() {
-  document.getElementById('counter-group').style.display = this.value==='counter'?'block':'none';
-});
-document.getElementById('p-type').addEventListener('change', function() {
-  document.getElementById('p-counter-group').style.display = this.value==='counter'?'block':'none';
-});
-
+// Type chip selection — replaces old <select> dropdowns
+window._emailType = { m: 'pitch', p: 'pitch' };
+function selectEmailType(prefix, val, el) {
+  window._emailType[prefix] = val;
+  const grid = document.getElementById(prefix + '-type-chips');
+  grid.querySelectorAll('.type-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const grp = document.getElementById(prefix === 'm' ? 'counter-group' : 'p-counter-group');
+  if (grp) grp.style.display = val === 'counter' ? 'block' : 'none';
+}
 function toggleCounterField(prefix) {
-  const type = document.getElementById(prefix + '-type').value;
+  const type = window._emailType ? window._emailType[prefix] : 'pitch';
   const grp  = document.getElementById(prefix === 'm' ? 'counter-group' : 'p-counter-group');
   if (grp) grp.style.display = type === 'counter' ? 'block' : 'none';
 }
@@ -3627,12 +3880,12 @@ async function generateEmail(mode) {
     brand   = document.getElementById('m-brand').value.trim() || '';
     offer   = document.getElementById('m-offer').value;
     videos  = document.getElementById('m-videos').value;
-    type    = document.getElementById('m-type').value;
+    type    = (window._emailType && window._emailType['m']) || 'pitch';
     counter = document.getElementById('m-counter').value;
     myName  = document.getElementById('m-name').value.trim() || (mediaKitProfile.name || 'me');
   } else {
     const raw = document.getElementById('p-email').value;
-    type    = document.getElementById('p-type').value;
+    type    = (window._emailType && window._emailType['p']) || 'pitch';
     counter = document.getElementById('p-counter').value;
     myName  = mediaKitProfile.name || 'me';
     const bm = raw.match(/from\s+([A-Z][a-zA-Z\s&]+?)[\.\,\!]/);
