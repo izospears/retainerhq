@@ -4664,12 +4664,15 @@ async function downloadMediaKitPDF() {
       windowWidth: 816,
       backgroundColor: '#080C14',
       logging: false,
-      onclone: (_doc, el) => {
-        el.style.opacity = '1';
-        el.style.zIndex  = '1';
-        el.style.position = 'relative';
-        el.style.top  = '0';
-        el.style.left = '0';
+      onclone: (clonedDoc) => {
+        const el = clonedDoc.querySelector('.kpdf-wrap');
+        if (el) {
+          el.style.opacity  = '1';
+          el.style.zIndex   = '1';
+          el.style.position = 'relative';
+          el.style.top  = '0';
+          el.style.left = '0';
+        }
       },
     },
     jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
