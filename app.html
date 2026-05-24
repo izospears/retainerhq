@@ -4476,6 +4476,23 @@ async function downloadMediaKitPDF() {
   btn.disabled = true;
   btn.textContent = 'Generating…';
 
+  // Reset template to the original positioning that html2canvas handles correctly
+  const tpl = document.getElementById('mk-pdf-tpl');
+  tpl.style.cssText = 'position:fixed;left:-9999px;top:0;display:none;z-index:-1;';
+
+  // Helper — inject html, capture with the exact settings that worked originally
+  async function capturePage(html) {
+    tpl.innerHTML = html;
+    tpl.style.display = 'block';
+    await new Promise(r => setTimeout(r, 250));
+    const canvas = await html2canvas(tpl.querySelector('div'), {
+      scale: 2, useCORS: true, backgroundColor: '#080C14', logging: false, width: 800,
+    });
+    tpl.style.display = 'none';
+    tpl.innerHTML = '';
+    return canvas;
+  }
+
   // ── Gather data ──────────────────────────────────────────────
   const handle    = document.getElementById('kit-handle').value.trim() || '@handle';
   const niche     = document.getElementById('kit-niche').value.trim() || '';
@@ -4496,124 +4513,110 @@ async function downloadMediaKitPDF() {
     { qty: rates.pkg4qty, price: rates.pkg4price },
   ].filter(p => p.qty && p.price);
 
-  // ── Template constants — everything uses box-sizing:border-box ──
-  const W = 700; // safe fixed width — narrower than viewport so grids never overflow
-  const S = (px) => Math.round(px * 0.82) + 'px'; // scale helper (~18% smaller)
-  const BB = 'box-sizing:border-box;';
+  // ── Template helpers ─────────────────────────────────────────
+  const fmtN = n => { const x = parseInt(n); if (!x) return '—'; if (x>=1e6) return (x/1e6).toFixed(1)+'M'; if (x>=1000) return (x/1000).toFixed(1)+'K'; return String(x); };
+
+  // ── Shared template pieces (same style as original working version) ──
+  const FONT = `font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;`;
 
   const pkgHTML = pkgs.map(p =>
-    `<div style="${BB}background:#111827;border:1px solid #1E2D45;border-radius:10px;padding:14px;text-align:center;">
-      <div style="font-size:${S(22)}px;font-weight:900;color:#00E5A0;letter-spacing:-1px;">$${Number(p.price).toLocaleString()}</div>
-      <div style="font-size:9px;color:#4A5878;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:3px;">per month</div>
-      <div style="font-size:11px;color:#8896B3;margin-top:6px;font-weight:500;">${p.qty} videos / mo</div>
+    `<div style="background:#111827;border:1px solid #1E2D45;border-radius:12px;padding:20px;text-align:center;">
+      <div style="font-size:28px;font-weight:900;color:#00E5A0;letter-spacing:-1px;">$${Number(p.price).toLocaleString()}</div>
+      <div style="font-size:11px;color:#4A5878;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:4px;">per month</div>
+      <div style="font-size:13px;color:#8896B3;margin-top:8px;font-weight:500;">${p.qty} videos / mo</div>
     </div>`
   ).join('');
 
   const headerHTML = `
-    <div style="${BB}background:linear-gradient(135deg,#0D1220 0%,#111827 100%);padding:32px;border-bottom:1px solid #1E2D45;width:${W}px;">
-      <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:${bio ? 18 : 0}px;">
-        <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#00E5A0,#00C88A);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#000;flex-shrink:0;">${initials}</div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:22px;font-weight:900;letter-spacing:-.5px;line-height:1.1;">${fullName}</div>
-          <div style="font-size:13px;color:#00E5A0;margin-top:4px;font-weight:700;">${handle.startsWith('@') ? handle : '@'+handle}</div>
-          ${niche ? `<div style="margin-top:8px;"><span style="${BB}background:rgba(0,229,160,.12);color:#00E5A0;border:1px solid rgba(0,229,160,.28);border-radius:20px;padding:3px 11px;font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;">${niche}</span></div>` : ''}
+    <div style="background:linear-gradient(135deg,#0D1220 0%,#111827 100%);padding:48px;border-bottom:1px solid #1E2D45;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:-60px;right:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(0,229,160,.12),transparent 65%);border-radius:50%;"></div>
+      <div style="display:flex;align-items:flex-start;gap:24px;${bio ? 'margin-bottom:24px;' : ''}">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#00E5A0,#00C88A);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#000;flex-shrink:0;">${initials}</div>
+        <div style="flex:1;">
+          <div style="font-size:30px;font-weight:900;letter-spacing:-.6px;line-height:1.1;">${fullName}</div>
+          <div style="font-size:15px;color:#00E5A0;margin-top:5px;font-weight:700;">${handle.startsWith('@') ? handle : '@'+handle}</div>
+          ${niche ? `<div style="margin-top:10px;"><span style="background:rgba(0,229,160,.12);color:#00E5A0;border:1px solid rgba(0,229,160,.28);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;">${niche}</span></div>` : ''}
         </div>
         <div style="text-align:right;flex-shrink:0;">
-          <div style="font-size:9px;color:#253450;font-weight:700;letter-spacing:.6px;text-transform:uppercase;">BUILT WITH</div>
-          <div style="font-size:14px;font-weight:900;color:#00E5A0;">RetainerHQ</div>
-          <div style="font-size:9px;color:#253450;margin-top:1px;">retainerhq.io</div>
+          <div style="font-size:10px;color:#253450;font-weight:700;letter-spacing:.8px;text-transform:uppercase;">BUILT WITH</div>
+          <div style="font-size:18px;font-weight:900;color:#00E5A0;">RetainerHQ</div>
+          <div style="font-size:10px;color:#253450;margin-top:2px;">retainerhq.io</div>
         </div>
       </div>
-      ${bio ? `<div style="font-size:12px;color:#8896B3;line-height:1.65;">${bio}</div>` : ''}
+      ${bio ? `<div style="font-size:14px;color:#8896B3;line-height:1.75;max-width:620px;">${bio}</div>` : ''}
     </div>`;
 
   const statsHTML = `
-    <div style="${BB}display:grid;grid-template-columns:${W/3}px ${W/3}px ${W/3}px;width:${W}px;background:#0D1220;">
-      <div style="${BB}padding:22px 24px;border-right:1px solid #1E2D45;width:${W/3}px;">
-        <div style="font-size:28px;font-weight:900;color:#00E5A0;letter-spacing:-1px;line-height:1;">${fmtN(followers)}</div>
-        <div style="font-size:9px;color:#4A5878;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:5px;">Followers</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;background:#0D1220;">
+      <div style="padding:32px 36px;border-right:1px solid #1E2D45;">
+        <div style="font-size:38px;font-weight:900;color:#00E5A0;letter-spacing:-1.5px;line-height:1;">${fmtN(followers)}</div>
+        <div style="font-size:10px;color:#4A5878;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-top:6px;">Followers</div>
       </div>
-      <div style="${BB}padding:22px 24px;border-right:1px solid #1E2D45;width:${W/3}px;">
-        <div style="font-size:28px;font-weight:900;color:#00E5A0;letter-spacing:-1px;line-height:1;">${gmv ? '$'+fmtN(gmv) : '—'}</div>
-        <div style="font-size:9px;color:#4A5878;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:5px;">Lifetime GMV</div>
+      <div style="padding:32px 36px;border-right:1px solid #1E2D45;">
+        <div style="font-size:38px;font-weight:900;color:#00E5A0;letter-spacing:-1.5px;line-height:1;">${gmv ? '$'+fmtN(gmv) : '—'}</div>
+        <div style="font-size:10px;color:#4A5878;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-top:6px;">Lifetime GMV</div>
       </div>
-      <div style="${BB}padding:22px 24px;width:${W/3}px;">
-        <div style="font-size:28px;font-weight:900;color:#F0F4FF;letter-spacing:-1px;line-height:1;">TikTok</div>
-        <div style="font-size:9px;color:#4A5878;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:5px;">Platform</div>
+      <div style="padding:32px 36px;">
+        <div style="font-size:38px;font-weight:900;color:#F0F4FF;letter-spacing:-1.5px;line-height:1;">TikTok</div>
+        <div style="font-size:10px;color:#4A5878;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-top:6px;">Platform</div>
       </div>
     </div>`;
 
   const footerHTML = `
-    <div style="${BB}padding:16px 32px;border-top:1px solid #1E2D45;display:flex;align-items:center;justify-content:space-between;background:#0D1220;width:${W}px;">
-      <div style="font-size:10px;color:#4A5878;">Available for brand partnerships · TikTok Shop Affiliate</div>
-      <div style="font-size:9px;color:#253450;font-weight:600;">retainerhq.io</div>
+    <div style="padding:22px 48px;border-top:1px solid #1E2D45;display:flex;align-items:center;justify-content:space-between;background:#0D1220;">
+      <div style="font-size:12px;color:#4A5878;">Available for brand partnerships · TikTok Shop Affiliate</div>
+      <div style="font-size:11px;color:#253450;font-weight:600;">retainerhq.io</div>
     </div>`;
 
-  // ── Build two-page template ───────────────────────────────────
-  const tpl = document.getElementById('mk-pdf-tpl');
-  const BASE = `color:#F0F4FF;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;${BB}width:${W}px;`;
-
-  const pkgCols = Math.min(pkgs.length, 4);
-  const pkgColW = Math.floor((W - 64 - (pkgCols-1)*10) / pkgCols);
-
-  const pg1HTML = `<div id="mkpdf-pg1" style="background:#080C14;${BASE}">
+  // Page 1: original layout, same as what worked
+  const pg1HTML = `<div style="background:#080C14;color:#F0F4FF;${FONT}width:800px;">
     ${headerHTML}
     ${statsHTML}
-    ${pkgs.length ? `<div style="${BB}padding:24px 32px;border-top:1px solid #1E2D45;background:#080C14;width:${W}px;">
-      <div style="font-size:9px;color:#4A5878;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:14px;">Retainer Packages</div>
-      <div style="display:flex;gap:10px;">${pkgs.map(p=>`<div style="${BB}width:${pkgColW}px;background:#111827;border:1px solid #1E2D45;border-radius:10px;padding:14px;text-align:center;flex-shrink:0;"><div style="font-size:20px;font-weight:900;color:#00E5A0;letter-spacing:-1px;">$${Number(p.price).toLocaleString()}</div><div style="font-size:9px;color:#4A5878;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:3px;">per month</div><div style="font-size:11px;color:#8896B3;margin-top:5px;font-weight:500;">${p.qty} videos / mo</div></div>`).join('')}</div>
+    ${pkgs.length ? `<div style="padding:36px 48px;border-top:1px solid #1E2D45;background:#080C14;">
+      <div style="font-size:10px;color:#4A5878;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:20px;">Retainer Packages</div>
+      <div style="display:grid;grid-template-columns:repeat(${Math.min(pkgs.length,4)},1fr);gap:14px;">${pkgHTML}</div>
     </div>` : ''}
     ${footerHTML}
   </div>`;
 
-  const vidW = Math.floor((W - 64 - 32) / 3);
+  // Page 2: videos
   const videoCardsHTML = window._topVideos.map((v, i) => {
-    if (!v.screenshot) return `<div style="width:${vidW}px;"></div>`;
+    if (!v.screenshot) return `<div></div>`;
     const views = document.getElementById('vviews-' + i).value.trim();
     const url   = document.getElementById('vurl-'   + i).value.trim();
-    return `<div style="${BB}width:${vidW}px;flex-shrink:0;">
-      <div style="${BB}position:relative;border-radius:10px;overflow:hidden;background:#111827;border:1px solid #1E2D45;width:${vidW}px;">
-        <img src="${v.screenshot}" style="width:${vidW}px;height:auto;display:block;" />
-        ${views ? `<div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.88));padding:24px 8px 8px;font-size:12px;font-weight:800;color:#fff;text-align:center;">👁 ${views}</div>` : ''}
+    return `<div>
+      <div style="position:relative;border-radius:12px;overflow:hidden;background:#111827;border:1px solid #1E2D45;">
+        <img src="${v.screenshot}" style="width:100%;height:auto;display:block;" />
+        ${views ? `<div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.88));padding:28px 10px 10px;font-size:14px;font-weight:800;color:#fff;text-align:center;">👁 ${views}</div>` : ''}
       </div>
-      ${url ? `<div style="margin-top:7px;font-size:9px;color:#4A5878;text-align:center;word-break:break-all;">🔗 ${url.replace(/^https?:\/\//,'')}</div>` : ''}
+      ${url ? `<div style="margin-top:8px;font-size:10px;color:#4A5878;text-align:center;word-break:break-all;">🔗 ${url.replace(/^https?:\/\//,'')}</div>` : ''}
     </div>`;
   }).join('');
 
-  const pg2HTML = hasVideos ? `<div id="mkpdf-pg2" style="background:#080C14;${BASE}">
+  const pg2HTML = `<div style="background:#080C14;color:#F0F4FF;${FONT}width:800px;">
     ${headerHTML}
-    <div style="${BB}padding:28px 32px 36px;background:#080C14;width:${W}px;">
-      <div style="font-size:9px;color:#4A5878;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:18px;">Top Videos</div>
-      <div style="display:flex;gap:16px;">${videoCardsHTML}</div>
+    <div style="padding:40px 48px 48px;background:#080C14;">
+      <div style="font-size:10px;color:#4A5878;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:24px;">Top Videos</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;">${videoCardsHTML}</div>
     </div>
     ${footerHTML}
-  </div>` : '';
-
-  tpl.style.cssText = `position:absolute;top:-99999px;left:0;display:block;width:${W}px;`;
-  tpl.innerHTML = pg1HTML + pg2HTML;
-
-  await new Promise(r => setTimeout(r, 350));
-
-  const captureOpts = { scale: 2, useCORS: true, backgroundColor: '#080C14', logging: false };
+  </div>`;
 
   try {
-    const pg1El   = document.getElementById('mkpdf-pg1');
-    // Use fixed W as page width — don't trust canvas.width which can vary
-    const canvas1 = await html2canvas(pg1El, { ...captureOpts });
-    const scale1  = canvas1.width / W;          // how many canvas px per template px
-    const h1pdf   = canvas1.height / scale1;    // template height in template px
+    // Capture page 1 using the exact original method
+    const canvas1 = await capturePage(pg1HTML);
+    const pw = canvas1.width / 2, ph1 = canvas1.height / 2;
 
     const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ unit: 'px', format: [W, h1pdf] });
-    pdf.addImage(canvas1.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, W, h1pdf);
+    const pdf = new jsPDF({ unit: 'px', format: [pw, ph1] });
+    pdf.addImage(canvas1.toDataURL('image/png'), 'PNG', 0, 0, pw, ph1);
 
+    // Capture page 2 only if there are videos
     if (hasVideos) {
-      const pg2El  = document.getElementById('mkpdf-pg2');
-      const canvas2 = await html2canvas(pg2El, { ...captureOpts });
-      const scale2  = canvas2.width / W;
-      const h2pdf   = canvas2.height / scale2;
-      pdf.addPage([W, h2pdf]);
-      pdf.addImage(canvas2.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, W, h2pdf);
+      const canvas2 = await capturePage(pg2HTML);
+      const ph2 = canvas2.height / 2;
+      pdf.addPage([pw, ph2]);
+      pdf.addImage(canvas2.toDataURL('image/png'), 'PNG', 0, 0, pw, ph2);
     }
 
     const safeName = fullName.replace(/\s+/g,'-').toLowerCase();
@@ -4634,7 +4637,7 @@ async function downloadMediaKitPDF() {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <!-- Hidden PDF template -->
-<div id="mk-pdf-tpl" style="position:absolute;top:-99999px;left:0;display:none;width:800px;"></div>
+<div id="mk-pdf-tpl" style="position:fixed;left:-9999px;top:0;display:none;z-index:-1;"></div>
 
 </body>
 </html>
