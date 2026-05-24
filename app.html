@@ -230,6 +230,45 @@
     .stat-card.c-yellow::after{ background: var(--yellow); }
     .stat-card.c-purple::after{ background: var(--purple); }
 
+    /* ── DEADLINE ALERTS ── */
+    .deadline-alerts { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .deadline-alert {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 16px; border-radius: 14px;
+      border: 1px solid; cursor: pointer;
+      transition: all .2s; animation: alertSlideIn .4s cubic-bezier(.4,0,.2,1) both;
+    }
+    .deadline-alert:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,.2); }
+    .deadline-alert.alert-red { background: rgba(248,113,113,.07); border-color: rgba(248,113,113,.25); }
+    .deadline-alert.alert-yellow { background: rgba(255,209,102,.07); border-color: rgba(255,209,102,.25); }
+    .deadline-alert.alert-blue { background: rgba(96,165,250,.07); border-color: rgba(96,165,250,.2); }
+    .alert-icon {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 17px;
+    }
+    .alert-red .alert-icon { background: rgba(248,113,113,.15); }
+    .alert-yellow .alert-icon { background: rgba(255,209,102,.15); }
+    .alert-blue .alert-icon { background: rgba(96,165,250,.12); }
+    .alert-body { flex: 1; }
+    .alert-title { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+    .alert-desc { font-size: 12px; color: var(--text3); line-height: 1.5; }
+    .alert-red .alert-title { color: #F87171; }
+    .alert-yellow .alert-title { color: var(--yellow); }
+    .alert-blue .alert-title { color: #60A5FA; }
+    .alert-action {
+      font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 7px;
+      border: none; cursor: pointer; flex-shrink: 0; align-self: center;
+      font-family: inherit; transition: all .15s;
+    }
+    .alert-red .alert-action { background: rgba(248,113,113,.2); color: #F87171; }
+    .alert-yellow .alert-action { background: rgba(255,209,102,.2); color: var(--yellow); }
+    .alert-blue .alert-action { background: rgba(96,165,250,.15); color: #60A5FA; }
+    .alert-action:hover { filter: brightness(1.2); }
+    @keyframes alertSlideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .stat-icon-wrap {
       display: inline-flex;
       align-items: center; justify-content: center;
@@ -1568,6 +1607,7 @@
 
     <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
+      <div class="deadline-alerts" id="deadline-alerts"></div>
       <div class="stats-grid">
         <div class="stat-card c-green">
           <div class="stat-icon-wrap">
@@ -2864,6 +2904,72 @@ function startOnboarding() {
   openAddModal();
 }
 
+function renderDeadlineAlerts(active) {
+  const container = document.getElementById('deadline-alerts');
+  container.innerHTML = '';
+  const today = new Date(); today.setHours(0,0,0,0);
+  const alerts = [];
+
+  active.forEach(c => {
+    if (!c.expiry) return;
+    const expiry = new Date(c.expiry); expiry.setHours(0,0,0,0);
+    const start  = c.start ? new Date(c.start) : null;
+    const daysRemaining = Math.ceil((expiry - today) / 86400000);
+    const videosRemaining = Math.max(0, c.videos - c.posted);
+
+    // ── EXPIRED ──
+    if (daysRemaining < 0 && videosRemaining > 0) {
+      alerts.push({ type: 'red', icon: '🚨', brand: c.brand, id: c.id,
+        title: `${c.brand} — Contract expired with ${videosRemaining} videos undelivered`,
+        desc: `This contract expired ${Math.abs(daysRemaining)} day${Math.abs(daysRemaining)!==1?'s':''} ago. Reach out to your contact to discuss outstanding deliverables.`,
+        action: 'View Contract' });
+      return;
+    }
+
+    // ── BEHIND PACE ──
+    if (start && daysRemaining > 0 && c.videos > 0) {
+      const totalDays = Math.ceil((expiry - start) / 86400000);
+      const daysElapsed = Math.ceil((today - start) / 86400000);
+      if (totalDays > 0 && daysElapsed > 0) {
+        const expectedByNow = Math.floor((daysElapsed / totalDays) * c.videos);
+        const behindBy = expectedByNow - c.posted;
+        if (behindBy >= 2) {
+          // How many videos needed this week to get back on track
+          const videosPerDay = videosRemaining / daysRemaining;
+          const needThisWeek = Math.ceil(videosPerDay * 7);
+          alerts.push({ type: 'red', icon: '⚠️', brand: c.brand, id: c.id,
+            title: `${c.brand} — You're ${behindBy} video${behindBy!==1?'s':''} behind pace`,
+            desc: `${c.posted}/${c.videos} posted with ${daysRemaining} days left. You need ~${needThisWeek} video${needThisWeek!==1?'s':''} this week to stay on track.`,
+            action: 'View Contract' });
+          return;
+        }
+      }
+    }
+
+    // ── EXPIRING SOON (7 days) ──
+    if (daysRemaining <= 7 && daysRemaining >= 0) {
+      alerts.push({ type: daysRemaining <= 3 ? 'red' : 'yellow', icon: daysRemaining <= 3 ? '🔥' : '⏰', brand: c.brand, id: c.id,
+        title: `${c.brand} — ${daysRemaining === 0 ? 'Expires today' : `Expires in ${daysRemaining} day${daysRemaining!==1?'s':''}`}`,
+        desc: `${videosRemaining} video${videosRemaining!==1?'s':''} still remaining. ${videosRemaining === 0 ? 'All delivered — consider sending a renewal pitch.' : 'Finish up your deliverables before the deadline.'}`,
+        action: videosRemaining === 0 ? 'Send Renewal' : 'View Contract' });
+    }
+  });
+
+  alerts.forEach((a, i) => {
+    const div = document.createElement('div');
+    div.className = `deadline-alert alert-${a.type}`;
+    div.style.animationDelay = (i * 0.08) + 's';
+    div.innerHTML = `
+      <div class="alert-icon">${a.icon}</div>
+      <div class="alert-body">
+        <div class="alert-title">${a.title}</div>
+        <div class="alert-desc">${a.desc}</div>
+      </div>
+      <button class="alert-action" onclick="openDetail('${a.id}')">${a.action}</button>`;
+    container.appendChild(div);
+  });
+}
+
 function renderDashboard() {
   checkOnboarding();
   const active = contracts.filter(c => c.status === 'active');
@@ -2871,6 +2977,7 @@ function renderDashboard() {
   const avg = contracts.length ? Math.round(contracts.reduce((s,c)=>s+c.value,0) / contracts.length) : 0;
   const totalValue = active.reduce((s,c) => s + c.value, 0);
 
+  renderDeadlineAlerts(active);
   document.getElementById('stat-total').textContent = '$' + totalValue.toLocaleString();
   document.getElementById('stat-active').textContent = active.length;
   document.getElementById('stat-videos').textContent = videosLeft;
