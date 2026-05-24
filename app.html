@@ -4471,10 +4471,14 @@ setTimeout(() => initCustomDropdowns(), 300);
 
 
 /* ── MEDIA KIT PDF ── */
-function downloadMediaKitPDF() {
+async function downloadMediaKitPDF() {
   const btn = document.getElementById('mk-dl-btn');
+  const restoreBtn = () => {
+    btn.disabled = false;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:13px;height:13px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF`;
+  };
   btn.disabled = true;
-  btn.textContent = 'Opening…';
+  btn.textContent = 'Generating…';
 
   // ── Gather data ──────────────────────────────────────────────
   const handle    = document.getElementById('kit-handle').value.trim() || '@handle';
@@ -4485,7 +4489,6 @@ function downloadMediaKitPDF() {
   const fullName  = mediaKitProfile.name || 'Creator';
   const initials  = fullName.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() || 'CR';
   const rates     = mediaKitProfile.rates_data || JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
-  const hasVideos = window._topVideos.some(v => v.screenshot);
 
   const pkgs = [
     { qty: rates.pkg1qty, price: rates.pkg1price },
@@ -4497,10 +4500,10 @@ function downloadMediaKitPDF() {
   const fmtN = n => { const x=parseInt(n); if(!x) return '—'; if(x>=1e6) return (x/1e6).toFixed(1)+'M'; if(x>=1000) return (x/1000).toFixed(1)+'K'; return String(x); };
 
   const pkgHTML = pkgs.map(p =>
-    `<div class="pkg-card">
-      <div class="pkg-price">$${Number(p.price).toLocaleString()}</div>
-      <div class="pkg-label">per month</div>
-      <div class="pkg-qty">${p.qty} videos / mo</div>
+    `<div class="kpkg-card">
+      <div class="kpkg-price">$${Number(p.price).toLocaleString()}</div>
+      <div class="kpkg-label">per month</div>
+      <div class="kpkg-qty">${p.qty} videos / mo</div>
     </div>`
   ).join('');
 
@@ -4508,148 +4511,172 @@ function downloadMediaKitPDF() {
     if (!v.screenshot) return '';
     const views = document.getElementById('vviews-' + i).value.trim();
     const url   = document.getElementById('vurl-'   + i).value.trim();
-    return `<div class="vid-card">
-      <div class="vid-thumb">
+    return `<div class="kvid-card">
+      <div class="kvid-thumb">
         <img src="${v.screenshot}" />
-        ${views ? `<div class="vid-views">👁 ${views}</div>` : ''}
+        ${views ? `<div class="kvid-views">👁 ${views}</div>` : ''}
       </div>
-      ${url ? `<div class="vid-url">🔗 ${url.replace(/^https?:\/\//,'')}</div>` : ''}
+      ${url ? `<div class="kvid-url">🔗 ${url.replace(/^https?:\/\//,'')}</div>` : ''}
     </div>`;
   }).join('');
 
   const hasVidCards = videoCardsHTML.trim().length > 0;
 
-  const fullHTML = `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  @page { margin: 0; size: auto; }
-  @media print {
-    html, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .page-break { page-break-before: always; }
+  // ── Load html2pdf.js if not already present ───────────────────
+  if (!window.html2pdf) {
+    try {
+      await new Promise((res, rej) => {
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      });
+    } catch(e) {
+      showToast('❌ Could not load PDF library'); restoreBtn(); return;
+    }
   }
-  body {
-    background: #080C14;
-    color: #F0F4FF;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  .page { width: 100%; background: #080C14; }
-  /* Header */
-  .hdr { background: linear-gradient(135deg,#0D1220,#111827); padding: 40px; border-bottom: 1px solid #1E2D45; }
-  .hdr-row { display: flex; align-items: flex-start; gap: 20px; ${bio ? 'margin-bottom:20px;' : ''} }
-  .avatar { width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#00E5A0,#00C88A);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#000;flex-shrink:0; }
-  .hdr-info { flex: 1; }
-  .hdr-name { font-size: 28px; font-weight: 900; letter-spacing: -.5px; line-height: 1.1; }
-  .hdr-handle { font-size: 14px; color: #00E5A0; margin-top: 4px; font-weight: 700; }
-  .hdr-niche { display:inline-block;margin-top:9px;background:rgba(0,229,160,.12);color:#00E5A0;border:1px solid rgba(0,229,160,.28);border-radius:20px;padding:3px 13px;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase; }
-  .hdr-brand { text-align:right;flex-shrink:0; }
-  .hdr-brand-label { font-size:9px;color:#253450;font-weight:700;letter-spacing:.7px;text-transform:uppercase; }
-  .hdr-brand-name { font-size:16px;font-weight:900;color:#00E5A0; }
-  .hdr-brand-url { font-size:9px;color:#253450;margin-top:1px; }
-  .hdr-bio { font-size:13px;color:#8896B3;line-height:1.7; }
-  /* Stats */
-  .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; background: #0D1220; }
-  .stat { padding: 28px 32px; border-right: 1px solid #1E2D45; }
-  .stat:last-child { border-right: none; }
-  .stat-val { font-size: 34px; font-weight: 900; color: #00E5A0; letter-spacing: -1.5px; line-height: 1; }
-  .stat-val.white { color: #F0F4FF; }
-  .stat-lbl { font-size: 9px; color: #4A5878; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase; margin-top: 5px; }
-  /* Packages */
-  .pkgs-section { padding: 32px 40px; border-top: 1px solid #1E2D45; background: #080C14; }
-  .section-lbl { font-size: 9px; color: #4A5878; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; margin-bottom: 16px; }
-  .pkgs-grid { display: grid; grid-template-columns: repeat(${Math.min(pkgs.length||1,4)}, 1fr); gap: 12px; }
-  .pkg-card { background:#111827;border:1px solid #1E2D45;border-radius:10px;padding:16px;text-align:center; }
-  .pkg-price { font-size:24px;font-weight:900;color:#00E5A0;letter-spacing:-1px; }
-  .pkg-label { font-size:9px;color:#4A5878;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:3px; }
-  .pkg-qty { font-size:12px;color:#8896B3;margin-top:6px;font-weight:500; }
-  /* Videos */
-  .vids-section { padding: 32px 40px 40px; background: #080C14; }
-  .vids-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-  .vid-card {}
-  .vid-thumb { position:relative;border-radius:10px;overflow:hidden;background:#111827;border:1px solid #1E2D45; }
-  .vid-thumb img { width:100%;height:auto;display:block; }
-  .vid-views { position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.88));padding:24px 8px 8px;font-size:13px;font-weight:800;color:#fff;text-align:center; }
-  .vid-url { margin-top:7px;font-size:9px;color:#4A5878;text-align:center;word-break:break-all; }
-  /* Footer */
-  .footer { padding:18px 40px;border-top:1px solid #1E2D45;display:flex;align-items:center;justify-content:space-between;background:#0D1220; }
-  .footer-left { font-size:11px;color:#4A5878; }
-  .footer-right { font-size:10px;color:#253450;font-weight:600; }
-</style>
-</head>
-<body>
 
-<!-- PAGE 1 -->
-<div class="page">
-  <div class="hdr">
-    <div class="hdr-row">
-      <div class="avatar">${initials}</div>
-      <div class="hdr-info">
-        <div class="hdr-name">${fullName}</div>
-        <div class="hdr-handle">${handle.startsWith('@') ? handle : '@'+handle}</div>
-        ${niche ? `<span class="hdr-niche">${niche}</span>` : ''}
+  // ── Inject scoped CSS ─────────────────────────────────────────
+  const styleEl = document.createElement('style');
+  styleEl.id = 'k-pdf-tmp-style';
+  styleEl.textContent = `
+    .kpdf-wrap*,.kpdf-wrap*::before,.kpdf-wrap*::after{box-sizing:border-box;margin:0;padding:0;}
+    .kpdf-wrap{background:#080C14;color:#F0F4FF;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;width:816px;}
+    .kpdf-wrap .kpage{width:816px;background:#080C14;}
+    .kpdf-wrap .page-break{page-break-before:always;}
+    .kpdf-wrap .khdr{background:linear-gradient(135deg,#0D1220,#111827);padding:40px;border-bottom:1px solid #1E2D45;}
+    .kpdf-wrap .khdr-row{display:flex;align-items:flex-start;gap:20px;${bio?'margin-bottom:20px;':''}}
+    .kpdf-wrap .kavatar{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#00E5A0,#00C88A);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#000;flex-shrink:0;}
+    .kpdf-wrap .khdr-info{flex:1;}
+    .kpdf-wrap .khdr-name{font-size:28px;font-weight:900;letter-spacing:-.5px;line-height:1.1;}
+    .kpdf-wrap .khdr-handle{font-size:14px;color:#00E5A0;margin-top:4px;font-weight:700;}
+    .kpdf-wrap .khdr-niche{display:inline-block;margin-top:9px;background:rgba(0,229,160,.12);color:#00E5A0;border:1px solid rgba(0,229,160,.28);border-radius:20px;padding:3px 13px;font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;}
+    .kpdf-wrap .khdr-brand{text-align:right;flex-shrink:0;}
+    .kpdf-wrap .khdr-brand-label{font-size:9px;color:#253450;font-weight:700;letter-spacing:.7px;text-transform:uppercase;}
+    .kpdf-wrap .khdr-brand-name{font-size:16px;font-weight:900;color:#00E5A0;}
+    .kpdf-wrap .khdr-brand-url{font-size:9px;color:#253450;margin-top:1px;}
+    .kpdf-wrap .khdr-bio{font-size:13px;color:#8896B3;line-height:1.7;}
+    .kpdf-wrap .kstats{display:grid;grid-template-columns:1fr 1fr 1fr;background:#0D1220;}
+    .kpdf-wrap .kstat{padding:28px 32px;border-right:1px solid #1E2D45;}
+    .kpdf-wrap .kstat:last-child{border-right:none;}
+    .kpdf-wrap .kstat-val{font-size:34px;font-weight:900;color:#00E5A0;letter-spacing:-1.5px;line-height:1;}
+    .kpdf-wrap .kstat-val.white{color:#F0F4FF;}
+    .kpdf-wrap .kstat-lbl{font-size:9px;color:#4A5878;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;margin-top:5px;}
+    .kpdf-wrap .kpkgs-section{padding:32px 40px;border-top:1px solid #1E2D45;background:#080C14;}
+    .kpdf-wrap .ksection-lbl{font-size:9px;color:#4A5878;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;margin-bottom:16px;}
+    .kpdf-wrap .kpkgs-grid{display:grid;grid-template-columns:repeat(${Math.min(pkgs.length||1,4)},1fr);gap:12px;}
+    .kpdf-wrap .kpkg-card{background:#111827;border:1px solid #1E2D45;border-radius:10px;padding:16px;text-align:center;}
+    .kpdf-wrap .kpkg-price{font-size:24px;font-weight:900;color:#00E5A0;letter-spacing:-1px;}
+    .kpdf-wrap .kpkg-label{font-size:9px;color:#4A5878;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:3px;}
+    .kpdf-wrap .kpkg-qty{font-size:12px;color:#8896B3;margin-top:6px;font-weight:500;}
+    .kpdf-wrap .kvids-section{padding:32px 40px 40px;background:#080C14;}
+    .kpdf-wrap .kvids-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+    .kpdf-wrap .kvid-thumb{position:relative;border-radius:10px;overflow:hidden;background:#111827;border:1px solid #1E2D45;}
+    .kpdf-wrap .kvid-thumb img{width:100%;height:auto;display:block;}
+    .kpdf-wrap .kvid-views{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.88));padding:24px 8px 8px;font-size:13px;font-weight:800;color:#fff;text-align:center;}
+    .kpdf-wrap .kvid-url{margin-top:7px;font-size:9px;color:#4A5878;text-align:center;word-break:break-all;}
+    .kpdf-wrap .kfooter{padding:18px 40px;border-top:1px solid #1E2D45;display:flex;align-items:center;justify-content:space-between;background:#0D1220;}
+    .kpdf-wrap .kfooter-left{font-size:11px;color:#4A5878;}
+    .kpdf-wrap .kfooter-right{font-size:10px;color:#253450;font-weight:600;}
+  `;
+  document.head.appendChild(styleEl);
+
+  // ── Build off-screen wrapper ───────────────────────────────────
+  const wrapper = document.createElement('div');
+  wrapper.className = 'kpdf-wrap';
+  wrapper.style.cssText = 'position:fixed;top:0;left:0;width:816px;opacity:0;pointer-events:none;z-index:-1;';
+  wrapper.innerHTML = `
+  <div class="kpage">
+    <div class="khdr">
+      <div class="khdr-row">
+        <div class="kavatar">${initials}</div>
+        <div class="khdr-info">
+          <div class="khdr-name">${fullName}</div>
+          <div class="khdr-handle">${handle.startsWith('@')?handle:'@'+handle}</div>
+          ${niche?`<span class="khdr-niche">${niche}</span>`:''}
+        </div>
+        <div class="khdr-brand">
+          <div class="khdr-brand-label">Built with</div>
+          <div class="khdr-brand-name">RetainerHQ</div>
+          <div class="khdr-brand-url">retainerhq.io</div>
+        </div>
       </div>
-      <div class="hdr-brand">
-        <div class="hdr-brand-label">Built with</div>
-        <div class="hdr-brand-name">RetainerHQ</div>
-        <div class="hdr-brand-url">retainerhq.io</div>
-      </div>
+      ${bio?`<div class="khdr-bio">${bio}</div>`:''}
     </div>
-    ${bio ? `<div class="hdr-bio">${bio}</div>` : ''}
-  </div>
-  <div class="stats">
-    <div class="stat"><div class="stat-val">${fmtN(followers)}</div><div class="stat-lbl">Followers</div></div>
-    <div class="stat"><div class="stat-val">${gmv ? '$'+fmtN(gmv) : '—'}</div><div class="stat-lbl">Lifetime GMV</div></div>
-    <div class="stat"><div class="stat-val white">TikTok</div><div class="stat-lbl">Platform</div></div>
-  </div>
-  ${pkgs.length ? `<div class="pkgs-section"><div class="section-lbl">Retainer Packages</div><div class="pkgs-grid">${pkgHTML}</div></div>` : ''}
-  <div class="footer">
-    <div class="footer-left">Available for brand partnerships · TikTok Shop Affiliate</div>
-    <div class="footer-right">retainerhq.io</div>
-  </div>
-</div>
-
-${hasVidCards ? `<!-- PAGE 2 -->
-<div class="page page-break">
-  <div class="hdr">
-    <div class="hdr-row">
-      <div class="avatar">${initials}</div>
-      <div class="hdr-info">
-        <div class="hdr-name">${fullName}</div>
-        <div class="hdr-handle">${handle.startsWith('@') ? handle : '@'+handle}</div>
-      </div>
-      <div class="hdr-brand">
-        <div class="hdr-brand-label">Built with</div>
-        <div class="hdr-brand-name">RetainerHQ</div>
-        <div class="hdr-brand-url">retainerhq.io</div>
-      </div>
+    <div class="kstats">
+      <div class="kstat"><div class="kstat-val">${fmtN(followers)}</div><div class="kstat-lbl">Followers</div></div>
+      <div class="kstat"><div class="kstat-val">${gmv?'$'+fmtN(gmv):'—'}</div><div class="kstat-lbl">Lifetime GMV</div></div>
+      <div class="kstat"><div class="kstat-val white">TikTok</div><div class="kstat-lbl">Platform</div></div>
+    </div>
+    ${pkgs.length?`<div class="kpkgs-section"><div class="ksection-lbl">Retainer Packages</div><div class="kpkgs-grid">${pkgHTML}</div></div>`:''}
+    <div class="kfooter">
+      <div class="kfooter-left">Available for brand partnerships · TikTok Shop Affiliate</div>
+      <div class="kfooter-right">retainerhq.io</div>
     </div>
   </div>
-  <div class="vids-section">
-    <div class="section-lbl">Top Videos</div>
-    <div class="vids-grid">${videoCardsHTML}</div>
-  </div>
-  <div class="footer">
-    <div class="footer-left">Available for brand partnerships · TikTok Shop Affiliate</div>
-    <div class="footer-right">retainerhq.io</div>
-  </div>
-</div>` : ''}
+  ${hasVidCards?`
+  <div class="kpage page-break">
+    <div class="khdr">
+      <div class="khdr-row">
+        <div class="kavatar">${initials}</div>
+        <div class="khdr-info">
+          <div class="khdr-name">${fullName}</div>
+          <div class="khdr-handle">${handle.startsWith('@')?handle:'@'+handle}</div>
+        </div>
+        <div class="khdr-brand">
+          <div class="khdr-brand-label">Built with</div>
+          <div class="khdr-brand-name">RetainerHQ</div>
+          <div class="khdr-brand-url">retainerhq.io</div>
+        </div>
+      </div>
+    </div>
+    <div class="kvids-section">
+      <div class="ksection-lbl">Top Videos</div>
+      <div class="kvids-grid">${videoCardsHTML}</div>
+    </div>
+    <div class="kfooter">
+      <div class="kfooter-left">Available for brand partnerships · TikTok Shop Affiliate</div>
+      <div class="kfooter-right">retainerhq.io</div>
+    </div>
+  </div>`:''}`;
+  document.body.appendChild(wrapper);
 
-<script>window.onload = () => { window.print(); };<\/script>
-</body>
-</html>`;
+  // Wait for images
+  await Promise.all(Array.from(wrapper.querySelectorAll('img')).map(img =>
+    new Promise(r => img.complete ? r() : (img.onload = r, img.onerror = r))
+  ));
 
-  const blob = new Blob([fullHTML], { type: 'text/html' });
-  const url  = URL.createObjectURL(blob);
-  window.open(url, '_blank');
-  setTimeout(() => URL.revokeObjectURL(url), 30000);
+  // ── Generate & download PDF ────────────────────────────────────
+  const cleanup = () => {
+    try { document.head.removeChild(styleEl); } catch(e){}
+    try { document.body.removeChild(wrapper); } catch(e){}
+  };
 
-  showToast('📄 Save as PDF in the print dialog');
-  btn.disabled = false;
-  btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:13px;height:13px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF`;
+  html2pdf().from(wrapper).set({
+    margin: 0,
+    filename: 'RetainerHQ_Media_Kit.pdf',
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      width: 816,
+      windowWidth: 816,
+      backgroundColor: '#080C14',
+      logging: false,
+    },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+    pagebreak: { mode: 'css', before: '.page-break' }
+  }).save().then(() => {
+    cleanup();
+    showToast('✅ PDF downloaded!');
+    restoreBtn();
+  }).catch(e => {
+    console.error('PDF error:', e);
+    cleanup();
+    showToast('❌ PDF failed — try again');
+    restoreBtn();
+  });
 }
 </script>
 
