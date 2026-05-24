@@ -678,6 +678,63 @@
       display: flex; align-items: center; gap: 6px;
     }
     .output-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+    /* ── EMAIL GENERATING ANIMATION ── */
+    .email-generating {
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      gap: 20px; padding: 48px 24px; min-height: 280px;
+    }
+    .email-generating.active { display: flex; }
+    .gen-orb-wrap { position: relative; width: 72px; height: 72px; }
+    .gen-orb {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(0,229,160,.6), rgba(0,229,160,.05));
+      border: 1.5px solid rgba(0,229,160,.3);
+      animation: orbPulse 2s ease-in-out infinite;
+      box-shadow: 0 0 30px rgba(0,229,160,.2);
+    }
+    .gen-orb-ring {
+      position: absolute; inset: -8px; border-radius: 50%;
+      border: 1.5px solid rgba(0,229,160,.15);
+      animation: orbRing 2s ease-in-out infinite;
+    }
+    .gen-orb-ring2 {
+      position: absolute; inset: -18px; border-radius: 50%;
+      border: 1px solid rgba(0,229,160,.07);
+      animation: orbRing 2.5s ease-in-out infinite reverse;
+    }
+    @keyframes orbPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(0,229,160,.2); }
+      50% { transform: scale(1.08); box-shadow: 0 0 50px rgba(0,229,160,.4); }
+    }
+    @keyframes orbRing {
+      0%, 100% { transform: scale(1); opacity: .6; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+    .gen-lines { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 320px; }
+    .gen-line {
+      height: 10px; border-radius: 6px;
+      background: linear-gradient(90deg, var(--card2) 25%, rgba(0,229,160,.15) 50%, var(--card2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.6s infinite;
+    }
+    .gen-line:nth-child(1) { width: 85%; animation-delay: 0s; }
+    .gen-line:nth-child(2) { width: 100%; animation-delay: .15s; }
+    .gen-line:nth-child(3) { width: 72%; animation-delay: .3s; }
+    .gen-line:nth-child(4) { width: 90%; animation-delay: .45s; height: 8px; margin-top: 4px; }
+    .gen-line:nth-child(5) { width: 60%; animation-delay: .6s; height: 8px; }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .gen-label {
+      font-size: 13px; font-weight: 700; color: var(--text3);
+      letter-spacing: .3px;
+      animation: genLabelPulse 2s ease-in-out infinite;
+    }
+    @keyframes genLabelPulse {
+      0%, 100% { opacity: .5; }
+      50% { opacity: 1; color: var(--accent); }
+    }
     .email-body {
       width: 100%;
       background: transparent;
@@ -1729,11 +1786,27 @@
 
       <div class="email-output" id="email-output" style="display:none;">
         <div class="email-output-header">
-          <div class="email-output-label"><div class="output-dot"></div>Generated Email</div>
-          <button class="btn btn-ghost" style="padding:5px 12px;font-size:11px;" onclick="copyEmail()">
+          <div class="email-output-label"><div class="output-dot" id="output-dot"></div><span id="output-header-label">Generated Email</span></div>
+          <button class="btn btn-ghost" style="padding:5px 12px;font-size:11px;" id="copy-btn" onclick="copyEmail()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:12px;height:12px;"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             Copy
           </button>
+        </div>
+        <!-- Generating animation -->
+        <div class="email-generating" id="email-generating">
+          <div class="gen-orb-wrap">
+            <div class="gen-orb"></div>
+            <div class="gen-orb-ring"></div>
+            <div class="gen-orb-ring2"></div>
+          </div>
+          <div class="gen-lines">
+            <div class="gen-line"></div>
+            <div class="gen-line"></div>
+            <div class="gen-line"></div>
+            <div class="gen-line"></div>
+            <div class="gen-line"></div>
+          </div>
+          <div class="gen-label">Crafting your email...</div>
         </div>
         <textarea class="email-body" id="email-text" rows="12"></textarea>
       </div>
@@ -3223,10 +3296,16 @@ async function generateEmail(mode) {
   // Pull GMV: rates page first, then media kit profile
   const gmvOverride = ratesGmv || mediaKitProfile.total_gmv || mediaKitProfile.last_30d_gmv || '';
 
-  // Show loading state with debug info
+  // Show generating animation
   const outputEl = document.getElementById('email-output');
   const textEl   = document.getElementById('email-text');
-  textEl.value = 'Generating your email...';
+  const genEl    = document.getElementById('email-generating');
+  const copyBtn  = document.getElementById('copy-btn');
+  const headerLabel = document.getElementById('output-header-label');
+  textEl.style.display = 'none';
+  copyBtn.style.display = 'none';
+  headerLabel.textContent = 'Generating...';
+  genEl.classList.add('active');
   outputEl.style.display = 'block';
   outputEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
@@ -3259,6 +3338,11 @@ async function generateEmail(mode) {
     await sb.from('profiles').update({ email_gen_count: window._emailGenCount }).eq('id', currentUser.id);
   } catch(e) {
     textEl.value = 'Error generating email: ' + e.message;
+  } finally {
+    genEl.classList.remove('active');
+    textEl.style.display = 'block';
+    copyBtn.style.display = '';
+    headerLabel.textContent = 'Generated Email';
   }
 }
 
