@@ -230,6 +230,95 @@
     .stat-card.c-yellow::after{ background: var(--yellow); }
     .stat-card.c-purple::after{ background: var(--purple); }
 
+    /* ── WELCOME HERO ── */
+    .welcome-hero {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 48px 24px 40px; text-align: center; gap: 32px;
+    }
+    .welcome-headline { font-size: clamp(24px,4vw,34px); font-weight: 900; letter-spacing: -.6px; line-height: 1.15; }
+    .welcome-headline span { color: var(--accent); }
+    .welcome-sub { font-size: 14px; color: var(--text3); max-width: 400px; line-height: 1.6; margin-top: -16px; }
+    .welcome-steps { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 640px; }
+    .welcome-step {
+      flex: 1; min-width: 160px; max-width: 200px;
+      background: var(--card); border: 1px solid var(--border2);
+      border-radius: 18px; padding: 20px 16px; position: relative; overflow: hidden;
+    }
+    /* continuous shine sweep */
+    .welcome-step::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(105deg, transparent 35%, rgba(0,229,160,.08) 50%, transparent 65%);
+      background-size: 200% 100%;
+      animation: stepShine 2.8s ease-in-out infinite;
+    }
+    .welcome-step:nth-child(2)::before { animation-delay: .6s; }
+    .welcome-step:nth-child(3)::before { animation-delay: 1.2s; }
+    @keyframes stepShine {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    /* glowing border pulse */
+    .welcome-step::after {
+      content: ''; position: absolute; inset: -1px;
+      border-radius: 18px;
+      background: transparent;
+      border: 1.5px solid transparent;
+      animation: stepGlow 2.8s ease-in-out infinite;
+    }
+    .welcome-step:nth-child(2)::after { animation-delay: .6s; }
+    .welcome-step:nth-child(3)::after { animation-delay: 1.2s; }
+    @keyframes stepGlow {
+      0%, 100% { border-color: transparent; box-shadow: none; }
+      50% { border-color: rgba(0,229,160,.35); box-shadow: 0 0 20px rgba(0,229,160,.15), inset 0 0 20px rgba(0,229,160,.04); }
+    }
+    .step-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(0,229,160,.12); border: 1.5px solid rgba(0,229,160,.3);
+      color: var(--accent); font-size: 12px; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 12px;
+    }
+    .step-icon { font-size: 24px; margin-bottom: 8px; }
+    .step-title { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .step-desc { font-size: 11px; color: var(--text3); line-height: 1.5; }
+    .step-arrow { font-size: 18px; color: var(--border2); align-self: center; flex-shrink: 0; margin-top: -24px; }
+    .welcome-stats { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; }
+    .welcome-stat { text-align: center; }
+    .welcome-stat-val {
+      font-size: 26px; font-weight: 900; color: var(--accent); letter-spacing: -.5px;
+      animation: statPulse 3s ease-in-out infinite;
+    }
+    .welcome-stat:nth-child(2) .welcome-stat-val { animation-delay: 1s; color: #60A5FA; }
+    .welcome-stat:nth-child(3) .welcome-stat-val { animation-delay: 2s; color: var(--yellow); }
+    @keyframes statPulse {
+      0%, 100% { opacity: .7; }
+      50% { opacity: 1; filter: drop-shadow(0 0 8px currentColor); }
+    }
+    .welcome-stat-label { font-size: 11px; color: var(--text3); font-weight: 600; margin-top: 2px; letter-spacing: .3px; }
+    .welcome-cta {
+      background: var(--accent); color: #000; border: none;
+      border-radius: 14px; padding: 15px 36px;
+      font-size: 15px; font-weight: 900; font-family: inherit;
+      cursor: pointer; letter-spacing: -.2px;
+      position: relative; overflow: hidden;
+      animation: ctaGlow 2s ease-in-out infinite;
+    }
+    @keyframes ctaGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(0,229,160,.3); }
+      50% { box-shadow: 0 0 40px rgba(0,229,160,.6), 0 4px 20px rgba(0,229,160,.4); }
+    }
+    .welcome-cta::before {
+      content: ''; position: absolute; top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
+      animation: ctaShine 2.5s ease-in-out infinite;
+    }
+    @keyframes ctaShine {
+      0% { left: -100%; }
+      50%, 100% { left: 150%; }
+    }
+    .welcome-cta:hover { background: #00f0a8; transform: translateY(-2px); }
+
     /* ── DEADLINE ALERTS ── */
     .deadline-alerts { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
     .deadline-alert {
@@ -461,6 +550,36 @@
       font-family: inherit; outline: none; width: 140px;
       box-shadow: 0 0 0 3px rgba(0,229,160,.12);
     }
+    /* floating edit panel */
+    .field-edit-panel {
+      position: absolute; right: 0; z-index: 50;
+      background: var(--card); border: 1.5px solid var(--accent);
+      border-radius: 14px; padding: 14px 16px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.5);
+      display: flex; flex-direction: column; gap: 10px; min-width: 220px;
+      animation: wizFadeIn .2s ease forwards;
+    }
+    .field-edit-panel input, .field-edit-panel select {
+      background: var(--card2); border: 1.5px solid var(--border2);
+      border-radius: 8px; padding: 9px 12px;
+      font-size: 14px; font-weight: 600; color: var(--text);
+      font-family: inherit; outline: none; width: 100%; box-sizing: border-box;
+      transition: border-color .15s;
+    }
+    .field-edit-panel input:focus, .field-edit-panel select:focus { border-color: var(--accent); }
+    .field-edit-actions { display: flex; gap: 8px; }
+    .field-edit-save {
+      flex: 1; background: var(--accent); color: #000; border: none;
+      border-radius: 8px; padding: 8px; font-size: 13px; font-weight: 800;
+      font-family: inherit; cursor: pointer; transition: all .15s;
+    }
+    .field-edit-save:hover { background: #00f0a8; }
+    .field-edit-cancel {
+      background: var(--card2); color: var(--text3); border: 1px solid var(--border2);
+      border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: 700;
+      font-family: inherit; cursor: pointer;
+    }
+    .d-editable { position: relative; }
 
     .checklist { list-style: none; }
     .check-item {
@@ -1618,6 +1737,52 @@
 
     <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
+
+      <!-- WELCOME HERO (shown when no contracts) -->
+      <div class="welcome-hero" id="dashboard-welcome" style="display:none;">
+        <div>
+          <div class="welcome-headline">Your first retainer is<br><span>one email away.</span></div>
+          <div class="welcome-sub">Add your first brand deal and let RetainerHQ keep you on track, on pace, and paid.</div>
+        </div>
+
+        <div class="welcome-steps">
+          <div class="welcome-step">
+            <div class="step-icon">💰</div>
+            <div class="step-title">Set Your Rates</div>
+            <div class="step-desc">Fill in your My Rates page so every pitch email uses your real numbers.</div>
+          </div>
+          <div class="step-arrow">→</div>
+          <div class="welcome-step">
+            <div class="step-icon">✉️</div>
+            <div class="step-title">Generate Your Pitch</div>
+            <div class="step-desc">Use the AI email generator to send a professional retainer pitch in seconds.</div>
+          </div>
+          <div class="step-arrow">→</div>
+          <div class="welcome-step">
+            <div class="step-icon">🤝</div>
+            <div class="step-title">Land the Deal</div>
+            <div class="step-desc">Add the contract here and track every video, deadline, and payment.</div>
+          </div>
+        </div>
+
+        <div class="welcome-stats">
+          <div class="welcome-stat">
+            <div class="welcome-stat-val">$3,200</div>
+            <div class="welcome-stat-label">Avg monthly retainer</div>
+          </div>
+          <div class="welcome-stat">
+            <div class="welcome-stat-val">203+</div>
+            <div class="welcome-stat-label">Creators on platform</div>
+          </div>
+          <div class="welcome-stat">
+            <div class="welcome-stat-val">$0</div>
+            <div class="welcome-stat-label">Cost to join</div>
+          </div>
+        </div>
+
+        <button class="welcome-cta" onclick="openAddModal()">+ Add Your First Contract</button>
+      </div>
+
       <div class="deadline-alerts" id="deadline-alerts"></div>
       <div class="stats-grid">
         <div class="stat-card c-green">
@@ -2995,17 +3160,27 @@ function renderDashboard() {
   document.getElementById('stat-videos').textContent = videosLeft;
   document.getElementById('stat-avg').textContent = avg ? '$' + avg.toLocaleString() : '$0';
 
-  const tbody = document.getElementById('dashboard-contracts');
-  tbody.innerHTML = '';
+  const statsGrid = document.querySelector('#page-dashboard .stats-grid');
+  const sectionHeader = document.querySelector('#page-dashboard .section-header');
+  const tableWrap = document.querySelector('#page-dashboard .table-wrap');
+  const welcomeEl = document.getElementById('dashboard-welcome');
+
   if (!contracts.length) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:50px 20px;color:var(--text3);font-size:13px;">
-      <div style="margin-bottom:10px;font-size:28px;">📋</div>
-      <div style="font-weight:600;color:var(--text2);margin-bottom:6px;">No contracts yet</div>
-      <div style="margin-bottom:16px;">Add your first brand deal to get started.</div>
-      <button class="btn btn-primary" onclick="openAddModal()">+ Add First Contract</button>
-    </td></tr>`;
+    if (statsGrid) statsGrid.style.display = 'none';
+    if (sectionHeader) sectionHeader.style.display = 'none';
+    if (tableWrap) tableWrap.style.display = 'none';
+    if (welcomeEl) welcomeEl.style.display = 'flex';
     return;
   }
+
+  if (statsGrid) statsGrid.style.display = '';
+  if (sectionHeader) sectionHeader.style.display = '';
+  if (tableWrap) tableWrap.style.display = '';
+  if (welcomeEl) welcomeEl.style.display = 'none';
+
+  const tbody = document.getElementById('dashboard-contracts');
+  tbody.innerHTML = '';
+  if (!contracts.length) { return; }
   contracts.forEach(c => {
     const days = daysLeft(c.expiry);
     const dClass = deadlineClass(days);
@@ -3172,75 +3347,83 @@ async function deleteContract(id) {
   showToast('Contract removed');
 }
 
+function closeEditPanel() {
+  const existing = document.getElementById('field-edit-panel');
+  if (existing) existing.remove();
+}
+
 async function editField(field) {
+  closeEditPanel();
   const c = contracts.find(x => String(x.id) === String(currentDetailId));
   if (!c) return;
 
   const fieldMap = {
-    value:   { elId: 'd-value',   type: 'number', dbKey: 'value',       current: c.value },
-    videos:  { elId: 'd-videos',  type: 'number', dbKey: 'videos',      current: c.videos },
-    start:   { elId: 'd-start',   type: 'date',   dbKey: 'start_date',  current: c.start || '' },
-    expiry:  { elId: 'd-expiry',  type: 'date',   dbKey: 'expiry_date', current: c.expiry || '' },
-    contact: { elId: 'd-contact', type: 'email',  dbKey: 'contact',     current: c.contact || '' },
-    status:  { elId: 'd-status-val', type: 'select', dbKey: 'status',   current: c.status || 'active' },
+    value:   { elId: 'd-value',      type: 'number', dbKey: 'value',       label: 'Contract Value ($)', current: c.value },
+    videos:  { elId: 'd-videos',     type: 'number', dbKey: 'videos',      label: 'Videos Required',    current: c.videos },
+    start:   { elId: 'd-start',      type: 'date',   dbKey: 'start_date',  label: 'Start Date',         current: c.start || '' },
+    expiry:  { elId: 'd-expiry',     type: 'date',   dbKey: 'expiry_date', label: 'Expiry Date',        current: c.expiry || '' },
+    contact: { elId: 'd-contact',    type: 'text',   dbKey: 'contact',     label: 'Brand Contact Email',current: c.contact || '' },
+    status:  { elId: 'd-status-val', type: 'select', dbKey: 'status',      label: 'Status',             current: c.status || 'active' },
   };
 
   const cfg = fieldMap[field];
   if (!cfg) return;
-  const el = document.getElementById(cfg.elId);
-  const originalText = el.textContent;
+  const anchor = document.getElementById(cfg.elId).closest('.detail-row');
 
+  let inputHTML = '';
   if (cfg.type === 'select') {
-    // inline status picker
-    el.innerHTML = `
-      <select class="d-inline-edit" id="d-inline-input" style="width:auto;">
-        <option value="active" ${c.status==='active'?'selected':''}>Active</option>
-        <option value="pending" ${c.status==='pending'?'selected':''}>Pending</option>
-        <option value="expired" ${c.status==='expired'?'selected':''}>Expired</option>
-      </select>`;
-    const sel = document.getElementById('d-inline-input');
-    sel.focus();
-    const save = async () => {
-      const val = sel.value;
-      c.status = val;
-      await sb.from('contracts').update({ status: val }).eq('id', c.id);
-      openDetail(c.id);
-      renderDashboard();
-      showToast('Status updated');
-    };
-    sel.addEventListener('change', save);
-    sel.addEventListener('blur', () => { el.textContent = originalText; });
-    return;
+    inputHTML = `<select id="fep-input">
+      <option value="active" ${cfg.current==='active'?'selected':''}>Active</option>
+      <option value="pending" ${cfg.current==='pending'?'selected':''}>Pending</option>
+      <option value="expired" ${cfg.current==='expired'?'selected':''}>Expired</option>
+    </select>`;
+  } else {
+    inputHTML = `<input id="fep-input" type="${cfg.type}" value="${cfg.current}" placeholder="${cfg.label}" />`;
   }
 
-  el.innerHTML = `<input class="d-inline-edit" id="d-inline-input" type="${cfg.type}" value="${cfg.current}" />`;
-  const input = document.getElementById('d-inline-input');
+  const panel = document.createElement('div');
+  panel.className = 'field-edit-panel';
+  panel.id = 'field-edit-panel';
+  panel.innerHTML = `
+    <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;">${cfg.label}</div>
+    ${inputHTML}
+    <div class="field-edit-actions">
+      <button class="field-edit-cancel" onclick="closeEditPanel()">Cancel</button>
+      <button class="field-edit-save" id="fep-save">Save</button>
+    </div>`;
+  anchor.appendChild(panel);
+
+  const input = document.getElementById('fep-input');
   input.focus();
-  if (cfg.type !== 'date') input.select();
+  if (cfg.type !== 'date' && input.select) input.select();
 
   const save = async () => {
-    let val = input.value.trim();
-    if (!val) { el.textContent = originalText; return; }
+    let val = input.value;
+    if (typeof val === 'string') val = val.trim();
+    if (!val && val !== 0) { closeEditPanel(); return; }
     if (cfg.type === 'number') val = parseFloat(val);
-    c[field === 'start' ? 'start' : field === 'expiry' ? 'expiry' : field] = val;
-    // fix key mapping
     if (field === 'start') c.start = val;
-    if (field === 'expiry') c.expiry = val;
-    if (field === 'value') c.value = val;
-    if (field === 'videos') c.videos = val;
-    if (field === 'contact') c.contact = val;
+    else if (field === 'expiry') c.expiry = val;
+    else if (field === 'value') c.value = val;
+    else if (field === 'videos') c.videos = val;
+    else if (field === 'contact') c.contact = val;
+    else if (field === 'status') c.status = val;
     await sb.from('contracts').update({ [cfg.dbKey]: val }).eq('id', c.id);
+    closeEditPanel();
     openDetail(c.id);
     renderDashboard();
-    showToast('Saved');
+    showToast('Saved ✓');
   };
 
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') save(); if (e.key === 'Escape') el.textContent = originalText; });
-  input.addEventListener('blur', () => { setTimeout(() => { if (document.getElementById('d-inline-input')) el.textContent = originalText; }, 150); });
-  // small delay so blur doesn't fire before Enter
-  input.addEventListener('change', () => {});
-  const saveBtn = () => { save(); };
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); saveBtn(); } });
+  document.getElementById('fep-save').addEventListener('click', save);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') save(); if (e.key === 'Escape') closeEditPanel(); });
+
+  // close if clicking outside
+  setTimeout(() => {
+    document.addEventListener('click', function handler(e) {
+      if (!panel.contains(e.target)) { closeEditPanel(); document.removeEventListener('click', handler); }
+    });
+  }, 100);
 }
 
 // openAddModal and closeAddModal defined in wizard section above
