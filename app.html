@@ -440,6 +440,101 @@
     .check-status { font-size: 11px; color: var(--text3); font-weight: 600; }
     .check-status.done { color: var(--accent); }
 
+    /* ── DRAFT TOGGLE ── */
+    .draft-toggle-wrap { margin-bottom: 18px; }
+    .draft-toggle-label { font-size: 12px; font-weight: 700; color: var(--text2); letter-spacing: .4px; text-transform: uppercase; margin-bottom: 10px; }
+    .pill-toggle {
+      display: flex; position: relative;
+      background: var(--card2); border: 1px solid var(--border2);
+      border-radius: 12px; padding: 4px; gap: 0;
+      width: 100%; overflow: hidden;
+    }
+    .pill-option {
+      flex: 1; text-align: center; padding: 9px 12px;
+      font-size: 13px; font-weight: 700; color: var(--text3);
+      border-radius: 9px; cursor: pointer;
+      position: relative; z-index: 2;
+      transition: color .25s;
+      user-select: none;
+    }
+    .pill-option.active { color: #000; }
+    .pill-slider {
+      position: absolute; top: 4px; left: 4px;
+      width: calc(50% - 4px); height: calc(100% - 8px);
+      background: var(--accent);
+      border-radius: 9px;
+      transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+      box-shadow: 0 0 16px rgba(0,229,160,.35);
+      z-index: 1;
+    }
+    .pill-slider.right { transform: translateX(calc(100% + 0px)); }
+
+    /* ── VIDEO PIPELINE ── */
+    .pipeline-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .pipeline-item {
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px 16px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .pipeline-item:hover { border-color: var(--border2); box-shadow: 0 4px 20px rgba(0,0,0,.2); }
+    .pipeline-item.all-done { border-color: rgba(0,229,160,.3); box-shadow: 0 0 12px rgba(0,229,160,.08); }
+    .pipeline-item-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .pipeline-vid-label { font-size: 13px; font-weight: 800; color: var(--text); }
+    .pipeline-vid-status {
+      font-size: 11px; font-weight: 700; padding: 3px 9px;
+      border-radius: 20px; letter-spacing: .3px;
+    }
+    .pipeline-vid-status.status-pending { background: rgba(100,116,139,.15); color: var(--text3); }
+    .pipeline-vid-status.status-filmed { background: rgba(251,191,36,.12); color: #FBB F24; }
+    .pipeline-vid-status.status-filmed { background: rgba(251,191,36,.12); color: #F59E0B; }
+    .pipeline-vid-status.status-draft_sent { background: rgba(96,165,250,.12); color: #60A5FA; }
+    .pipeline-vid-status.status-approved { background: rgba(167,139,250,.12); color: #A78BFA; }
+    .pipeline-vid-status.status-posted { background: rgba(0,229,160,.12); color: var(--accent); }
+    .stage-track {
+      display: flex; align-items: center; gap: 0;
+    }
+    .stage-btn {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px;
+      cursor: pointer; position: relative;
+      padding: 8px 4px;
+      border-radius: 10px;
+      transition: background .15s;
+    }
+    .stage-btn:hover { background: rgba(255,255,255,.04); }
+    .stage-dot {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2px solid var(--border2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; transition: all .25s cubic-bezier(.34,1.56,.64,1);
+      background: var(--card);
+    }
+    .stage-dot.active {
+      border-color: var(--accent);
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(0,229,160,.4);
+      transform: scale(1.1);
+    }
+    .stage-dot.active svg { color: #000; }
+    .stage-dot svg { width: 12px; height: 12px; color: var(--text3); }
+    .stage-name { font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: .3px; text-align: center; transition: color .2s; }
+    .stage-btn.active .stage-name { color: var(--accent); }
+    .stage-connector {
+      width: 100%; height: 2px; background: var(--border);
+      flex-shrink: 1; margin-bottom: 18px; flex: 0.3;
+      border-radius: 2px; transition: background .3s;
+      max-width: 20px;
+    }
+    .stage-connector.active { background: var(--accent); }
+    @keyframes stagePop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); box-shadow: 0 0 20px rgba(0,229,160,.6); }
+      100% { transform: scale(1.1); }
+    }
+    .stage-dot.popping { animation: stagePop .35s ease forwards; }
+
     /* ── EMAIL GENERATOR ── */
     .tabs {
       display: flex;
@@ -1395,8 +1490,11 @@
       </div>
 
       <div class="detail-card" style="margin-bottom:16px;">
-        <div class="detail-card-title">Video Checklist</div>
-        <ul class="checklist" id="d-video-list"></ul>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <div class="detail-card-title" style="margin-bottom:0;">Video Pipeline</div>
+          <div id="d-pipeline-badge" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(0,229,160,.1);color:var(--accent);letter-spacing:.3px;"></div>
+        </div>
+        <ul class="pipeline-list" id="d-video-list"></ul>
       </div>
 
       <div style="display:flex;gap:8px;">
@@ -1735,6 +1833,14 @@
         <option value="pending">Pending</option>
         <option value="expired">Expired</option>
       </select>
+    </div>
+    <div class="draft-toggle-wrap">
+      <div class="draft-toggle-label">Does this brand require draft approval?</div>
+      <div class="pill-toggle" id="draft-toggle-pill" onclick="toggleDraftPill()">
+        <div class="pill-option active" id="draft-opt-no">No — Post freely</div>
+        <div class="pill-option" id="draft-opt-yes">Yes — Send drafts first</div>
+        <div class="pill-slider" id="draft-pill-slider"></div>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeAddModal()">Cancel</button>
@@ -2596,22 +2702,79 @@ function openDetail(id) {
   document.getElementById('d-progress-bar').style.width = pct + '%';
   document.getElementById('d-progress-label').textContent = pct + '% complete';
 
-  const list = document.getElementById('d-video-list');
-  list.innerHTML = '';
-  for (let i=1; i<=c.videos; i++) {
-    const done = i <= c.posted;
-    list.innerHTML += `
-      <li class="check-item" onclick="toggleVideo('${c.id}',${i})">
-        <div class="check-box ${done?'done':''}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <span class="check-label ${done?'done':''}">Video ${i} — ${c.niche||c.brand} content</span>
-        <span class="check-status ${done?'done':''}">${done ? 'Posted' : 'Pending'}</span>
-      </li>`;
-  }
-
+  renderPipeline(c);
   document.getElementById('detail-delete-btn').onclick = () => deleteContract(c.id);
   navigate('detail');
+}
+
+const STAGE_ORDER_DRAFT = ['pending','filmed','draft_sent','approved','posted'];
+const STAGE_ORDER_SIMPLE = ['pending','filmed','posted'];
+const STAGE_LABELS = { pending:'Not Started', filmed:'Filmed', draft_sent:'Draft Sent', approved:'Approved', posted:'Posted' };
+const STAGE_ICONS = {
+  pending: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="4"/></svg>`,
+  filmed: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>`,
+  draft_sent: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`,
+  approved: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+  posted: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`
+};
+
+function renderPipeline(c) {
+  const stages = c.video_stages || Array.from({length: c.videos}, () => ({stage: 'pending'}));
+  const requiresDrafts = c.requires_drafts || false;
+  const stageOrder = requiresDrafts ? STAGE_ORDER_DRAFT : STAGE_ORDER_SIMPLE;
+  const postedCount = stages.filter(s => s.stage === 'posted').length;
+  const badge = document.getElementById('d-pipeline-badge');
+  badge.textContent = requiresDrafts ? 'Draft Approval Required' : 'Post Freely';
+  badge.style.background = requiresDrafts ? 'rgba(96,165,250,.12)' : 'rgba(0,229,160,.1)';
+  badge.style.color = requiresDrafts ? '#60A5FA' : 'var(--accent)';
+
+  const list = document.getElementById('d-video-list');
+  list.innerHTML = '';
+  for (let i = 0; i < c.videos; i++) {
+    const currentStage = (stages[i] && stages[i].stage) || 'pending';
+    const allDone = currentStage === 'posted';
+    const stageIdx = stageOrder.indexOf(currentStage);
+    let stagesHTML = '';
+    stageOrder.forEach((s, si) => {
+      if (s === 'pending') return;
+      const isActive = stageOrder.indexOf(currentStage) >= si;
+      const isConnector = si < stageOrder.length - 1;
+      stagesHTML += `
+        <div class="stage-btn ${isActive ? 'active' : ''}" onclick="setVideoStage('${c.id}',${i},'${s}')">
+          <div class="stage-dot ${isActive ? 'active' : ''}" id="sdot-${c.id}-${i}-${s}">${STAGE_ICONS[s]}</div>
+          <div class="stage-name">${STAGE_LABELS[s]}</div>
+        </div>`;
+      if (isConnector && s !== stageOrder[stageOrder.length-1]) {
+        stagesHTML += `<div class="stage-connector ${isActive ? 'active' : ''}"></div>`;
+      }
+    });
+    list.innerHTML += `
+      <li class="pipeline-item ${allDone ? 'all-done' : ''}">
+        <div class="pipeline-item-header">
+          <div class="pipeline-vid-label">Video ${i+1}</div>
+          <div class="pipeline-vid-status status-${currentStage}">${STAGE_LABELS[currentStage]}</div>
+        </div>
+        <div class="stage-track">${stagesHTML}</div>
+      </li>`;
+  }
+}
+
+async function setVideoStage(cid, videoIdx, stage) {
+  const c = contracts.find(x=>String(x.id)===String(cid));
+  if (!c) return;
+  if (!c.video_stages) c.video_stages = Array.from({length: c.videos}, () => ({stage:'pending'}));
+  const requiresDrafts = c.requires_drafts || false;
+  const stageOrder = requiresDrafts ? STAGE_ORDER_DRAFT : STAGE_ORDER_SIMPLE;
+  const currentStage = c.video_stages[videoIdx]?.stage || 'pending';
+  // clicking same stage or previous = go back one step
+  const currentIdx = stageOrder.indexOf(currentStage);
+  const clickedIdx = stageOrder.indexOf(stage);
+  const newStage = (clickedIdx <= currentIdx && currentIdx > 0) ? stageOrder[currentIdx - 1] : stage;
+  c.video_stages[videoIdx] = { stage: newStage };
+  // recalculate posted count
+  c.posted = c.video_stages.filter(s => s.stage === 'posted').length;
+  await sb.from('contracts').update({ video_stages: c.video_stages, posted: c.posted }).eq('id', cid);
+  openDetail(cid);
 }
 
 async function toggleVideo(cid, num) {
@@ -2666,6 +2829,15 @@ async function startCheckout() {
   }
 }
 
+let _draftRequired = false;
+function toggleDraftPill() {
+  _draftRequired = !_draftRequired;
+  document.getElementById('draft-opt-no').classList.toggle('active', !_draftRequired);
+  document.getElementById('draft-opt-yes').classList.toggle('active', _draftRequired);
+  const slider = document.getElementById('draft-pill-slider');
+  slider.classList.toggle('right', _draftRequired);
+}
+
 async function addContract() {
   const brand = document.getElementById('new-brand').value.trim();
   const value = parseFloat(document.getElementById('new-value').value);
@@ -2673,6 +2845,7 @@ async function addContract() {
   if (!brand || isNaN(value) || isNaN(videos)) { alert('Please fill in Brand, Value, and Videos.'); return; }
   if (!currentUser) { alert('Not logged in. Please refresh.'); return; }
 
+  const initStages = Array.from({length: videos}, () => ({ stage: 'pending' }));
   const newContract = {
     user_id: currentUser.id,
     brand,
@@ -2681,7 +2854,9 @@ async function addContract() {
     status: document.getElementById('new-status').value,
     start_date: document.getElementById('new-start').value || null,
     expiry_date: document.getElementById('new-expiry').value || null,
-    contact: document.getElementById('new-contact').value.trim()
+    contact: document.getElementById('new-contact').value.trim(),
+    requires_drafts: _draftRequired,
+    video_stages: initStages
   };
 
   const { error } = await sb.from('contracts').insert(newContract);
@@ -2691,6 +2866,10 @@ async function addContract() {
   }
 
   closeAddModal();
+  _draftRequired = false;
+  document.getElementById('draft-opt-no').classList.add('active');
+  document.getElementById('draft-opt-yes').classList.remove('active');
+  document.getElementById('draft-pill-slider').classList.remove('right');
   ['new-brand','new-niche','new-value','new-videos','new-start','new-expiry','new-contact'].forEach(id => document.getElementById(id).value='');
   const statusSel = document.getElementById('new-status');
   if (statusSel) statusSel.value = 'active';
