@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RetainerHQ — Sign Up as a Brand</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080C14;
+      --bg2: #0D1220;
+      --card: #111827;
+      --accent: #00E5A0;
+      --accent2: #00C88A;
+      --accent-dim: rgba(0,229,160,0.08);
+      --text: #F0F4FF;
+      --text2: #8896B3;
+      --text3: #4A5878;
+      --border: #1E2D45;
+      --border2: #253450;
+      --red: #FF6B6B;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { width: 100%; max-width: 480px; }
+    .logo { text-align: center; margin-bottom: 28px; }
+    .logo-mark {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--accent), #00B8FF);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 10px;
+    }
+    .logo-mark svg { width: 22px; height: 22px; }
+    .logo-name { font-size: 22px; font-weight: 800; letter-spacing: -.5px; }
+    .logo-sub { font-size: 13px; color: var(--text2); margin-top: 4px; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.4);
+    }
+    .card-title { font-size: 18px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 4px; }
+    .card-sub { font-size: 13px; color: var(--text2); margin-bottom: 24px; }
+    .form-group { margin-bottom: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+    .form-label {
+      font-size: 11px; font-weight: 700; color: var(--text2);
+      margin-bottom: 6px; display: block;
+      text-transform: uppercase; letter-spacing: .4px;
+    }
+    .form-input, .form-select {
+      width: 100%;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 11px 13px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color .15s, box-shadow .15s;
+      appearance: none;
+    }
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,229,160,.08);
+    }
+    .form-input::placeholder { color: var(--text3); }
+    .form-select option { background: var(--card); }
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+      content: '';
+      position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+      width: 0; height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 5px solid var(--text3);
+      pointer-events: none;
+    }
+    .btn {
+      width: 100%; padding: 13px;
+      border-radius: 10px; font-size: 14px; font-weight: 700;
+      cursor: pointer; border: none; font-family: inherit;
+      transition: all .15s; margin-top: 6px;
+    }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-primary:hover { background: #00f0a8; box-shadow: 0 0 20px rgba(0,229,160,.25); }
+    .btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+    .error-msg {
+      background: rgba(255,107,107,.1);
+      border: 1px solid rgba(255,107,107,.3);
+      border-radius: 8px; padding: 10px 14px;
+      font-size: 13px; color: var(--red);
+      margin-bottom: 14px; display: none;
+    }
+    .divider { border-top: 1px solid var(--border); margin: 20px 0; }
+    .back-link {
+      text-align: center; margin-top: 20px;
+      font-size: 13px; color: var(--text2);
+    }
+    .back-link a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .back-link a:hover { text-decoration: underline; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--accent-dim); border: 1px solid rgba(0,229,160,.2);
+      border-radius: 20px; padding: 4px 12px;
+      font-size: 11px; font-weight: 700; color: var(--accent);
+      letter-spacing: .4px; text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <div class="logo-name">RetainerHQ</div>
+    <div class="logo-sub">The platform for TikTok Shop affiliates & brands</div>
+  </div>
+
+  <div class="card">
+    <div class="badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:11px;height:11px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      Brand Account
+    </div>
+    <div class="card-title">Get started with RetainerHQ</div>
+    <div class="card-sub">Connect with vetted TikTok Shop affiliates who convert.</div>
+
+    <div id="error-msg" class="error-msg"></div>
+
+    <div class="form-row">
+      <div>
+        <label class="form-label">Company Name</label>
+        <input class="form-input" type="text" id="company-name" placeholder="e.g. GlowUp Cosmetics" />
+      </div>
+      <div>
+        <label class="form-label">Your Name</label>
+        <input class="form-input" type="text" id="contact-name" placeholder="e.g. Sarah Kim" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Work Email</label>
+      <input class="form-input" type="email" id="signup-email" placeholder="you@company.com" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" id="signup-password" placeholder="Min. 6 characters" />
+    </div>
+
+    <div class="form-row">
+      <div>
+        <label class="form-label">Industry / Niche</label>
+        <div class="select-wrap">
+          <select class="form-select" id="brand-niche">
+            <option value="">Select niche...</option>
+            <option>Beauty & Skincare</option>
+            <option>Health & Wellness</option>
+            <option>Fashion & Apparel</option>
+            <option>Home & Kitchen</option>
+            <option>Fitness & Sports</option>
+            <option>Tech & Gadgets</option>
+            <option>Food & Beverage</option>
+            <option>Pet Products</option>
+            <option>Baby & Kids</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="form-label">Monthly Budget</label>
+        <div class="select-wrap">
+          <select class="form-select" id="brand-budget">
+            <option value="">Select range...</option>
+            <option>Under $1,000</option>
+            <option>$1,000 – $5,000</option>
+            <option>$5,000 – $10,000</option>
+            <option>$10,000 – $25,000</option>
+            <option>$25,000+</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">What are you looking for?</label>
+      <div class="select-wrap">
+        <select class="form-select" id="brand-goal">
+          <option value="">Select goal...</option>
+          <option>Monthly retainer deals with multiple creators</option>
+          <option>A single high-volume creator partnership</option>
+          <option>Product seeding + content creation</option>
+          <option>TikTok Shop affiliate program management</option>
+          <option>Not sure yet — just exploring</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="signup-btn" onclick="signUp()">Create Brand Account</button>
+  </div>
+
+  <div class="back-link">
+    Already have an account? <a href="/auth.html">Sign in</a> &nbsp;·&nbsp; <a href="/">← Back to home</a>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://tbfcwqcqpfbqaknktkyp.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiZmN3cWNxcGZicWFrbmt0a3lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NDQyOTIsImV4cCI6MjA5MzIyMDI5Mn0.40OJm-heqGOiiGqE3QWHoafkRx8Snd3nH3cs19D7L4E';
+let sb;
+
+window.addEventListener('load', () => {
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  sb.auth.getSession().then(({ data: { session } }) => {
+    if (session) window.location.href = '/brand-dashboard.html';
+  });
+});
+
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg; el.style.display = 'block';
+}
+function hideError() { document.getElementById('error-msg').style.display = 'none'; }
+
+async function signUp() {
+  const companyName = document.getElementById('company-name').value.trim();
+  const contactName = document.getElementById('contact-name').value.trim();
+  const email       = document.getElementById('signup-email').value.trim();
+  const password    = document.getElementById('signup-password').value;
+  const niche       = document.getElementById('brand-niche').value;
+  const budget      = document.getElementById('brand-budget').value;
+  const goal        = document.getElementById('brand-goal').value;
+
+  if (!companyName || !contactName || !email || !password) {
+    showError('Please fill in all required fields.'); return;
+  }
+  if (password.length < 6) {
+    showError('Password must be at least 6 characters.'); return;
+  }
+
+  const btn = document.getElementById('signup-btn');
+  btn.textContent = 'Creating account...'; btn.disabled = true;
+  hideError();
+
+  const { data, error } = await sb.auth.signUp({ email, password });
+  if (error) {
+    showError(error.message);
+    btn.textContent = 'Create Brand Account'; btn.disabled = false;
+    return;
+  }
+
+  if (data.user) {
+    await sb.from('profiles').update({
+      name: contactName,
+      email,
+      role: 'brand',
+      brand_company: companyName,
+      brand_niche: niche,
+      brand_budget: budget,
+      brand_goal: goal,
+    }).eq('id', data.user.id);
+  }
+
+  window.location.href = '/brand-dashboard.html';
+}
+</script>
+</body>
+</html>
