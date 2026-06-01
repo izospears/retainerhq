@@ -113,6 +113,11 @@
     }
     .back-link a { color: var(--accent); text-decoration: none; font-weight: 600; }
     .back-link a:hover { text-decoration: underline; }
+    .chip-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { padding: 8px 14px; border-radius: 20px; border: 1.5px solid var(--border2); background: var(--bg2); font-size: 12px; font-weight: 600; color: var(--text2); cursor: pointer; transition: all .15s; user-select: none; white-space: nowrap; }
+    .chip:hover { border-color: var(--accent); color: var(--text); background: var(--accent-dim); }
+    .chip.selected { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); font-weight: 700; }
+    .chip-wide { white-space: normal; border-radius: 10px; }
     .badge {
       display: inline-flex; align-items: center; gap: 6px;
       background: var(--accent-dim); border: 1px solid rgba(0,229,160,.2);
@@ -167,51 +172,47 @@
       <input class="form-input" type="password" id="signup-password" placeholder="Min. 6 characters" />
     </div>
 
-    <div class="form-row">
-      <div>
-        <label class="form-label">Industry / Niche</label>
-        <div class="select-wrap">
-          <select class="form-select" id="brand-niche">
-            <option value="">Select niche...</option>
-            <option>Beauty & Skincare</option>
-            <option>Health & Wellness</option>
-            <option>Fashion & Apparel</option>
-            <option>Home & Kitchen</option>
-            <option>Fitness & Sports</option>
-            <option>Tech & Gadgets</option>
-            <option>Food & Beverage</option>
-            <option>Pet Products</option>
-            <option>Baby & Kids</option>
-            <option>Other</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <label class="form-label">Monthly Budget</label>
-        <div class="select-wrap">
-          <select class="form-select" id="brand-budget">
-            <option value="">Select range...</option>
-            <option>Under $1,000</option>
-            <option>$1,000 – $5,000</option>
-            <option>$5,000 – $10,000</option>
-            <option>$10,000 – $25,000</option>
-            <option>$25,000+</option>
-          </select>
-        </div>
+    <!-- Niche chips -->
+    <div class="form-group">
+      <label class="form-label">Industry / Niche</label>
+      <input type="hidden" id="brand-niche" value="" />
+      <div class="chip-grid" id="niche-chips">
+        <div class="chip" onclick="selectChip('niche-chips','brand-niche',this)">💄 Beauty & Skincare</div>
+        <div class="chip" onclick="selectChip('niche-chips','brand-niche',this)">🌿 Health & Wellness</div>
+        <div class="chip" onclick="selectChip('niche-chips','brand-niche',this)">👗 Fashion & Apparel</div>
+        <div class="chip" onclick="selectChip('niche-chips','brand-niche',this)">🏠 Home & Kitchen</div>
+        <div class="chip" onclick="selectChip('niche-chips','brand-niche',this)">💪 Fitness & Sports</div>
+        <div class="chip" onclick="selectChip('niche-chips','brand-niche',this)">📱 Tech & Gadgets</div>
+        <div class="chip" onclick="selectChip('niche-chips','brand-niche',this)">🍔 Food & Beverage</div>
+        <div class="chip" onclick="selectChip('niche-chips','brand-niche',this)">🐾 Pet Products</div>
+        <div class="chip" onclick="selectChip('niche-chips','brand-niche',this)">👶 Baby & Kids</div>
+        <div class="chip" onclick="selectChip('niche-chips','brand-niche',this)">✨ Other</div>
       </div>
     </div>
 
+    <!-- Budget chips -->
+    <div class="form-group">
+      <label class="form-label">Monthly Budget</label>
+      <input type="hidden" id="brand-budget" value="" />
+      <div class="chip-grid" id="budget-chips">
+        <div class="chip" onclick="selectChip('budget-chips','brand-budget',this)">Under $1K</div>
+        <div class="chip" onclick="selectChip('budget-chips','brand-budget',this)">$1K – $5K</div>
+        <div class="chip" onclick="selectChip('budget-chips','brand-budget',this)">$5K – $10K</div>
+        <div class="chip" onclick="selectChip('budget-chips','brand-budget',this)">$10K – $25K</div>
+        <div class="chip" onclick="selectChip('budget-chips','brand-budget',this)">$25K+</div>
+      </div>
+    </div>
+
+    <!-- Goal chips -->
     <div class="form-group">
       <label class="form-label">What are you looking for?</label>
-      <div class="select-wrap">
-        <select class="form-select" id="brand-goal">
-          <option value="">Select goal...</option>
-          <option>Monthly retainer deals with multiple creators</option>
-          <option>A single high-volume creator partnership</option>
-          <option>Product seeding + content creation</option>
-          <option>TikTok Shop affiliate program management</option>
-          <option>Not sure yet — just exploring</option>
-        </select>
+      <input type="hidden" id="brand-goal" value="" />
+      <div class="chip-grid" id="goal-chips">
+        <div class="chip chip-wide" onclick="selectChip('goal-chips','brand-goal',this)">Monthly retainers with multiple creators</div>
+        <div class="chip chip-wide" onclick="selectChip('goal-chips','brand-goal',this)">Single high-volume creator partnership</div>
+        <div class="chip chip-wide" onclick="selectChip('goal-chips','brand-goal',this)">Product seeding + content creation</div>
+        <div class="chip chip-wide" onclick="selectChip('goal-chips','brand-goal',this)">TikTok Shop affiliate program management</div>
+        <div class="chip chip-wide" onclick="selectChip('goal-chips','brand-goal',this)">Just exploring for now</div>
       </div>
     </div>
 
@@ -240,6 +241,12 @@ function showError(msg) {
   el.textContent = msg; el.style.display = 'block';
 }
 function hideError() { document.getElementById('error-msg').style.display = 'none'; }
+
+function selectChip(gridId, inputId, el) {
+  document.getElementById(gridId).querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById(inputId).value = el.textContent.trim().replace(/^[^\w]+/, '').trim();
+}
 
 async function signUp() {
   const companyName = document.getElementById('company-name').value.trim();
