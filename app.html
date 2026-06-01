@@ -1962,6 +1962,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       My Rates
     </div>
+    <div class="nav-item" onclick="navigate('roster')" id="snav-roster" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Creator Roster
+    </div>
   </nav>
 
   <div class="sidebar-bottom">
@@ -2623,6 +2627,52 @@
       </div>
     </div>
 
+    <!-- CREATOR ROSTER (admin only) -->
+    <div class="page" id="page-roster">
+      <div class="section-header">
+        <div class="section-title">Creator Roster</div>
+        <div style="font-size:12px;color:var(--text2);" id="roster-count"></div>
+      </div>
+
+      <!-- Search + filters -->
+      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+        <input id="roster-search" type="text" placeholder="Search name, handle, email..." oninput="filterRoster()"
+          style="flex:1;min-width:200px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 13px;color:var(--text);font-size:13px;font-family:inherit;" />
+        <select id="roster-filter-niche" onchange="filterRoster()"
+          style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text2);font-size:12px;font-weight:600;font-family:inherit;appearance:none;cursor:pointer;">
+          <option value="">All Niches</option>
+          <option>Beauty & Skincare</option><option>Health & Wellness</option>
+          <option>Fashion & Apparel</option><option>Home & Kitchen</option>
+          <option>Fitness & Sports</option><option>Tech & Gadgets</option>
+        </select>
+        <select id="roster-sort" onchange="filterRoster()"
+          style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text2);font-size:12px;font-weight:600;font-family:inherit;appearance:none;cursor:pointer;">
+          <option value="joined">Sort: Newest</option>
+          <option value="gmv">Sort: GMV</option>
+          <option value="followers">Sort: Followers</option>
+        </select>
+      </div>
+
+      <!-- Table -->
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;" id="roster-table">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);background:var(--card2);">
+              <th style="padding:12px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;">Creator</th>
+              <th style="padding:12px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;">Niche</th>
+              <th style="padding:12px 16px;text-align:right;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;">Followers</th>
+              <th style="padding:12px 16px;text-align:right;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;">Lifetime GMV</th>
+              <th style="padding:12px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;">Email</th>
+              <th style="padding:12px 16px;text-align:right;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;">Joined</th>
+            </tr>
+          </thead>
+          <tbody id="roster-body">
+            <tr><td colspan="6" style="padding:40px;text-align:center;color:var(--text2);">Loading creators...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -3120,6 +3170,11 @@ async function initAuth() {
     if (!profile.onboarded) {
       showProfileOnboarding(profile.role || 'creator');
     }
+
+    // Admin: show creator roster nav only for isaacspears01@gmail.com
+    if (currentUser.email === 'isaacspears01@gmail.com') {
+      document.getElementById('snav-roster').style.display = 'flex';
+    }
   }
 
   await loadContracts();
@@ -3155,14 +3210,14 @@ function initials(str) {
 
 function navigate(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  ['dashboard','contracts','email','income','mediakit','rates'].forEach(id => {
+  ['dashboard','contracts','email','income','mediakit','rates','roster'].forEach(id => {
     const s = document.getElementById('snav-' + id);
     const m = document.getElementById('mnav-' + id);
     if (s) s.classList.remove('active');
     if (m) m.classList.remove('active');
   });
   document.getElementById('page-' + page).classList.add('active');
-  const titles = { dashboard:'Dashboard', contracts:'Contracts', email:'Email Generator', detail:'Contract Detail', income:'Income Tracker', mediakit:'Media Kit', rates:'My Rates' };
+  const titles = { dashboard:'Dashboard', contracts:'Contracts', email:'Email Generator', detail:'Contract Detail', income:'Income Tracker', mediakit:'Media Kit', rates:'My Rates', roster:'Creator Roster' };
   document.getElementById('topbar-title').textContent = titles[page] || '';
   const navKey = page === 'detail' ? null : page;
   if (navKey) {
@@ -3174,6 +3229,58 @@ function navigate(page) {
   if (page === 'dashboard') renderDashboard();
   if (page === 'contracts') renderContracts();
   if (page === 'income') renderIncome();
+  if (page === 'roster') loadCreatorRoster();
+}
+
+// ── CREATOR ROSTER (admin only) ──────────────────────────────────
+let allRosterCreators = [];
+
+async function loadCreatorRoster() {
+  const { data, error } = await sb.from('profiles').select('id, name, email, tiktok_handle, niche, followers, total_gmv, created_at').eq('role', 'creator').order('created_at', { ascending: false });
+  if (error) { console.error(error); return; }
+  allRosterCreators = data || [];
+  document.getElementById('roster-count').textContent = allRosterCreators.length + ' creators signed up';
+  renderRoster(allRosterCreators);
+}
+
+function renderRoster(list) {
+  const fmtN = n => { const x=parseInt(n); if(!x) return '—'; if(x>=1e6) return (x/1e6).toFixed(1)+'M'; if(x>=1000) return (x/1000).toFixed(1)+'K'; return String(x); };
+  const tbody = document.getElementById('roster-body');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="padding:40px;text-align:center;color:var(--text2);">No creators yet</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map((c, i) => {
+    const handle = c.tiktok_handle ? (c.tiktok_handle.startsWith('@') ? c.tiktok_handle : '@'+c.tiktok_handle) : '—';
+    const joined = c.created_at ? new Date(c.created_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '—';
+    const rowBg  = i % 2 === 0 ? 'var(--card)' : 'var(--card2)';
+    return `<tr style="border-bottom:1px solid var(--border);background:${rowBg};">
+      <td style="padding:13px 16px;">
+        <div style="font-size:13px;font-weight:700;">${c.name || '—'}</div>
+        <div style="font-size:11px;color:var(--accent);font-weight:600;margin-top:1px;">${handle}</div>
+      </td>
+      <td style="padding:13px 16px;font-size:12px;color:var(--text2);">${c.niche || '—'}</td>
+      <td style="padding:13px 16px;font-size:13px;font-weight:700;text-align:right;">${fmtN(c.followers)}</td>
+      <td style="padding:13px 16px;font-size:13px;font-weight:800;color:var(--accent);text-align:right;">${c.total_gmv ? '$'+fmtN(c.total_gmv) : '—'}</td>
+      <td style="padding:13px 16px;font-size:11px;color:var(--text2);">${c.email || '—'}</td>
+      <td style="padding:13px 16px;font-size:11px;color:var(--text3);text-align:right;">${joined}</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterRoster() {
+  const q     = document.getElementById('roster-search').value.toLowerCase();
+  const niche = document.getElementById('roster-filter-niche').value.toLowerCase();
+  const sort  = document.getElementById('roster-sort').value;
+  let list = allRosterCreators.filter(c => {
+    const mQ = !q || (c.name||'').toLowerCase().includes(q) || (c.tiktok_handle||'').toLowerCase().includes(q) || (c.email||'').toLowerCase().includes(q);
+    const mN = !niche || (c.niche||'').toLowerCase().includes(niche.split('&')[0].trim());
+    return mQ && mN;
+  });
+  if (sort === 'gmv')       list.sort((a,b) => (parseInt(b.total_gmv)||0) - (parseInt(a.total_gmv)||0));
+  if (sort === 'followers') list.sort((a,b) => (parseInt(b.followers)||0) - (parseInt(a.followers)||0));
+  document.getElementById('roster-count').textContent = list.length + ' creators';
+  renderRoster(list);
 }
 
 /* ── MY RATES ── */
