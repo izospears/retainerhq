@@ -1697,81 +1697,133 @@
     }
 
     /* ── PROFILE ONBOARDING ── */
+    /* ── ONBOARDING ── */
+    @keyframes obFadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes obCardIn { from { opacity:0; transform:scale(.96) translateY(16px); } to { opacity:1; transform:scale(1) translateY(0); } }
+    @keyframes obStepIn { from { opacity:0; transform:translateX(18px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes obStepOut { from { opacity:1; transform:translateX(0); } to { opacity:0; transform:translateX(-18px); } }
+    @keyframes btnPulse { 0%,100% { box-shadow:0 0 0 0 rgba(0,229,160,0); } 50% { box-shadow:0 0 22px 4px rgba(0,229,160,.35); } }
+    @keyframes segGlow { from { opacity:.5; } to { opacity:1; box-shadow:0 0 8px rgba(0,229,160,.6); } }
+    @keyframes checkPop { 0% { transform:scale(0); } 70% { transform:scale(1.2); } 100% { transform:scale(1); } }
+
     .ob-full {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 500;
-      background: rgba(8,12,20,0.97);
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(6,9,18,0.98); backdrop-filter: blur(8px);
+      align-items: center; justify-content: center; padding: 20px;
     }
-    .ob-full.show { display: flex; animation: fadeInBg .3s ease forwards; }
+    .ob-full.show { display: flex; animation: obFadeIn .25s ease forwards; }
     .ob-full-card {
-      background: var(--card);
+      background: linear-gradient(160deg, #111827 0%, #0D1220 100%);
       border: 1px solid var(--border2);
-      border-radius: 22px;
-      padding: 36px 32px;
-      width: 100%;
-      max-width: 460px;
-      animation: fadeInUp .4s cubic-bezier(.16,1,.3,1) forwards;
+      border-radius: 24px;
+      padding: 40px 36px;
+      width: 100%; max-width: 480px;
+      box-shadow: 0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(0,229,160,.06);
+      animation: obCardIn .45s cubic-bezier(.16,1,.3,1) forwards;
+      position: relative; overflow: hidden;
     }
-    .ob-progress { display: flex; gap: 6px; margin-bottom: 28px; }
-    .ob-seg { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background .3s; }
-    .ob-seg.done { background: var(--accent); }
-    .ob-step-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
-    .ob-title { font-size: 22px; font-weight: 800; color: var(--text); letter-spacing: -.4px; margin-bottom: 6px; }
-    .ob-sub { font-size: 13px; color: var(--text2); margin-bottom: 24px; line-height: 1.5; }
-    .ob-role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
-    .ob-role-opt {
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 12px;
-      cursor: pointer;
-      text-align: center;
-      background: var(--bg2);
-      transition: all .15s;
+    .ob-full-card::before {
+      content: ''; position: absolute; top: -80px; right: -80px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(0,229,160,.06) 0%, transparent 70%);
+      pointer-events: none;
     }
-    .ob-role-opt.sel { border-color: var(--accent); background: var(--accent-dim); }
-    .ob-role-icon { font-size: 22px; margin-bottom: 6px; }
-    .ob-role-label { font-size: 13px; font-weight: 700; color: var(--text); }
-    .ob-role-sub { font-size: 10px; color: var(--text3); margin-top: 2px; }
-    .ob-tag-row { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
-    .ob-tag {
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 5px 13px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text2);
-      cursor: pointer;
-      background: var(--bg2);
-      transition: all .15s;
+
+    .ob-progress { display: flex; gap: 6px; margin-bottom: 32px; }
+    .ob-seg { flex: 1; height: 3px; border-radius: 99px; background: rgba(255,255,255,.08); transition: all .4s cubic-bezier(.16,1,.3,1); }
+    .ob-seg.done { background: var(--accent); animation: segGlow .4s ease forwards; }
+
+    .ob-step-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
     }
-    .ob-tag.sel { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
-    .ob-tile-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; margin-bottom: 14px; }
+    .ob-step-label::before {
+      content: ''; width: 16px; height: 2px;
+      background: var(--accent); border-radius: 99px; display: block;
+    }
+    .ob-title { font-size: 26px; font-weight: 900; color: var(--text); letter-spacing: -.6px; line-height: 1.1; margin-bottom: 8px; }
+    .ob-sub { font-size: 14px; color: var(--text2); margin-bottom: 28px; line-height: 1.6; }
+
+    .ob-step { display: none; }
+    .ob-step.active { display: block; animation: obStepIn .35s cubic-bezier(.16,1,.3,1) forwards; }
+    .ob-step.leaving { animation: obStepOut .2s ease forwards; }
+
+    .ob-field { margin-bottom: 18px; }
+    .ob-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--text3); margin-bottom: 8px; display: block;
+    }
+    .ob-input {
+      width: 100%; background: rgba(255,255,255,.04); border: 1.5px solid var(--border);
+      border-radius: 12px; padding: 13px 16px; color: var(--text);
+      font-size: 15px; font-family: inherit; font-weight: 500;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .ob-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0,229,160,.08); }
+    .ob-input::placeholder { color: var(--text3); font-weight: 400; }
+    .ob-input.error { border-color: var(--red); box-shadow: 0 0 0 4px rgba(255,107,107,.08); }
+
+    .ob-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+    .ob-chip {
+      padding: 8px 16px; border-radius: 99px;
+      border: 1.5px solid var(--border); background: rgba(255,255,255,.03);
+      font-size: 13px; font-weight: 600; color: var(--text2);
+      cursor: pointer; transition: all .15s; user-select: none;
+    }
+    .ob-chip:hover { border-color: var(--accent); color: var(--text); background: var(--accent-dim); }
+    .ob-chip.sel { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); font-weight: 700; }
+
+    .ob-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px,1fr)); gap: 8px; margin-bottom: 4px; }
     .ob-tile {
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 8px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text2);
-      cursor: pointer;
-      background: var(--bg2);
-      text-align: center;
-      transition: all .15s;
+      border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 12px 8px; font-size: 13px; font-weight: 700;
+      color: var(--text2); cursor: pointer; background: rgba(255,255,255,.03);
+      text-align: center; transition: all .15s;
     }
     .ob-tile:hover { border-color: var(--border2); color: var(--text); }
     .ob-tile.sel { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
-    .ob-btn { width: 100%; background: var(--accent); color: #000; border: none; border-radius: 10px; padding: 13px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: inherit; transition: all .15s; margin-top: 4px; }
-    .ob-btn:hover { background: #00f0a8; }
-    .ob-btn:disabled { opacity: .6; cursor: not-allowed; }
-    .ob-step { display: none; }
-    .ob-step.active { display: block; }
-    .ob-success-icon { width: 60px; height: 60px; border-radius: 50%; background: var(--accent-dim); border: 2px solid rgba(0,229,160,.3); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
-    .ob-success-icon svg { width: 28px; height: 28px; }
+
+    .ob-error-hint { font-size: 11px; color: var(--red); margin-top: 8px; display: none; font-weight: 600; }
+    .ob-error-hint.show { display: block; }
+
+    .ob-btn {
+      width: 100%; background: var(--accent); color: #000; border: none;
+      border-radius: 12px; padding: 15px; font-size: 15px; font-weight: 800;
+      cursor: pointer; font-family: inherit; transition: all .2s; margin-top: 8px;
+      letter-spacing: -.2px; animation: btnPulse 3s ease-in-out infinite;
+      position: relative; overflow: hidden;
+    }
+    .ob-btn::after {
+      content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
+      animation: btnShine 3s ease-in-out infinite; animation-delay: 1s;
+    }
+    @keyframes btnShine { 0%,100% { left:-100%; } 50% { left:150%; } }
+    .ob-btn:hover { background: #00f0a8; box-shadow: 0 8px 24px rgba(0,229,160,.4); transform: translateY(-1px); }
+    .ob-btn:active { transform: translateY(0); }
+    .ob-btn:disabled { opacity: .5; cursor: not-allowed; animation: none; transform: none; }
+
+    .ob-success-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: linear-gradient(135deg, rgba(0,229,160,.15), rgba(0,184,255,.1));
+      border: 2px solid rgba(0,229,160,.3);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; animation: checkPop .5s cubic-bezier(.16,1,.3,1) forwards;
+    }
+    .ob-success-icon svg { width: 32px; height: 32px; }
+
+    .ob-role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+    .ob-role-opt {
+      border: 2px solid var(--border); border-radius: 14px;
+      padding: 18px 14px; cursor: pointer; text-align: center;
+      background: rgba(255,255,255,.03); transition: all .2s;
+    }
+    .ob-role-opt:hover { border-color: var(--border2); }
+    .ob-role-opt.sel { border-color: var(--accent); background: var(--accent-dim); }
+    .ob-role-icon { font-size: 26px; margin-bottom: 8px; }
+    .ob-role-label { font-size: 14px; font-weight: 800; color: var(--text); letter-spacing: -.2px; }
+    .ob-role-sub { font-size: 11px; color: var(--text3); margin-top: 3px; line-height: 1.4; }
 
     /* ── MOTIVATIONAL FLASH ── */
     .motiv-flash {
@@ -2844,115 +2896,67 @@
 <div class="toast" id="toast"><div class="toast-dot"></div><span id="toast-msg"></span></div>
 
 <!-- ONBOARDING OVERLAY -->
-<!-- PROFILE ONBOARDING FLOW -->
 <div class="ob-full" id="ob-full">
   <div class="ob-full-card">
     <div class="ob-progress" id="ob-progress"></div>
 
-    <!-- Step 0: Role -->
+    <!-- Step 0: Handle + Name -->
     <div class="ob-step active" id="ob-s0">
       <div class="ob-step-label">Step 1 of 4</div>
-      <div class="ob-title">Welcome to RetainerHQ</div>
-      <div class="ob-sub">Let's get your account set up. Are you a creator or a brand?</div>
-      <div class="ob-role-grid">
-        <div class="ob-role-opt sel" id="ob-r-creator" onclick="obSelectRole('creator')">
-          <div class="ob-role-icon">🎬</div>
-          <div class="ob-role-label">Creator</div>
-          <div class="ob-role-sub">TikTok Shop affiliate or UGC creator</div>
-        </div>
-        <div class="ob-role-opt" id="ob-r-brand" onclick="obSelectRole('brand')">
-          <div class="ob-role-icon">🏢</div>
-          <div class="ob-role-label">Brand</div>
-          <div class="ob-role-sub">Looking to work with affiliates</div>
-        </div>
+      <div class="ob-title" id="ob-welcome-title">Welcome to RetainerHQ 👋</div>
+      <div class="ob-sub">Let's personalize your experience. This takes less than 2 minutes.</div>
+      <div class="ob-field">
+        <label class="ob-label">Your TikTok Handle *</label>
+        <input class="ob-input" id="ob-handle" type="text" placeholder="@yourhandle" autocomplete="off" />
+        <div class="ob-error-hint" id="ob-handle-err">TikTok handle is required</div>
+      </div>
+      <div class="ob-field">
+        <label class="ob-label">Your Name *</label>
+        <input class="ob-input" id="ob-name" type="text" placeholder="e.g. Isaac Spears" autocomplete="off" />
+        <div class="ob-error-hint" id="ob-name-err">Please enter your name</div>
       </div>
       <button class="ob-btn" onclick="obNext(0)">Continue →</button>
     </div>
 
-    <!-- Step 1: Presence -->
+    <!-- Step 1: Niche -->
     <div class="ob-step" id="ob-s1">
       <div class="ob-step-label">Step 2 of 4</div>
-      <div class="ob-title" id="ob-s1-title">Your TikTok presence</div>
-      <div class="ob-sub" id="ob-s1-sub">Tell us about your account so we can personalize your experience.</div>
-      <!-- Step 1 Creator -->
-      <div id="ob-s1-creator">
-        <div class="form-group">
-          <label class="form-label">Your Niche</label>
-          <div class="ob-tag-row">
-            <div class="ob-tag" onclick="obSelTag(this,'niche')">Beauty</div>
-            <div class="ob-tag" onclick="obSelTag(this,'niche')">Fashion</div>
-            <div class="ob-tag" onclick="obSelTag(this,'niche')">Tech</div>
-            <div class="ob-tag" onclick="obSelTag(this,'niche')">Food</div>
-            <div class="ob-tag" onclick="obSelTag(this,'niche')">Fitness</div>
-            <div class="ob-tag" onclick="obSelTag(this,'niche')">Lifestyle</div>
-            <div class="ob-tag" onclick="obSelTag(this,'niche')">Gaming</div>
-            <div class="ob-tag" onclick="obSelTag(this,'niche')">Other</div>
-          </div>
-        </div>
+      <div class="ob-title">What's your niche?</div>
+      <div class="ob-sub">Pick the category that best describes your TikTok content.</div>
+      <div class="ob-chips" id="ob-niche-chips">
+        <div class="ob-chip" onclick="obChip(this,'niche')">💄 Beauty & Skincare</div>
+        <div class="ob-chip" onclick="obChip(this,'niche')">🌿 Health & Wellness</div>
+        <div class="ob-chip" onclick="obChip(this,'niche')">👗 Fashion</div>
+        <div class="ob-chip" onclick="obChip(this,'niche')">🏠 Home & Kitchen</div>
+        <div class="ob-chip" onclick="obChip(this,'niche')">💪 Fitness</div>
+        <div class="ob-chip" onclick="obChip(this,'niche')">📱 Tech & Gadgets</div>
+        <div class="ob-chip" onclick="obChip(this,'niche')">🍔 Food & Beverage</div>
+        <div class="ob-chip" onclick="obChip(this,'niche')">🎮 Gaming</div>
+        <div class="ob-chip" onclick="obChip(this,'niche')">✨ Lifestyle</div>
+        <div class="ob-chip" onclick="obChip(this,'niche')">📦 Other</div>
       </div>
-      <!-- Step 1 Brand -->
-      <div id="ob-s1-brand" style="display:none;">
-        <div class="form-group">
-          <label class="form-label">Product Category</label>
-          <div class="ob-tag-row">
-            <div class="ob-tag" onclick="obSelTag(this,'cat')">Beauty</div>
-            <div class="ob-tag" onclick="obSelTag(this,'cat')">Fashion</div>
-            <div class="ob-tag" onclick="obSelTag(this,'cat')">Health</div>
-            <div class="ob-tag" onclick="obSelTag(this,'cat')">Tech</div>
-            <div class="ob-tag" onclick="obSelTag(this,'cat')">Food</div>
-            <div class="ob-tag" onclick="obSelTag(this,'cat')">Home</div>
-            <div class="ob-tag" onclick="obSelTag(this,'cat')">Other</div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Monthly Creator Budget</label>
-          <div class="ob-tile-row">
-            <div class="ob-tile" onclick="obSelTile(this,'budget')">Under $1K</div>
-            <div class="ob-tile" onclick="obSelTile(this,'budget')">$1K–$5K</div>
-            <div class="ob-tile" onclick="obSelTile(this,'budget')">$5K–$20K</div>
-            <div class="ob-tile" onclick="obSelTile(this,'budget')">$20K+</div>
-          </div>
-        </div>
-      </div>
-      <button class="ob-btn" onclick="obNext(1)">Continue →</button>
+      <div class="ob-error-hint" id="ob-niche-err">Please select your niche</div>
+      <button class="ob-btn" onclick="obNext(1)" style="margin-top:24px;">Continue →</button>
     </div>
 
     <!-- Step 2: Numbers -->
     <div class="ob-step" id="ob-s2">
       <div class="ob-step-label">Step 3 of 4</div>
-      <div class="ob-title" id="ob-s2-title">Your numbers</div>
-      <div class="ob-sub">This personalizes your email templates.</div>
-      <div id="ob-s2-creator">
-        <div class="form-group">
-          <label class="form-label">Last 30-Day GMV</label>
-          <div class="ob-tile-row">
-            <div class="ob-tile" onclick="obSelTile(this,'gmv30')">Under $1K</div>
-            <div class="ob-tile" onclick="obSelTile(this,'gmv30')">$1K–$5K</div>
-            <div class="ob-tile" onclick="obSelTile(this,'gmv30')">$5K–$15K</div>
-            <div class="ob-tile" onclick="obSelTile(this,'gmv30')">$15K–$50K</div>
-            <div class="ob-tile" onclick="obSelTile(this,'gmv30')">$50K+</div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Active Brand Deals Per Month</label>
-          <div class="ob-tile-row">
-            <div class="ob-tile" onclick="obSelTile(this,'deals')">0</div>
-            <div class="ob-tile" onclick="obSelTile(this,'deals')">1–3</div>
-            <div class="ob-tile" onclick="obSelTile(this,'deals')">4–10</div>
-            <div class="ob-tile" onclick="obSelTile(this,'deals')">10+</div>
-          </div>
-        </div>
+      <div class="ob-title">Your numbers</div>
+      <div class="ob-sub">This personalizes your pitch emails and helps brands find you.</div>
+      <div class="ob-field">
+        <label class="ob-label">TikTok Followers *</label>
+        <input class="ob-input" id="ob-followers" type="text" placeholder="e.g. 22000" autocomplete="off" />
+        <div class="ob-error-hint" id="ob-followers-err">Please enter your follower count</div>
       </div>
-      <div id="ob-s2-brand" style="display:none;">
-        <div class="form-group">
-          <label class="form-label">How many creators are you looking to work with?</label>
-          <div class="ob-tile-row">
-            <div class="ob-tile" onclick="obSelTile(this,'hiring')">1–5</div>
-            <div class="ob-tile" onclick="obSelTile(this,'hiring')">5–20</div>
-            <div class="ob-tile" onclick="obSelTile(this,'hiring')">20–50</div>
-            <div class="ob-tile" onclick="obSelTile(this,'hiring')">50+</div>
-          </div>
-        </div>
+      <div class="ob-field">
+        <label class="ob-label">Last 30-Day GMV *</label>
+        <input class="ob-input" id="ob-gmv30" type="text" placeholder="e.g. $4,200 or 4200" autocomplete="off" />
+        <div class="ob-error-hint" id="ob-gmv30-err">Please enter your last 30-day GMV</div>
+      </div>
+      <div class="ob-field">
+        <label class="ob-label">Lifetime GMV (optional)</label>
+        <input class="ob-input" id="ob-gmv-lifetime" type="text" placeholder="e.g. $4,000,000" autocomplete="off" />
       </div>
       <button class="ob-btn" onclick="obNext(2)">Continue →</button>
     </div>
@@ -2960,61 +2964,42 @@
     <!-- Step 3: Goals -->
     <div class="ob-step" id="ob-s3">
       <div class="ob-step-label">Step 4 of 4</div>
-      <div class="ob-title">Your goals</div>
-      <div class="ob-sub">Almost done — what does success look like for you?</div>
-      <div id="ob-s3-creator">
-        <div class="form-group">
-          <label class="form-label">Desired Monthly TikTok Shop Income</label>
-          <div class="ob-tile-row">
-            <div class="ob-tile" onclick="obSelTile(this,'income')">$1K–$3K</div>
-            <div class="ob-tile" onclick="obSelTile(this,'income')">$3K–$5K</div>
-            <div class="ob-tile" onclick="obSelTile(this,'income')">$5K–$10K</div>
-            <div class="ob-tile" onclick="obSelTile(this,'income')">$10K–$25K</div>
-            <div class="ob-tile" onclick="obSelTile(this,'income')">$25K+</div>
-          </div>
+      <div class="ob-title">Almost there 🔥</div>
+      <div class="ob-sub">What does winning look like for you?</div>
+      <div class="ob-field">
+        <label class="ob-label">Desired Monthly Income *</label>
+        <div class="ob-tiles" id="ob-income-tiles">
+          <div class="ob-tile" onclick="obTile(this,'income')">$1K–$3K</div>
+          <div class="ob-tile" onclick="obTile(this,'income')">$3K–$5K</div>
+          <div class="ob-tile" onclick="obTile(this,'income')">$5K–$10K</div>
+          <div class="ob-tile" onclick="obTile(this,'income')">$10K–$25K</div>
+          <div class="ob-tile" onclick="obTile(this,'income')">$25K+</div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Biggest Challenge Right Now</label>
-          <div class="ob-tag-row">
-            <div class="ob-tag" onclick="obSelTag(this,'challenge')">Getting brand deals</div>
-            <div class="ob-tag" onclick="obSelTag(this,'challenge')">Pricing confidently</div>
-            <div class="ob-tag" onclick="obSelTag(this,'challenge')">Tracking income</div>
-            <div class="ob-tag" onclick="obSelTag(this,'challenge')">Consistent content</div>
-            <div class="ob-tag" onclick="obSelTag(this,'challenge')">Scaling income</div>
-          </div>
-        </div>
+        <div class="ob-error-hint" id="ob-income-err">Please select your income goal</div>
       </div>
-      <div id="ob-s3-brand" style="display:none;">
-        <div class="form-group">
-          <label class="form-label">Primary Goal</label>
-          <div class="ob-tile-row">
-            <div class="ob-tile" onclick="obSelTile(this,'goal')">Drive GMV</div>
-            <div class="ob-tile" onclick="obSelTile(this,'goal')">Brand Awareness</div>
-            <div class="ob-tile" onclick="obSelTile(this,'goal')">New Product Launch</div>
-            <div class="ob-tile" onclick="obSelTile(this,'goal')">Scale Program</div>
-          </div>
+      <div class="ob-field">
+        <label class="ob-label">Biggest Challenge Right Now *</label>
+        <div class="ob-chips" id="ob-challenge-chips">
+          <div class="ob-chip" onclick="obChip(this,'challenge')">Getting brand deals</div>
+          <div class="ob-chip" onclick="obChip(this,'challenge')">Pricing confidently</div>
+          <div class="ob-chip" onclick="obChip(this,'challenge')">Tracking income</div>
+          <div class="ob-chip" onclick="obChip(this,'challenge')">Consistent content</div>
+          <div class="ob-chip" onclick="obChip(this,'challenge')">Scaling income</div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Biggest Challenge</label>
-          <div class="ob-tag-row">
-            <div class="ob-tag" onclick="obSelTag(this,'bchallenge')">Finding creators</div>
-            <div class="ob-tag" onclick="obSelTag(this,'bchallenge')">Managing partnerships</div>
-            <div class="ob-tag" onclick="obSelTag(this,'bchallenge')">Tracking ROI</div>
-            <div class="ob-tag" onclick="obSelTag(this,'bchallenge')">Negotiating rates</div>
-          </div>
-        </div>
+        <div class="ob-error-hint" id="ob-challenge-err">Please select your biggest challenge</div>
       </div>
       <button class="ob-btn" id="ob-finish-btn" onclick="obFinish()">Complete Setup →</button>
     </div>
 
     <!-- Step 4: Done -->
     <div class="ob-step" id="ob-s4">
-      <div style="text-align:center;">
+      <div style="text-align:center;padding:20px 0;">
         <div class="ob-success-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
-        <div class="ob-title">You're all set!</div>
-        <div class="ob-sub" style="margin-top:8px;">Welcome to RetainerHQ. Let's get to work.</div>
+        <div class="ob-title" style="text-align:center;">You're all set! 🚀</div>
+        <div class="ob-sub" style="text-align:center;margin-top:8px;">Your profile is live. Brands can now find you and send retainer offers.</div>
+        <button class="ob-btn" onclick="closOb()" style="margin-top:28px;">Let's get to work →</button>
       </div>
     </div>
   </div>
@@ -3381,13 +3366,25 @@ function checkOnboarding() { /* retired — tour replaces this */ }
 let _obRole = 'creator';
 let _obStep = 0;
 const _obTotal = 4;
-let _obNiche = '';
+let _obData = {};
 
 function showProfileOnboarding(currentRole) {
   _obRole = currentRole || 'creator';
   _obStep = 0;
   _obData = {};
-  obSelectRole(_obRole);
+  // Pre-fill name if we have it
+  const existingName = document.querySelector('.user-name')?.textContent;
+  if (existingName && existingName !== currentUser?.email) {
+    document.getElementById('ob-name').value = existingName;
+  }
+  // Pre-fill handle if we have it
+  if (mediaKitProfile?.tiktok_handle) {
+    document.getElementById('ob-handle').value = mediaKitProfile.tiktok_handle;
+  }
+  const firstName = (mediaKitProfile?.name || '').split(' ')[0];
+  if (firstName) {
+    document.getElementById('ob-welcome-title').textContent = `Welcome, ${firstName} 👋`;
+  }
   obRenderProgress();
   document.querySelectorAll('.ob-step').forEach(s => s.classList.remove('active'));
   document.getElementById('ob-s0').classList.add('active');
@@ -3404,91 +3401,124 @@ function obRenderProgress() {
   }
 }
 
-function obSelectRole(r) {
-  _obRole = r;
-  document.getElementById('ob-r-creator').classList.toggle('sel', r === 'creator');
-  document.getElementById('ob-r-brand').classList.toggle('sel', r === 'brand');
+function obChip(el, group) {
+  el.closest('.ob-chips').querySelectorAll('.ob-chip').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  _obData[group] = el.textContent.trim().replace(/^[^\w]+/, '').trim();
 }
 
-let _obData = {};
-
-function obSelTag(el, group) {
-  el.closest('.ob-tag-row').querySelectorAll('.ob-tag').forEach(t => t.classList.remove('sel'));
+function obTile(el, group) {
+  el.closest('.ob-tiles').querySelectorAll('.ob-tile').forEach(t => t.classList.remove('sel'));
   el.classList.add('sel');
   _obData[group] = el.textContent.trim();
 }
 
-function obSelTile(el, group) {
-  el.closest('.ob-tile-row').querySelectorAll('.ob-tile').forEach(t => t.classList.remove('sel'));
-  el.classList.add('sel');
-  _obData[group] = el.textContent.trim();
+function obShowErr(id, show) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('show', show);
+}
+function obShake(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.add('error');
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = '';
+  setTimeout(() => el.classList.remove('error'), 2000);
 }
 
 function obNext(fromStep) {
-  document.getElementById('ob-s' + fromStep).classList.remove('active');
-  _obStep = fromStep + 1;
+  // ── VALIDATE ──
+  if (fromStep === 0) {
+    const handle = document.getElementById('ob-handle').value.trim();
+    const name   = document.getElementById('ob-name').value.trim();
+    let valid = true;
+    if (!handle) { obShowErr('ob-handle-err', true); obShake('ob-handle'); valid = false; }
+    else obShowErr('ob-handle-err', false);
+    if (!name) { obShowErr('ob-name-err', true); obShake('ob-name'); valid = false; }
+    else obShowErr('ob-name-err', false);
+    if (!valid) return;
+    _obData.handle = handle.startsWith('@') ? handle : '@' + handle;
+    _obData.name   = name;
+  }
+  if (fromStep === 1) {
+    if (!_obData.niche) { obShowErr('ob-niche-err', true); return; }
+    obShowErr('ob-niche-err', false);
+  }
+  if (fromStep === 2) {
+    const followers = document.getElementById('ob-followers').value.trim();
+    const gmv30     = document.getElementById('ob-gmv30').value.trim();
+    let valid = true;
+    if (!followers) { obShowErr('ob-followers-err', true); obShake('ob-followers'); valid = false; }
+    else obShowErr('ob-followers-err', false);
+    if (!gmv30) { obShowErr('ob-gmv30-err', true); obShake('ob-gmv30'); valid = false; }
+    else obShowErr('ob-gmv30-err', false);
+    if (!valid) return;
+    _obData.followers    = followers.replace(/[^0-9]/g, '');
+    _obData.gmv30        = gmv30;
+    _obData.gmvLifetime  = document.getElementById('ob-gmv-lifetime').value.trim();
+  }
 
-  if (_obStep === 1) {
-    document.getElementById('ob-s1-creator').style.display = _obRole === 'creator' ? 'block' : 'none';
-    document.getElementById('ob-s1-brand').style.display = _obRole === 'brand' ? 'block' : 'none';
-    document.getElementById('ob-s1-title').textContent = _obRole === 'creator' ? 'Your TikTok presence' : 'Your brand';
-    document.getElementById('ob-s1-sub').textContent = _obRole === 'creator'
-      ? 'Tell us about your account so we can personalize your experience.'
-      : 'Tell us about your company so we can tailor your dashboard.';
-  }
-  if (_obStep === 2) {
-    document.getElementById('ob-s2-creator').style.display = _obRole === 'creator' ? 'block' : 'none';
-    document.getElementById('ob-s2-brand').style.display = _obRole === 'brand' ? 'block' : 'none';
-    document.getElementById('ob-s2-title').textContent = _obRole === 'creator' ? 'Your numbers' : 'Your budget';
-  }
-  if (_obStep === 3) {
-    document.getElementById('ob-s3-creator').style.display = _obRole === 'creator' ? 'block' : 'none';
-    document.getElementById('ob-s3-brand').style.display = _obRole === 'brand' ? 'block' : 'none';
-  }
-
-  document.getElementById('ob-s' + _obStep).classList.add('active');
-  obRenderProgress();
+  const cur = document.getElementById('ob-s' + fromStep);
+  cur.classList.add('leaving');
+  setTimeout(() => {
+    cur.classList.remove('active', 'leaving');
+    _obStep = fromStep + 1;
+    obRenderProgress();
+    const next = document.getElementById('ob-s' + _obStep);
+    next.classList.add('active');
+  }, 200);
 }
 
 async function obFinish() {
+  // Validate
+  if (!_obData.income) { obShowErr('ob-income-err', true); return; }
+  obShowErr('ob-income-err', false);
+  if (!_obData.challenge) { obShowErr('ob-challenge-err', true); return; }
+  obShowErr('ob-challenge-err', false);
+
   const btn = document.getElementById('ob-finish-btn');
   btn.textContent = 'Saving...'; btn.disabled = true;
 
-  const updates = { role: _obRole, onboarded: true };
-
-  if (_obRole === 'creator') {
-    if (_obData.niche)     updates.niche = _obData.niche;
-    if (_obData.followers) updates.followers = _obData.followers;
-    if (_obData.gmv30)     updates.last_30d_gmv = _obData.gmv30;
-    if (_obData.deals)     updates.current_deals_per_month = _obData.deals;
-    if (_obData.income)    updates.desired_monthly_income = _obData.income;
-    if (_obData.challenge) updates.biggest_challenge = _obData.challenge;
-  } else {
-    if (_obData.cat)     updates.niche = _obData.cat;
-    if (_obData.budget)  updates.desired_monthly_income = _obData.budget;
-    if (_obData.hiring)  updates.current_deals_per_month = _obData.hiring;
-    if (_obData.goal)    updates.desired_monthly_income = _obData.goal;
-    if (_obData.bchallenge) updates.biggest_challenge = _obData.bchallenge;
-  }
+  const updates = {
+    role: 'creator', onboarded: true,
+    name:            _obData.name,
+    tiktok_handle:   _obData.handle,
+    niche:           _obData.niche,
+    followers:       _obData.followers,
+    last_30d_gmv:    _obData.gmv30,
+    total_gmv:       _obData.gmvLifetime || null,
+    desired_monthly_income: _obData.income,
+    biggest_challenge:      _obData.challenge,
+  };
 
   await sb.from('profiles').update(updates).eq('id', currentUser.id);
   Object.assign(mediaKitProfile, updates);
 
-  document.getElementById('ob-s3').classList.remove('active');
-  _obStep = 4;
-  obRenderProgress();
-  document.getElementById('ob-s4').classList.add('active');
-  setTimeout(() => obDone(), 1500);
+  // Update sidebar name
+  document.querySelector('.user-name').textContent = _obData.name;
+  document.querySelector('.avatar').textContent = _obData.name.slice(0,2).toUpperCase();
+
+  const cur = document.getElementById('ob-s3');
+  cur.classList.add('leaving');
+  setTimeout(() => {
+    cur.classList.remove('active', 'leaving');
+    _obStep = 4; obRenderProgress();
+    document.getElementById('ob-s4').classList.add('active');
+  }, 200);
 }
 
-function obDone() {
+function closOb() {
   document.getElementById('ob-full').classList.remove('show');
-  if (_obRole === 'brand') {
-    document.querySelector('.user-plan').textContent = 'Brand Account';
-  }
   window._justOnboarded = true;
   showMotivationalFlash();
 }
+
+// Legacy compatibility
+function obDone() { closOb(); }
+function obSelTag(el, group) { obChip(el, group); }
+function obSelTile(el, group) { obTile(el, group); }
+function obSelectRole(r) { _obRole = r; }
 
 /* ── FEATURE TOUR ── */
 const _TOUR_STEPS = [
