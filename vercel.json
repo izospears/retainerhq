@@ -10,6 +10,10 @@
     { "src": "/creator-signup", "dest": "/creator-signup.html" },
     { "src": "/brand.html", "dest": "/brand.html" },
     { "src": "/brand", "dest": "/brand.html" },
+    { "src": "/brand-signup.html", "dest": "/brand-signup.html" },
+    { "src": "/brand-signup", "dest": "/brand-signup.html" },
+    { "src": "/brand-dashboard.html", "dest": "/brand-dashboard.html" },
+    { "src": "/brand-dashboard", "dest": "/brand-dashboard.html" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
