@@ -1038,9 +1038,9 @@ let selectedRole = 'creator';
 async function loadCount() {
   try {
     const { count } = await sb.from('waitlist').select('*', { count: 'exact', head: true });
-    document.getElementById('waitlist-count').textContent = Math.max(count || 0, 203);
+    document.getElementById('waitlist-count').textContent = Math.max(count || 0, 340);
   } catch(e) {
-    document.getElementById('waitlist-count').textContent = 203;
+    document.getElementById('waitlist-count').textContent = 340;
   }
 }
 
