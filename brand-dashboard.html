@@ -13,12 +13,9 @@
       --accent: #00E5A0; --accent2: #00C88A; --accent-dim: rgba(0,229,160,0.08);
       --text: #F0F4FF; --text2: #8896B3; --text3: #4A5878;
       --border: #1E2D45; --border2: #253450; --red: #FF6B6B;
-      --gold: #FFD700; --silver: #C0C0C0; --bronze: #CD7F32;
-      --sidebar-w: 230px;
+      --sidebar-w: 220px;
     }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; -webkit-font-smoothing: antialiased; }
-
-    /* ── SIDEBAR ── */
     .sidebar { width: var(--sidebar-w); min-height: 100vh; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; z-index: 50; }
     .sidebar-logo { padding: 20px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
     .logo-mark { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), #00B8FF); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -39,8 +36,6 @@
     .sign-out-btn { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; cursor: pointer; color: var(--text3); font-size: 12px; font-weight: 500; transition: all .15s; margin-top: 4px; background: none; border: none; font-family: inherit; width: 100%; }
     .sign-out-btn:hover { color: var(--red); background: rgba(255,107,107,.06); }
     .sign-out-btn svg { width: 14px; height: 14px; }
-
-    /* ── MAIN ── */
     .main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; display: flex; flex-direction: column; }
     .topbar { height: 60px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 28px; background: var(--bg); position: sticky; top: 0; z-index: 40; }
     .topbar-title { font-size: 16px; font-weight: 800; letter-spacing: -.3px; }
@@ -50,62 +45,17 @@
     .btn-primary:hover { background: #00f0a8; box-shadow: 0 0 16px rgba(0,229,160,.25); }
     .btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border2); }
     .btn-ghost:hover { background: rgba(255,255,255,.04); color: var(--text); }
-
-    /* ── PAGES ── */
     .page { padding: 28px; display: none; }
     .page.active { display: block; }
-
-    /* ── PLATFORM STATS BAR ── */
-    .platform-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
-    .pstat { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; position: relative; overflow: hidden; }
-    .pstat::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), #00B8FF); }
-    .pstat-label { font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
-    .pstat-value { font-size: 28px; font-weight: 900; color: var(--accent); letter-spacing: -1px; line-height: 1; }
-    .pstat-value.white { color: var(--text); }
-    .pstat-sub { font-size: 11px; color: var(--text3); margin-top: 5px; }
-
-    /* ── SECTION HEADER ── */
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; }
+    .stat-label { font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+    .stat-value { font-size: 28px; font-weight: 900; color: var(--accent); letter-spacing: -1px; line-height: 1; }
+    .stat-value.white { color: var(--text); }
+    .stat-sub { font-size: 11px; color: var(--text3); margin-top: 5px; }
     .section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .section-title { font-size: 15px; font-weight: 800; letter-spacing: -.3px; }
+    .section-title { font-size: 14px; font-weight: 800; letter-spacing: -.2px; }
     .section-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
-    .section-link { font-size: 12px; color: var(--accent); font-weight: 700; cursor: pointer; }
-    .section-link:hover { text-decoration: underline; }
-
-    /* ── LEADERBOARD ── */
-    .leaderboard-top3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
-    .podium-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px 20px; text-align: center; position: relative; cursor: pointer; transition: all .2s; }
-    .podium-card:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,.4); }
-    .podium-card.rank-1 { border-color: rgba(255,215,0,.3); background: linear-gradient(135deg, #111827, #1a1f2e); }
-    .podium-card.rank-1::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--gold), #FFA500); border-radius: 16px 16px 0 0; }
-    .podium-card.rank-2::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--silver), #E8E8E8); border-radius: 16px 16px 0 0; }
-    .podium-card.rank-3::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--bronze), #B8860B); border-radius: 16px 16px 0 0; }
-    .rank-badge { font-size: 28px; margin-bottom: 12px; display: block; }
-    .podium-avatar { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #00B8FF); display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; color: #000; margin: 0 auto 12px; }
-    .podium-name { font-size: 14px; font-weight: 800; letter-spacing: -.2px; margin-bottom: 2px; }
-    .podium-handle { font-size: 11px; color: var(--accent); font-weight: 600; margin-bottom: 10px; }
-    .podium-gmv { font-size: 22px; font-weight: 900; color: var(--accent); letter-spacing: -1px; }
-    .podium-gmv-label { font-size: 9px; color: var(--text3); font-weight: 700; letter-spacing: .7px; text-transform: uppercase; margin-top: 2px; }
-    .podium-niche { display: inline-block; margin-top: 8px; background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,229,160,.2); border-radius: 20px; padding: 2px 9px; font-size: 9px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
-
-    /* ── LEADERBOARD LIST ── */
-    .lb-list { display: flex; flex-direction: column; gap: 8px; }
-    .lb-row { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: all .15s; }
-    .lb-row:hover { border-color: var(--border2); background: var(--card2); }
-    .lb-rank { font-size: 14px; font-weight: 900; color: var(--text3); width: 28px; text-align: center; flex-shrink: 0; }
-    .lb-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #00B8FF); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; color: #000; flex-shrink: 0; }
-    .lb-info { flex: 1; }
-    .lb-name { font-size: 13px; font-weight: 700; }
-    .lb-handle { font-size: 11px; color: var(--accent); font-weight: 600; margin-top: 1px; }
-    .lb-niche { font-size: 10px; color: var(--text3); margin-top: 1px; }
-    .lb-stats { display: flex; gap: 20px; align-items: center; }
-    .lb-stat { text-align: right; }
-    .lb-stat-val { font-size: 14px; font-weight: 800; color: var(--text); letter-spacing: -.3px; }
-    .lb-stat-val.green { color: var(--accent); }
-    .lb-stat-lbl { font-size: 9px; color: var(--text3); font-weight: 700; letter-spacing: .5px; text-transform: uppercase; }
-    .lb-offer-btn { padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; background: var(--accent); color: #000; border: none; cursor: pointer; font-family: inherit; transition: all .15s; flex-shrink: 0; }
-    .lb-offer-btn:hover { background: #00f0a8; }
-
-    /* ── CREATOR GRID ── */
     .creator-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
     .creator-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; cursor: pointer; transition: all .15s; }
     .creator-card:hover { border-color: var(--border2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,.3); }
@@ -122,46 +72,17 @@
     .creator-bio { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 14px; }
     .creator-actions { display: flex; gap: 8px; }
     .creator-actions .btn { flex: 1; justify-content: center; padding: 8px 12px; font-size: 12px; }
-
-    /* ── FILTERS ── */
     .filters { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
     .filter-select { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 28px 8px 12px; color: var(--text2); font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234A5878' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; }
     .filter-select:focus { outline: none; border-color: var(--accent); }
     .search-input { flex: 1; min-width: 180px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; color: var(--text); font-size: 12px; font-family: inherit; }
     .search-input:focus { outline: none; border-color: var(--accent); }
     .search-input::placeholder { color: var(--text3); }
-
-    /* ── BRANDS GRID ── */
-    .brands-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
-    .brand-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; transition: all .15s; }
-    .brand-card:hover { border-color: var(--border2); }
-    .brand-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-    .brand-avatar { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, #253450, #1E2D45); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; color: var(--text2); flex-shrink: 0; }
-    .brand-name { font-size: 13px; font-weight: 800; }
-    .brand-niche { font-size: 11px; color: var(--text2); margin-top: 1px; }
-    .brand-budget { display: inline-block; margin-top: 6px; background: rgba(0,229,160,.08); color: var(--accent); border: 1px solid rgba(0,229,160,.15); border-radius: 6px; padding: 3px 8px; font-size: 10px; font-weight: 700; }
-    .brand-goal { font-size: 11px; color: var(--text2); margin-top: 8px; line-height: 1.5; }
-
-    /* ── CAMPAIGNS ── */
-    .campaigns-list { display: flex; flex-direction: column; gap: 10px; }
-    .campaign-row { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; display: flex; align-items: center; gap: 14px; }
-    .campaign-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #00B8FF); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; color: #000; flex-shrink: 0; }
-    .campaign-info { flex: 1; }
-    .campaign-name { font-size: 13px; font-weight: 700; }
-    .campaign-meta { font-size: 11px; color: var(--text2); margin-top: 2px; }
-    .campaign-status { font-size: 10px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; }
-    .status-pending { background: rgba(255,200,50,.1); color: #FFD700; }
-    .status-active { background: var(--accent-dim); color: var(--accent); }
-    .status-declined { background: rgba(255,107,107,.1); color: var(--red); }
-
-    /* ── EMPTY STATE ── */
     .empty-state { text-align: center; padding: 60px 20px; color: var(--text2); }
     .empty-icon { width: 48px; height: 48px; background: var(--card2); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
     .empty-icon svg { width: 22px; height: 22px; color: var(--text3); }
     .empty-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
     .empty-sub { font-size: 13px; color: var(--text2); }
-
-    /* ── MODAL ── */
     .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(4px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
     .modal-backdrop.open { display: flex; }
     .modal { background: var(--card); border: 1px solid var(--border2); border-radius: 18px; padding: 28px; width: 100%; max-width: 480px; box-shadow: 0 32px 80px rgba(0,0,0,.5); }
@@ -175,16 +96,18 @@
     .form-input::placeholder, .form-textarea::placeholder { color: var(--text3); }
     .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
     .modal-actions .btn { flex: 1; justify-content: center; }
-
-    /* ── PROFILE FORM ── */
-    .profile-form { max-width: 560px; }
-    .profile-form .form-group { margin-bottom: 16px; }
-
-    /* ── TOAST ── */
+    .campaigns-list { display: flex; flex-direction: column; gap: 12px; }
+    .campaign-row { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+    .campaign-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #00B8FF); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; color: #000; flex-shrink: 0; }
+    .campaign-info { flex: 1; }
+    .campaign-name { font-size: 13px; font-weight: 700; }
+    .campaign-meta { font-size: 11px; color: var(--text2); margin-top: 2px; }
+    .campaign-status { font-size: 10px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; }
+    .status-pending { background: rgba(255,200,50,.1); color: #FFD700; }
+    .status-active { background: var(--accent-dim); color: var(--accent); }
+    .status-declined { background: rgba(255,107,107,.1); color: var(--red); }
     .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--card); border: 1px solid var(--border2); border-radius: 10px; padding: 12px 20px; font-size: 13px; font-weight: 600; color: var(--text); box-shadow: 0 8px 32px rgba(0,0,0,.4); z-index: 999; transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
     .toast.show { transform: translateX(-50%) translateY(0); }
-
-    /* ── LOADING ── */
     #loading { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; }
     .spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -194,7 +117,6 @@
 
 <div id="loading"><div class="spinner"></div></div>
 
-<!-- Sidebar -->
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-mark">
@@ -207,36 +129,26 @@
       <div class="logo-badge">Brand</div>
     </div>
   </div>
-
   <nav class="sidebar-nav">
-    <div class="nav-section-label">Marketplace</div>
+    <div class="nav-section-label">Main</div>
     <div class="nav-item active" id="nav-overview" onclick="showPage('overview')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       Overview
-    </div>
-    <div class="nav-item" id="nav-leaderboard" onclick="showPage('leaderboard')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
-      Leaderboard
     </div>
     <div class="nav-item" id="nav-creators" onclick="showPage('creators')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       Browse Creators
     </div>
-    <div class="nav-item" id="nav-brands" onclick="showPage('brands')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      Brands
-    </div>
-    <div class="nav-section-label">My Account</div>
     <div class="nav-item" id="nav-campaigns" onclick="showPage('campaigns')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       My Campaigns
     </div>
+    <div class="nav-section-label">Account</div>
     <div class="nav-item" id="nav-profile" onclick="showPage('profile')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       Brand Profile
     </div>
   </nav>
-
   <div class="sidebar-bottom">
     <div class="user-block">
       <div class="user-avatar" id="sb-avatar">B</div>
@@ -254,10 +166,10 @@
 
 <main class="main">
 
-  <!-- ── OVERVIEW ── -->
+  <!-- OVERVIEW -->
   <div class="page active" id="page-overview">
     <div class="topbar">
-      <div class="topbar-title" id="overview-greeting">Welcome back</div>
+      <div class="topbar-title" id="overview-title">Welcome back</div>
       <div class="topbar-right">
         <button class="btn btn-primary" onclick="showPage('creators')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:13px;height:13px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -266,151 +178,49 @@
       </div>
     </div>
     <div style="padding:28px;">
-
-      <!-- Platform stats -->
-      <div class="platform-stats">
-        <div class="pstat">
-          <div class="pstat-label">Total Creators</div>
-          <div class="pstat-value white" id="ps-creators">—</div>
-          <div class="pstat-sub">on the platform</div>
-        </div>
-        <div class="pstat">
-          <div class="pstat-label">Total GMV Generated</div>
-          <div class="pstat-value" id="ps-gmv">—</div>
-          <div class="pstat-sub">across all creators</div>
-        </div>
-        <div class="pstat">
-          <div class="pstat-label">Active Brands</div>
-          <div class="pstat-value white" id="ps-brands">—</div>
-          <div class="pstat-sub">on the marketplace</div>
-        </div>
-        <div class="pstat">
-          <div class="pstat-label">Your Campaigns</div>
-          <div class="pstat-value" id="ps-campaigns">0</div>
-          <div class="pstat-sub">active retainer deals</div>
-        </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Active Campaigns</div><div class="stat-value white" id="stat-active">0</div><div class="stat-sub">running retainer deals</div></div>
+        <div class="stat-card"><div class="stat-label">Pending Offers</div><div class="stat-value" id="stat-pending">0</div><div class="stat-sub">awaiting creator response</div></div>
+        <div class="stat-card"><div class="stat-label">Creators Reached</div><div class="stat-value white" id="stat-reached">0</div><div class="stat-sub">total offers sent</div></div>
       </div>
-
-      <!-- Top 3 creators -->
       <div class="section-hdr">
-        <div>
-          <div class="section-title">🏆 Top Creators This Month</div>
-          <div class="section-sub">Ranked by lifetime GMV</div>
-        </div>
-        <div class="section-link" onclick="showPage('leaderboard')">View full leaderboard →</div>
-      </div>
-      <div class="leaderboard-top3" id="overview-top3">
-        <div class="empty-state" style="grid-column:1/-1;padding:40px 0;"><div class="spinner" style="margin:0 auto;"></div></div>
-      </div>
-
-      <!-- Recent activity -->
-      <div class="section-hdr" style="margin-top:8px;">
-        <div>
-          <div class="section-title">Recent Activity</div>
-          <div class="section-sub">Your latest offers and campaigns</div>
-        </div>
-        <div class="section-link" onclick="showPage('campaigns')">View all →</div>
+        <div><div class="section-title">Recent Activity</div><div class="section-sub">Your latest offers and campaigns</div></div>
       </div>
       <div id="overview-activity">
         <div class="empty-state">
           <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
           <div class="empty-title">No campaigns yet</div>
-          <div class="empty-sub">Browse creators and send your first retainer offer to get started.</div>
+          <div class="empty-sub">Browse creators and send your first retainer offer.</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── LEADERBOARD ── -->
-  <div class="page" id="page-leaderboard">
-    <div class="topbar">
-      <div class="topbar-title">🏆 Creator Leaderboard</div>
-    </div>
-    <div style="padding:28px;">
-      <div class="section-hdr" style="margin-bottom:20px;">
-        <div>
-          <div class="section-title">Top Creators by GMV</div>
-          <div class="section-sub">Ranked by lifetime TikTok Shop GMV generated</div>
-        </div>
-      </div>
-
-      <!-- Top 3 podium -->
-      <div class="leaderboard-top3" id="lb-top3">
-        <div class="empty-state" style="grid-column:1/-1;padding:40px 0;"><div class="spinner" style="margin:0 auto;"></div></div>
-      </div>
-
-      <!-- Rest of list -->
-      <div class="section-hdr" style="margin-top:8px;">
-        <div class="section-title" style="font-size:13px;color:var(--text2);">Full Rankings</div>
-      </div>
-      <div class="lb-list" id="lb-list"></div>
-    </div>
-  </div>
-
-  <!-- ── BROWSE CREATORS ── -->
+  <!-- BROWSE CREATORS -->
   <div class="page" id="page-creators">
-    <div class="topbar">
-      <div class="topbar-title">Browse Creators</div>
-      <div class="topbar-right">
-        <span id="creator-count" style="font-size:12px;color:var(--text2);font-weight:600;"></span>
-      </div>
-    </div>
+    <div class="topbar"><div class="topbar-title">Browse Creators</div></div>
     <div style="padding:28px;">
       <div class="filters">
         <input class="search-input" type="text" id="search-input" placeholder="Search by name or handle..." oninput="filterCreators()" />
         <select class="filter-select" id="filter-niche" onchange="filterCreators()">
           <option value="">All Niches</option>
-          <option>Beauty & Skincare</option>
-          <option>Health & Wellness</option>
-          <option>Fashion & Apparel</option>
-          <option>Home & Kitchen</option>
-          <option>Fitness & Sports</option>
-          <option>Tech & Gadgets</option>
-          <option>Food & Beverage</option>
+          <option>Beauty & Skincare</option><option>Health & Wellness</option><option>Fashion & Apparel</option>
+          <option>Home & Kitchen</option><option>Fitness & Sports</option><option>Tech & Gadgets</option>
         </select>
         <select class="filter-select" id="filter-gmv" onchange="filterCreators()">
           <option value="">Any GMV</option>
-          <option value="100000">$100K+ GMV</option>
-          <option value="500000">$500K+ GMV</option>
-          <option value="1000000">$1M+ GMV</option>
-        </select>
-        <select class="filter-select" id="filter-sort" onchange="filterCreators()">
-          <option value="gmv">Sort: GMV</option>
-          <option value="followers">Sort: Followers</option>
+          <option value="100000">$100K+</option><option value="500000">$500K+</option><option value="1000000">$1M+</option>
         </select>
       </div>
       <div class="creator-grid" id="creator-grid">
-        <div class="empty-state" style="grid-column:1/-1;">
-          <div class="spinner" style="margin:0 auto 16px;"></div>
-          <div class="empty-sub">Loading creators...</div>
-        </div>
+        <div class="empty-state" style="grid-column:1/-1;"><div class="spinner" style="margin:0 auto 16px;"></div><div class="empty-sub">Loading creators...</div></div>
       </div>
     </div>
   </div>
 
-  <!-- ── BRANDS ── -->
-  <div class="page" id="page-brands">
-    <div class="topbar">
-      <div class="topbar-title">Brands on RetainerHQ</div>
-      <div class="topbar-right">
-        <span id="brand-count" style="font-size:12px;color:var(--text2);font-weight:600;"></span>
-      </div>
-    </div>
-    <div style="padding:28px;">
-      <div class="brands-grid" id="brands-grid">
-        <div class="empty-state" style="grid-column:1/-1;">
-          <div class="spinner" style="margin:0 auto 16px;"></div>
-          <div class="empty-sub">Loading brands...</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── MY CAMPAIGNS ── -->
+  <!-- MY CAMPAIGNS -->
   <div class="page" id="page-campaigns">
-    <div class="topbar">
-      <div class="topbar-title">My Campaigns</div>
-    </div>
+    <div class="topbar"><div class="topbar-title">My Campaigns</div></div>
     <div style="padding:28px;">
       <div id="campaigns-list">
         <div class="empty-state">
@@ -422,23 +232,19 @@
     </div>
   </div>
 
-  <!-- ── BRAND PROFILE ── -->
+  <!-- BRAND PROFILE -->
   <div class="page" id="page-profile">
     <div class="topbar">
       <div class="topbar-title">Brand Profile</div>
-      <div class="topbar-right">
-        <button class="btn btn-primary" onclick="saveProfile()">Save Changes</button>
-      </div>
+      <div class="topbar-right"><button class="btn btn-primary" onclick="saveProfile()">Save Changes</button></div>
     </div>
-    <div style="padding:28px;">
-      <div class="profile-form">
-        <div class="form-group"><label class="form-label">Company Name</label><input class="form-input" type="text" id="profile-company" placeholder="e.g. GlowUp Cosmetics" /></div>
-        <div class="form-group"><label class="form-label">Contact Name</label><input class="form-input" type="text" id="profile-name" placeholder="Your name" /></div>
-        <div class="form-group"><label class="form-label">Industry / Niche</label><input class="form-input" type="text" id="profile-niche" placeholder="e.g. Beauty & Skincare" /></div>
-        <div class="form-group"><label class="form-label">Monthly Budget</label><input class="form-input" type="text" id="profile-budget" placeholder="e.g. $5,000 – $10,000" /></div>
-        <div class="form-group"><label class="form-label">What you're looking for</label><textarea class="form-textarea" id="profile-goal" rows="3" placeholder="Describe the type of creator partnerships you're looking for..."></textarea></div>
-        <div class="form-group"><label class="form-label">Website</label><input class="form-input" type="text" id="profile-website" placeholder="https://yourcompany.com" /></div>
-      </div>
+    <div style="padding:28px;max-width:560px;">
+      <div class="form-group"><label class="form-label">Company Name</label><input class="form-input" type="text" id="profile-company" placeholder="e.g. GlowUp Cosmetics" /></div>
+      <div class="form-group"><label class="form-label">Contact Name</label><input class="form-input" type="text" id="profile-name" placeholder="Your name" /></div>
+      <div class="form-group"><label class="form-label">Industry / Niche</label><input class="form-input" type="text" id="profile-niche" placeholder="e.g. Beauty & Skincare" /></div>
+      <div class="form-group"><label class="form-label">Monthly Budget</label><input class="form-input" type="text" id="profile-budget" placeholder="e.g. $5,000 – $10,000" /></div>
+      <div class="form-group"><label class="form-label">What you're looking for</label><textarea class="form-textarea" id="profile-goal" rows="3" placeholder="Describe the type of creator partnerships you're looking for..."></textarea></div>
+      <div class="form-group"><label class="form-label">Website</label><input class="form-input" type="text" id="profile-website" placeholder="https://yourcompany.com" /></div>
     </div>
   </div>
 
@@ -451,7 +257,7 @@
     <div class="modal-sub" id="offer-modal-sub">to @handle</div>
     <div class="form-group"><label class="form-label">Monthly Rate ($)</label><input class="form-input" type="number" id="offer-rate" placeholder="e.g. 2000" /></div>
     <div class="form-group"><label class="form-label">Videos Per Month</label><input class="form-input" type="number" id="offer-videos" placeholder="e.g. 8" /></div>
-    <div class="form-group"><label class="form-label">Message to Creator</label><textarea class="form-textarea" id="offer-message" rows="3" placeholder="Hi! We love your content and would love to work with you on a monthly retainer..."></textarea></div>
+    <div class="form-group"><label class="form-label">Message to Creator</label><textarea class="form-textarea" id="offer-message" rows="3" placeholder="Hi! We'd love to work with you on a monthly retainer..."></textarea></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeOfferModal()">Cancel</button>
       <button class="btn btn-primary" id="offer-submit-btn" onclick="submitOffer()">Send Offer</button>
@@ -465,256 +271,115 @@
 const SUPABASE_URL = 'https://tbfcwqcqpfbqaknktkyp.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiZmN3cWNxcGZicWFrbmt0a3lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NDQyOTIsImV4cCI6MjA5MzIyMDI5Mn0.40OJm-heqGOiiGqE3QWHoafkRx8Snd3nH3cs19D7L4E';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let brandProfile = {}, allCreators = [], offerTarget = null;
 
-let brandProfile = {};
-let allCreators  = [];
-let allBrands    = [];
-let offerTarget  = null;
+function fmtN(n) { const x=parseInt(n); if(!x) return '—'; if(x>=1e6) return (x/1e6).toFixed(1)+'M'; if(x>=1000) return (x/1000).toFixed(1)+'K'; return String(x); }
+function initials(s) { return (s||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+function hdl(c) { return c.tiktok_handle ? (c.tiktok_handle.startsWith('@') ? c.tiktok_handle : '@'+c.tiktok_handle) : '—'; }
 
-// ── HELPERS ─────────────────────────────────────────────────────
-function fmtN(n) {
-  const x = parseInt(n);
-  if (!x) return '—';
-  if (x >= 1e9) return '$' + (x/1e9).toFixed(1) + 'B';
-  if (x >= 1e6) return '$' + (x/1e6).toFixed(1) + 'M';
-  if (x >= 1e3) return '$' + (x/1e3).toFixed(0) + 'K';
-  return '$' + x;
-}
-function fmtFollowers(n) {
-  const x = parseInt(n);
-  if (!x) return '—';
-  if (x >= 1e6) return (x/1e6).toFixed(1) + 'M';
-  if (x >= 1e3) return (x/1e3).toFixed(1) + 'K';
-  return String(x);
-}
-function initials(str) {
-  return (str||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-}
-function handle(c) {
-  return c.tiktok_handle ? (c.tiktok_handle.startsWith('@') ? c.tiktok_handle : '@'+c.tiktok_handle) : '—';
-}
-
-// ── AUTH ─────────────────────────────────────────────────────────
 async function initAuth() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = '/auth.html'; return; }
-
   const { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
   if (!profile || profile.role !== 'brand') { window.location.href = '/app.html'; return; }
-
   brandProfile = profile;
-  document.getElementById('sb-avatar').textContent = initials(profile.brand_company || profile.name || 'B');
-  document.getElementById('sb-name').textContent    = profile.brand_company || profile.name || 'Brand';
-  document.getElementById('overview-greeting').textContent = 'Welcome back, ' + (profile.brand_company || profile.name || 'there') + ' 👋';
-
-  // Fill profile form
-  document.getElementById('profile-company').value  = profile.brand_company || '';
-  document.getElementById('profile-name').value     = profile.name          || '';
-  document.getElementById('profile-niche').value    = profile.brand_niche   || '';
-  document.getElementById('profile-budget').value   = profile.brand_budget  || '';
-  document.getElementById('profile-goal').value     = profile.brand_goal    || '';
-  document.getElementById('profile-website').value  = profile.brand_website || '';
-
-  await Promise.all([loadCreators(), loadBrands(), loadCampaigns()]);
+  document.getElementById('sb-avatar').textContent = initials(profile.brand_company||profile.name||'B');
+  document.getElementById('sb-name').textContent = profile.brand_company||profile.name||'Brand';
+  document.getElementById('overview-title').textContent = 'Welcome back, '+(profile.brand_company||profile.name||'there');
+  document.getElementById('profile-company').value = profile.brand_company||'';
+  document.getElementById('profile-name').value    = profile.name||'';
+  document.getElementById('profile-niche').value   = profile.brand_niche||'';
+  document.getElementById('profile-budget').value  = profile.brand_budget||'';
+  document.getElementById('profile-goal').value    = profile.brand_goal||'';
+  document.getElementById('profile-website').value = profile.brand_website||'';
+  await Promise.all([loadCreators(), loadCampaigns()]);
   document.getElementById('loading').style.display = 'none';
 }
 
-// ── PAGES ────────────────────────────────────────────────────────
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  const nav = document.getElementById('nav-' + id);
-  if (nav) nav.classList.add('active');
+  document.getElementById('page-'+id).classList.add('active');
+  document.getElementById('nav-'+id).classList.add('active');
 }
 
-// ── LOAD CREATORS ────────────────────────────────────────────────
 async function loadCreators() {
-  const { data, error } = await sb.from('profiles').select('*').eq('role', 'creator');
-  allCreators = (data || []).sort((a,b) => (parseInt(b.total_gmv)||0) - (parseInt(a.total_gmv)||0));
-
-  // Platform stats
-  const totalGmv = allCreators.reduce((s,c) => s + (parseInt(c.total_gmv)||0), 0);
-  document.getElementById('ps-creators').textContent = allCreators.length;
-  document.getElementById('ps-gmv').textContent = totalGmv >= 1e6 ? '$'+(totalGmv/1e6).toFixed(1)+'M' : totalGmv >= 1e3 ? '$'+(totalGmv/1e3).toFixed(0)+'K' : '$'+totalGmv;
-
-  renderLeaderboard();
+  const { data } = await sb.from('profiles').select('*').eq('role', 'creator');
+  allCreators = data || [];
   renderCreators(allCreators);
 }
 
-// ── LEADERBOARD ──────────────────────────────────────────────────
-function podiumCard(c, rank) {
-  const medals = ['🥇','🥈','🥉'];
-  const rankClass = ['rank-1','rank-2','rank-3'][rank-1] || '';
-  return `<div class="podium-card ${rankClass}" onclick="openOfferModal('${c.id}','${(c.name||'Creator').replace(/'/g,"\\'")}','${handle(c)}')">
-    <span class="rank-badge">${medals[rank-1]||rank}</span>
-    <div class="podium-avatar">${initials(c.name||'C')}</div>
-    <div class="podium-name">${c.name||'Creator'}</div>
-    <div class="podium-handle">${handle(c)}</div>
-    <div class="podium-gmv">${c.total_gmv ? fmtN(c.total_gmv) : '—'}</div>
-    <div class="podium-gmv-label">Lifetime GMV</div>
-    <div style="font-size:11px;color:var(--text2);margin-top:6px;">${fmtFollowers(c.followers)} followers</div>
-    ${c.niche ? `<span class="podium-niche">${c.niche}</span>` : ''}
-  </div>`;
-}
-
-function renderLeaderboard() {
-  const top3 = allCreators.slice(0, 3);
-  const rest  = allCreators.slice(3);
-  const top3HTML = top3.length ? top3.map((c,i) => podiumCard(c, i+1)).join('') : '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-title">No creators yet</div></div>';
-
-  document.getElementById('lb-top3').innerHTML      = top3HTML;
-  document.getElementById('overview-top3').innerHTML = top3HTML;
-
-  document.getElementById('lb-list').innerHTML = rest.map((c, i) => `
-    <div class="lb-row">
-      <div class="lb-rank">${i+4}</div>
-      <div class="lb-avatar">${initials(c.name||'C')}</div>
-      <div class="lb-info">
-        <div class="lb-name">${c.name||'Creator'}</div>
-        <div class="lb-handle">${handle(c)}</div>
-        ${c.niche ? `<div class="lb-niche">${c.niche}</div>` : ''}
-      </div>
-      <div class="lb-stats">
-        <div class="lb-stat">
-          <div class="lb-stat-val green">${c.total_gmv ? fmtN(c.total_gmv) : '—'}</div>
-          <div class="lb-stat-lbl">GMV</div>
-        </div>
-        <div class="lb-stat">
-          <div class="lb-stat-val">${fmtFollowers(c.followers)}</div>
-          <div class="lb-stat-lbl">Followers</div>
-        </div>
-      </div>
-      <button class="lb-offer-btn" onclick="openOfferModal('${c.id}','${(c.name||'Creator').replace(/'/g,"\\'")}','${handle(c)}')">Send Offer</button>
-    </div>`).join('');
-}
-
-// ── CREATOR GRID ─────────────────────────────────────────────────
 function renderCreators(list) {
   const grid = document.getElementById('creator-grid');
-  document.getElementById('creator-count').textContent = list.length + ' creators';
-  if (!list.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="empty-title">No creators found</div><div class="empty-sub">Try adjusting your filters.</div></div>`;
-    return;
-  }
-  grid.innerHTML = list.map(c => `
-    <div class="creator-card">
-      <div class="creator-top">
-        <div class="creator-avatar">${initials(c.name||'C')}</div>
-        <div class="creator-info">
-          <div class="creator-name">${c.name||'Creator'}</div>
-          <div class="creator-handle">${handle(c)}</div>
-          ${c.niche ? `<span class="creator-niche">${c.niche}</span>` : ''}
-        </div>
+  if (!list.length) { grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="empty-title">No creators found</div></div>`; return; }
+  grid.innerHTML = list.map(c => `<div class="creator-card">
+    <div class="creator-top">
+      <div class="creator-avatar">${initials(c.name||'C')}</div>
+      <div class="creator-info">
+        <div class="creator-name">${c.name||'Creator'}</div>
+        <div class="creator-handle">${hdl(c)}</div>
+        ${c.niche?`<span class="creator-niche">${c.niche}</span>`:''}
       </div>
-      <div class="creator-stats">
-        <div class="creator-stat"><div class="creator-stat-val">${fmtFollowers(c.followers)}</div><div class="creator-stat-lbl">Followers</div></div>
-        <div class="creator-stat"><div class="creator-stat-val">${c.total_gmv ? fmtN(c.total_gmv) : '—'}</div><div class="creator-stat-lbl">Lifetime GMV</div></div>
-      </div>
-      ${c.bio ? `<div class="creator-bio">${c.bio.slice(0,90)}${c.bio.length>90?'…':''}</div>` : ''}
-      <div class="creator-actions">
-        <button class="btn btn-ghost" onclick="event.stopPropagation()">View Kit</button>
-        <button class="btn btn-primary" onclick="openOfferModal('${c.id}','${(c.name||'Creator').replace(/'/g,"\\'")}','${handle(c)}')">Send Offer</button>
-      </div>
-    </div>`).join('');
+    </div>
+    <div class="creator-stats">
+      <div class="creator-stat"><div class="creator-stat-val">${fmtN(c.followers)}</div><div class="creator-stat-lbl">Followers</div></div>
+      <div class="creator-stat"><div class="creator-stat-val">${c.total_gmv?'$'+fmtN(c.total_gmv):'—'}</div><div class="creator-stat-lbl">Lifetime GMV</div></div>
+    </div>
+    ${c.bio?`<div class="creator-bio">${c.bio.slice(0,90)}${c.bio.length>90?'…':''}</div>`:''}
+    <div class="creator-actions">
+      <button class="btn btn-ghost">View Kit</button>
+      <button class="btn btn-primary" onclick="openOfferModal('${c.id}','${(c.name||'Creator').replace(/'/g,"\\'")}','${hdl(c)}')">Send Offer</button>
+    </div>
+  </div>`).join('');
 }
 
 function filterCreators() {
-  const q      = document.getElementById('search-input').value.toLowerCase();
-  const niche  = document.getElementById('filter-niche').value.toLowerCase();
-  const minGmv = parseInt(document.getElementById('filter-gmv').value) || 0;
-  const sort   = document.getElementById('filter-sort').value;
-  let list = allCreators.filter(c => {
-    const mQ = !q || (c.name||'').toLowerCase().includes(q) || (c.tiktok_handle||'').toLowerCase().includes(q);
-    const mN = !niche || (c.niche||'').toLowerCase().includes(niche.split('&')[0].trim());
-    const mG = !minGmv || (parseInt(c.total_gmv)||0) >= minGmv;
-    return mQ && mN && mG;
-  });
-  if (sort === 'followers') list.sort((a,b) => (parseInt(b.followers)||0) - (parseInt(a.followers)||0));
-  else list.sort((a,b) => (parseInt(b.total_gmv)||0) - (parseInt(a.total_gmv)||0));
-  renderCreators(list);
+  const q = document.getElementById('search-input').value.toLowerCase();
+  const niche = document.getElementById('filter-niche').value.toLowerCase();
+  const minGmv = parseInt(document.getElementById('filter-gmv').value)||0;
+  renderCreators(allCreators.filter(c => {
+    const mQ = !q||(c.name||'').toLowerCase().includes(q)||(c.tiktok_handle||'').toLowerCase().includes(q);
+    const mN = !niche||(c.niche||'').toLowerCase().includes(niche.split('&')[0].trim());
+    const mG = !minGmv||(parseInt(c.total_gmv)||0)>=minGmv;
+    return mQ&&mN&&mG;
+  }));
 }
 
-// ── BRANDS ───────────────────────────────────────────────────────
-async function loadBrands() {
-  const { data } = await sb.from('profiles').select('*').eq('role', 'brand');
-  allBrands = data || [];
-  document.getElementById('ps-brands').textContent = allBrands.length;
-  document.getElementById('brand-count').textContent = allBrands.length + ' brands';
-  const grid = document.getElementById('brands-grid');
-  if (!allBrands.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-title">No brands yet</div><div class="empty-sub">Be the first brand on RetainerHQ.</div></div>`;
-    return;
-  }
-  grid.innerHTML = allBrands.map(b => {
-    const name = b.brand_company || b.name || 'Brand';
-    return `<div class="brand-card">
-      <div class="brand-top">
-        <div class="brand-avatar">${initials(name)}</div>
-        <div>
-          <div class="brand-name">${name}</div>
-          <div class="brand-niche">${b.brand_niche||'—'}</div>
-        </div>
-      </div>
-      ${b.brand_budget ? `<span class="brand-budget">${b.brand_budget}/mo budget</span>` : ''}
-      ${b.brand_goal ? `<div class="brand-goal">${b.brand_goal.slice(0,80)}${b.brand_goal.length>80?'…':''}</div>` : ''}
-    </div>`;
-  }).join('');
-}
-
-// ── CAMPAIGNS ────────────────────────────────────────────────────
 async function loadCampaigns() {
   const { data } = await sb.from('brand_offers').select('*, profiles!creator_id(name, tiktok_handle)').eq('brand_id', brandProfile.id).order('created_at', { ascending: false });
   if (!data?.length) return;
-  let active = 0;
+  let pending=0, active=0;
   const html = data.map(o => {
-    if (o.status === 'active') active++;
-    const init = initials(o.profiles?.name||'C');
-    const h    = o.profiles?.tiktok_handle ? '@'+o.profiles.tiktok_handle.replace('@','') : '—';
-    const cls  = o.status === 'active' ? 'status-active' : o.status === 'declined' ? 'status-declined' : 'status-pending';
-    return `<div class="campaign-row">
-      <div class="campaign-avatar">${init}</div>
-      <div class="campaign-info">
-        <div class="campaign-name">${o.profiles?.name||'Creator'} · ${h}</div>
-        <div class="campaign-meta">$${(o.monthly_rate||0).toLocaleString()}/mo · ${o.videos_per_month||0} videos/mo · ${new Date(o.created_at).toLocaleDateString()}</div>
-      </div>
-      <div class="campaign-status ${cls}">${o.status}</div>
-    </div>`;
+    if (o.status==='pending') pending++;
+    if (o.status==='active') active++;
+    const cls = o.status==='active'?'status-active':o.status==='declined'?'status-declined':'status-pending';
+    const h = o.profiles?.tiktok_handle?'@'+o.profiles.tiktok_handle.replace('@',''):'—';
+    return `<div class="campaign-row"><div class="campaign-avatar">${initials(o.profiles?.name||'C')}</div><div class="campaign-info"><div class="campaign-name">${o.profiles?.name||'Creator'} · ${h}</div><div class="campaign-meta">$${(o.monthly_rate||0).toLocaleString()}/mo · ${o.videos_per_month||0} videos · ${new Date(o.created_at).toLocaleDateString()}</div></div><div class="campaign-status ${cls}">${o.status}</div></div>`;
   }).join('');
   document.getElementById('campaigns-list').innerHTML = `<div class="campaigns-list">${html}</div>`;
-  document.getElementById('ps-campaigns').textContent = active;
-  document.getElementById('overview-activity').innerHTML = `<div class="campaigns-list">${html.split('</div>').slice(0,3).join('</div>')}...</div>`;
+  document.getElementById('overview-activity').innerHTML = `<div class="campaigns-list">${html}</div>`;
+  document.getElementById('stat-pending').textContent = pending;
+  document.getElementById('stat-active').textContent  = active;
+  document.getElementById('stat-reached').textContent = data.length;
 }
 
-// ── OFFER MODAL ───────────────────────────────────────────────────
 function openOfferModal(creatorId, name, h) {
   offerTarget = creatorId;
-  document.getElementById('offer-modal-sub').textContent = 'to ' + h + ' (' + name + ')';
-  document.getElementById('offer-rate').value    = '';
-  document.getElementById('offer-videos').value  = '';
-  document.getElementById('offer-message').value = '';
+  document.getElementById('offer-modal-sub').textContent = 'to '+h+' ('+name+')';
+  document.getElementById('offer-rate').value=''; document.getElementById('offer-videos').value=''; document.getElementById('offer-message').value='';
   document.getElementById('offer-modal').classList.add('open');
 }
-function closeOfferModal() {
-  document.getElementById('offer-modal').classList.remove('open');
-  offerTarget = null;
-}
+function closeOfferModal() { document.getElementById('offer-modal').classList.remove('open'); offerTarget=null; }
 
 async function submitOffer() {
-  const rate    = document.getElementById('offer-rate').value.trim();
-  const videos  = document.getElementById('offer-videos').value.trim();
-  const message = document.getElementById('offer-message').value.trim();
-  if (!rate || !videos) { showToast('Please enter a rate and video count'); return; }
-  const btn = document.getElementById('offer-submit-btn');
-  btn.textContent = 'Sending...'; btn.disabled = true;
+  const rate=document.getElementById('offer-rate').value.trim(), videos=document.getElementById('offer-videos').value.trim(), message=document.getElementById('offer-message').value.trim();
+  if (!rate||!videos) { showToast('Please enter a rate and video count'); return; }
+  const btn=document.getElementById('offer-submit-btn'); btn.textContent='Sending...'; btn.disabled=true;
   const { error } = await sb.from('brand_offers').insert({ brand_id: brandProfile.id, creator_id: offerTarget, brand_name: brandProfile.brand_company||brandProfile.name, monthly_rate: parseInt(rate), videos_per_month: parseInt(videos), message, status: 'pending' });
-  btn.textContent = 'Send Offer'; btn.disabled = false;
-  closeOfferModal();
-  if (error) { showToast('❌ Failed to send offer'); console.error(error); }
-  else { showToast('✅ Offer sent!'); await loadCampaigns(); }
+  btn.textContent='Send Offer'; btn.disabled=false; closeOfferModal();
+  if (error) { showToast('❌ Failed to send offer'); console.error(error); } else { showToast('✅ Offer sent!'); await loadCampaigns(); }
 }
 
-// ── PROFILE SAVE ─────────────────────────────────────────────────
 async function saveProfile() {
   const { data: { session } } = await sb.auth.getSession();
   await sb.from('profiles').update({ name: document.getElementById('profile-name').value.trim(), brand_company: document.getElementById('profile-company').value.trim(), brand_niche: document.getElementById('profile-niche').value.trim(), brand_budget: document.getElementById('profile-budget').value.trim(), brand_goal: document.getElementById('profile-goal').value.trim(), brand_website: document.getElementById('profile-website').value.trim() }).eq('id', session.user.id);
@@ -723,11 +388,7 @@ async function saveProfile() {
 
 async function signOut() { await sb.auth.signOut(); window.location.href = '/auth.html'; }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
 
 initAuth();
 </script>
