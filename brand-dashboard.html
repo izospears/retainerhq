@@ -111,6 +111,38 @@
     #loading { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; }
     .spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
+    /* Kit modal */
+    .kit-modal { max-width: 600px; max-height: 88vh; overflow-y: auto; }
+    .kit-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+    .kit-avatar { width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #00B8FF); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; color: #000; flex-shrink: 0; }
+    .kit-name { font-size: 20px; font-weight: 900; letter-spacing: -.4px; }
+    .kit-handle { font-size: 13px; color: var(--accent); font-weight: 700; margin-top: 2px; }
+    .kit-niche { display: inline-block; margin-top: 6px; background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,229,160,.2); border-radius: 20px; padding: 2px 10px; font-size: 9px; font-weight: 700; letter-spacing: .7px; text-transform: uppercase; }
+    .kit-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 18px; }
+    .kit-stat { background: var(--bg2); border-radius: 10px; padding: 12px 14px; }
+    .kit-stat-val { font-size: 22px; font-weight: 900; color: var(--accent); letter-spacing: -1px; line-height: 1; }
+    .kit-stat-lbl { font-size: 9px; color: var(--text3); font-weight: 700; letter-spacing: .8px; text-transform: uppercase; margin-top: 4px; }
+    .kit-bio { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 18px; padding: 14px; background: var(--bg2); border-radius: 10px; }
+    .kit-section-label { font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+    .kit-pkgs { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); gap: 8px; margin-bottom: 18px; }
+    .kit-pkg { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center; }
+    .kit-pkg-price { font-size: 18px; font-weight: 900; color: var(--accent); letter-spacing: -.5px; }
+    .kit-pkg-label { font-size: 9px; color: var(--text3); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
+    .kit-pkg-qty { font-size: 11px; color: var(--text2); margin-top: 4px; }
+    .kit-videos { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 18px; }
+    .kit-video-thumb { border-radius: 8px; overflow: hidden; background: var(--bg2); border: 1px solid var(--border); position: relative; }
+    .kit-video-thumb img { width: 100%; height: auto; display: block; }
+    .kit-video-views { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent,rgba(0,0,0,.85)); padding: 12px 6px 6px; font-size: 11px; font-weight: 800; color: #fff; text-align: center; }
+    /* Brief cards */
+    .briefs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 16px; }
+    .brief-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+    .brief-title { font-size: 14px; font-weight: 800; letter-spacing: -.2px; margin-bottom: 6px; }
+    .brief-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .brief-tag { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,229,160,.2); border-radius: 20px; padding: 2px 9px; font-size: 10px; font-weight: 700; }
+    .brief-desc { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 12px; }
+    .brief-footer { display: flex; align-items: center; justify-content: space-between; }
+    .brief-budget { font-size: 16px; font-weight: 900; color: var(--accent); letter-spacing: -.5px; }
+    .brief-date { font-size: 11px; color: var(--text3); }
   </style>
 </head>
 <body>
@@ -142,6 +174,10 @@
     <div class="nav-item" id="nav-campaigns" onclick="showPage('campaigns')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       My Campaigns
+    </div>
+    <div class="nav-item" id="nav-briefs" onclick="showPage('briefs')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Post a Brief
     </div>
     <div class="nav-section-label">Account</div>
     <div class="nav-item" id="nav-profile" onclick="showPage('profile')">
@@ -232,6 +268,29 @@
     </div>
   </div>
 
+  <!-- CAMPAIGN BRIEFS -->
+  <div class="page" id="page-briefs">
+    <div class="topbar">
+      <div class="topbar-title">Campaign Briefs</div>
+      <div class="topbar-right">
+        <button class="btn btn-primary" onclick="openBriefModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:13px;height:13px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Post a Brief
+        </button>
+      </div>
+    </div>
+    <div style="padding:28px;">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.6;">Post what you're looking for and let creators apply directly to you. Every creator on the platform can see active briefs.</p>
+      <div class="briefs-grid" id="briefs-grid">
+        <div class="empty-state" style="grid-column:1/-1;">
+          <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div class="empty-title">No briefs posted yet</div>
+          <div class="empty-sub">Post your first brief and creators will start applying.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- BRAND PROFILE -->
   <div class="page" id="page-profile">
     <div class="topbar">
@@ -261,6 +320,44 @@
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeOfferModal()">Cancel</button>
       <button class="btn btn-primary" id="offer-submit-btn" onclick="submitOffer()">Send Offer</button>
+    </div>
+  </div>
+</div>
+
+<!-- KIT MODAL -->
+<div class="modal-backdrop" id="kit-modal">
+  <div class="modal kit-modal">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div class="modal-title" id="kit-modal-title">Creator Media Kit</div>
+      <button onclick="closeKitModal()" style="background:none;border:none;color:var(--text2);cursor:pointer;font-size:18px;padding:4px;">✕</button>
+    </div>
+    <div id="kit-modal-body"><div class="spinner" style="margin:40px auto;display:block;"></div></div>
+    <div class="modal-actions" style="margin-top:20px;">
+      <button class="btn btn-ghost" onclick="closeKitModal()">Close</button>
+      <button class="btn btn-primary" id="kit-offer-btn">Send Offer</button>
+    </div>
+  </div>
+</div>
+
+<!-- BRIEF MODAL -->
+<div class="modal-backdrop" id="brief-modal">
+  <div class="modal" style="max-width:520px;">
+    <div class="modal-title">Post a Campaign Brief</div>
+    <div class="modal-sub">Creators will see this and can apply directly to you.</div>
+    <div class="form-group"><label class="form-label">Brief Title *</label><input class="form-input" id="brief-title" placeholder="e.g. Looking for K-Beauty skincare creators" /></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group"><label class="form-label">Monthly Budget ($) *</label><input class="form-input" type="number" id="brief-budget" placeholder="e.g. 2000" /></div>
+      <div class="form-group"><label class="form-label">Videos Per Month *</label><input class="form-input" type="number" id="brief-videos" placeholder="e.g. 8" /></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group"><label class="form-label">Min Followers</label><input class="form-input" id="brief-followers" placeholder="e.g. 10000" /></div>
+      <div class="form-group"><label class="form-label">Niche Required</label><input class="form-input" id="brief-niche" placeholder="e.g. Skincare" /></div>
+    </div>
+    <div class="form-group"><label class="form-label">Description *</label><textarea class="form-textarea" id="brief-desc" rows="4" placeholder="Tell creators about your brand, the product, what kind of content you want, and what makes this opportunity great..."></textarea></div>
+    <div class="form-group"><label class="form-label">Application Deadline</label><input class="form-input" type="date" id="brief-deadline" /></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeBriefModal()">Cancel</button>
+      <button class="btn btn-primary" id="brief-submit-btn" onclick="submitBrief()">Post Brief</button>
     </div>
   </div>
 </div>
@@ -301,6 +398,129 @@ function showPage(id) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   document.getElementById('nav-'+id).classList.add('active');
+  if (id === 'briefs') loadBriefs();
+}
+
+// ── VIEW KIT ────────────────────────────────────────────────────
+let kitTarget = null;
+async function viewMediaKit(creatorId) {
+  kitTarget = creatorId;
+  document.getElementById('kit-modal').classList.add('open');
+  document.getElementById('kit-modal-body').innerHTML = '<div class="spinner" style="margin:40px auto;display:block;"></div>';
+
+  const { data: c } = await sb.from('profiles').select('*').eq('id', creatorId).single();
+  if (!c) { document.getElementById('kit-modal-body').innerHTML = '<p style="color:var(--text2);text-align:center;padding:40px;">Could not load profile.</p>'; return; }
+
+  const rates  = c.rates_data || {};
+  const videos = Array.isArray(c.top_videos) ? c.top_videos.filter(v => v.screenshot) : [];
+  const pkgs   = [
+    { qty: rates.pkg1qty, price: rates.pkg1price },
+    { qty: rates.pkg2qty, price: rates.pkg2price },
+    { qty: rates.pkg3qty, price: rates.pkg3price },
+    { qty: rates.pkg4qty, price: rates.pkg4price },
+  ].filter(p => p.qty && p.price);
+
+  document.getElementById('kit-offer-btn').onclick = () => { closeKitModal(); openOfferModal(c.id, c.name||'Creator', hdl(c)); };
+
+  document.getElementById('kit-modal-body').innerHTML = `
+    <div class="kit-header">
+      <div class="kit-avatar">${initials(c.name||'C')}</div>
+      <div>
+        <div class="kit-name">${c.name||'Creator'}</div>
+        <div class="kit-handle">${hdl(c)}</div>
+        ${c.niche ? `<span class="kit-niche">${c.niche}</span>` : ''}
+      </div>
+    </div>
+    <div class="kit-stats">
+      <div class="kit-stat"><div class="kit-stat-val">${fmtN(c.followers)}</div><div class="kit-stat-lbl">Followers</div></div>
+      <div class="kit-stat"><div class="kit-stat-val">${c.total_gmv ? '$'+fmtN(c.total_gmv) : '—'}</div><div class="kit-stat-lbl">Lifetime GMV</div></div>
+      <div class="kit-stat"><div class="kit-stat-val">${c.last_30d_gmv || '—'}</div><div class="kit-stat-lbl">30-Day GMV</div></div>
+    </div>
+    ${c.bio ? `<div class="kit-bio">${c.bio}</div>` : ''}
+    ${pkgs.length ? `
+      <div class="kit-section-label">Retainer Packages</div>
+      <div class="kit-pkgs">${pkgs.map(p => `
+        <div class="kit-pkg">
+          <div class="kit-pkg-price">$${Number(p.price).toLocaleString()}</div>
+          <div class="kit-pkg-label">per month</div>
+          <div class="kit-pkg-qty">${p.qty} videos/mo</div>
+        </div>`).join('')}
+      </div>` : ''}
+    ${videos.length ? `
+      <div class="kit-section-label">Top Videos</div>
+      <div class="kit-videos">${videos.map(v => `
+        <div class="kit-video-thumb">
+          <img src="${v.screenshot}" />
+          ${v.views ? `<div class="kit-video-views">👁 ${v.views}</div>` : ''}
+        </div>`).join('')}
+      </div>` : ''}
+  `;
+}
+
+function closeKitModal() {
+  document.getElementById('kit-modal').classList.remove('open');
+  kitTarget = null;
+}
+
+// ── CAMPAIGN BRIEFS ──────────────────────────────────────────────
+function openBriefModal() { document.getElementById('brief-modal').classList.add('open'); }
+function closeBriefModal() { document.getElementById('brief-modal').classList.remove('open'); }
+
+async function submitBrief() {
+  const title    = document.getElementById('brief-title').value.trim();
+  const budget   = document.getElementById('brief-budget').value.trim();
+  const videos   = document.getElementById('brief-videos').value.trim();
+  const desc     = document.getElementById('brief-desc').value.trim();
+  if (!title || !budget || !videos || !desc) { showToast('Please fill in all required fields'); return; }
+
+  const btn = document.getElementById('brief-submit-btn');
+  btn.textContent = 'Posting...'; btn.disabled = true;
+
+  const { error } = await sb.from('campaign_briefs').insert({
+    brand_id:         brandProfile.id,
+    brand_name:       brandProfile.brand_company || brandProfile.name,
+    brand_niche:      brandProfile.brand_niche || '',
+    title,
+    description:      desc,
+    budget_per_month: parseInt(budget),
+    videos_per_month: parseInt(videos),
+    niche_requirement: document.getElementById('brief-niche').value.trim(),
+    min_followers:    parseInt(document.getElementById('brief-followers').value)||0,
+    deadline:         document.getElementById('brief-deadline').value || null,
+    status:           'active',
+  });
+
+  btn.textContent = 'Post Brief'; btn.disabled = false;
+
+  if (error) { showToast('❌ Failed to post brief'); console.error(error); }
+  else {
+    closeBriefModal();
+    showToast('✅ Brief posted! Creators can now apply.');
+    loadBriefs();
+  }
+}
+
+async function loadBriefs() {
+  const { data } = await sb.from('campaign_briefs').select('*').eq('brand_id', brandProfile.id).order('created_at', { ascending: false });
+  const grid = document.getElementById('briefs-grid');
+  if (!data?.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="empty-title">No briefs posted yet</div><div class="empty-sub">Post your first brief and creators will start applying.</div></div>`;
+    return;
+  }
+  grid.innerHTML = data.map(b => `
+    <div class="brief-card">
+      <div class="brief-title">${b.title}</div>
+      <div class="brief-meta">
+        ${b.niche_requirement ? `<span class="brief-tag">${b.niche_requirement}</span>` : ''}
+        <span class="brief-tag">${b.videos_per_month} videos/mo</span>
+        ${b.min_followers ? `<span class="brief-tag">${fmtN(b.min_followers)}+ followers</span>` : ''}
+      </div>
+      <div class="brief-desc">${(b.description||'').slice(0,120)}${(b.description||'').length>120?'…':''}</div>
+      <div class="brief-footer">
+        <div class="brief-budget">$${(b.budget_per_month||0).toLocaleString()}<span style="font-size:11px;font-weight:400;color:var(--text3)">/mo</span></div>
+        <div class="brief-date">${b.deadline ? 'Deadline: '+new Date(b.deadline).toLocaleDateString() : 'Open'}</div>
+      </div>
+    </div>`).join('');
 }
 
 async function loadCreators() {
@@ -327,7 +547,7 @@ function renderCreators(list) {
     </div>
     ${c.bio?`<div class="creator-bio">${c.bio.slice(0,90)}${c.bio.length>90?'…':''}</div>`:''}
     <div class="creator-actions">
-      <button class="btn btn-ghost">View Kit</button>
+      <button class="btn btn-ghost" onclick="viewMediaKit('${c.id}')">View Kit</button>
       <button class="btn btn-primary" onclick="openOfferModal('${c.id}','${(c.name||'Creator').replace(/'/g,"\\'")}','${hdl(c)}')">Send Offer</button>
     </div>
   </div>`).join('');
