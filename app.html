@@ -3325,10 +3325,10 @@ async function applyToBrief(briefId, brandName, btn) {
     btn.textContent = 'Apply Now →'; btn.disabled = false;
     showToast('❌ Could not apply');
   } else {
-    btn.textContent = '✓ Applied!';
-    btn.style.background = 'var(--card2)';
-    btn.style.color = 'var(--accent)';
-    btn.style.border = '1px solid var(--border2)';
+    btn.textContent = '✓ Applied';
+    btn.style.cssText = 'width:100%;background:#111827;color:#00E5A0;border:1.5px solid rgba(0,229,160,.3);border-radius:9px;padding:10px;font-size:13px;font-weight:800;cursor:default;font-family:inherit;';
+    btn.onmouseover = null;
+    btn.onmouseout = null;
     showToast('✅ Applied to ' + brandName + '!');
   }
 }
