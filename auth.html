@@ -271,8 +271,26 @@ let selectedRole = 'creator';
 window.addEventListener('load', () => {
   try {
     sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    sb.auth.getSession().then(({ data: { session } }) => {
-      if (session) window.location.href = '/app.html';
+    sb.auth.getSession().then(async ({ data: { session } }) => {
+      if (!session) return;
+      // Show "already signed in" banner instead of silently redirecting
+      const { data: profile } = await sb.from('profiles').select('name, role, brand_company').eq('id', session.user.id).single();
+      const displayName = profile?.brand_company || profile?.name || session.user.email;
+      const role = profile?.role === 'brand' ? 'Brand Account' : 'Creator Account';
+      const dest = profile?.role === 'brand' ? '/brand-dashboard.html' : '/app.html';
+
+      const banner = document.createElement('div');
+      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#0D1220;border-bottom:1px solid #1E2D45;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;z-index:999;font-family:Inter,sans-serif;';
+      banner.innerHTML = `
+        <div style="font-size:13px;color:#8896B3;">
+          Signed in as <strong style="color:#F0F4FF;">${displayName}</strong>
+          <span style="background:rgba(0,229,160,.1);color:#00E5A0;border:1px solid rgba(0,229,160,.2);border-radius:4px;padding:1px 7px;font-size:10px;font-weight:700;margin-left:8px;">${role}</span>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button onclick="window.location.href='${dest}'" style="background:#00E5A0;color:#000;border:none;border-radius:7px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Go to Dashboard</button>
+          <button onclick="sb.auth.signOut().then(()=>this.closest('div[style]').remove())" style="background:transparent;color:#8896B3;border:1px solid #253450;border-radius:7px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Sign Out</button>
+        </div>`;
+      document.body.prepend(banner);
     });
   } catch(e) {
     console.error('Supabase init error:', e);
