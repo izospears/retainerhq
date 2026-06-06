@@ -2614,10 +2614,6 @@
       <div class="section-header">
         <div class="section-title">My Media Kit</div>
         <div style="display:flex;gap:10px;align-items:center;">
-          <button class="btn btn-ghost" id="mk-dl-btn" onclick="downloadMediaKitPDF()" style="display:flex;align-items:center;gap:6px;padding:8px 14px;font-size:12px;font-weight:700;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:13px;height:13px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download PDF
-          </button>
           <button class="btn btn-primary" onclick="saveMediaKit()">Save Kit</button>
         </div>
       </div>
@@ -2645,60 +2641,31 @@
           </div>
 
           <!-- Top Videos -->
-          <div class="top-videos-label">Top Videos (up to 3)</div>
-          <div class="video-slots">
-
-            <!-- Slot 0 -->
-            <div class="video-slot" id="vslot-0">
-              <div class="video-slot-num">#1</div>
-              <div class="video-upload-area" onclick="document.getElementById('vfile-0').click()">
-                <span class="video-upload-icon">📱</span>
-                <span class="video-upload-hint">Tap to upload<br>screenshot</span>
-                <img class="video-thumb" id="vimg-0" />
-                <div class="video-views-overlay" id="vviews-overlay-0"></div>
-                <button class="video-remove-btn" onclick="removeVideoSlot(event,0)">×</button>
+          <div class="form-group" style="margin-top:8px;">
+            <label class="form-label">Top Videos (3–5 links)</label>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Paste your best TikTok video links. Brands will see these on your profile.</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:11px;font-weight:700;color:var(--text3);min-width:20px;">#1</span>
+                <input class="form-input" id="vurl-0" placeholder="https://www.tiktok.com/@you/video/..." oninput="updateKitPreview()" />
               </div>
-              <input type="file" id="vfile-0" accept="image/*" style="display:none" onchange="handleVideoUpload(0,this)" />
-              <div class="video-slot-fields">
-                <input class="video-slot-input" id="vurl-0" placeholder="TikTok link…" oninput="updateKitPreview()" />
-                <input class="video-slot-input" id="vviews-0" placeholder="Views (e.g. 1.2M)" oninput="syncViewsOverlay(0)" />
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:11px;font-weight:700;color:var(--text3);min-width:20px;">#2</span>
+                <input class="form-input" id="vurl-1" placeholder="https://www.tiktok.com/@you/video/..." oninput="updateKitPreview()" />
               </div>
-            </div>
-
-            <!-- Slot 1 -->
-            <div class="video-slot" id="vslot-1">
-              <div class="video-slot-num">#2</div>
-              <div class="video-upload-area" onclick="document.getElementById('vfile-1').click()">
-                <span class="video-upload-icon">📱</span>
-                <span class="video-upload-hint">Tap to upload<br>screenshot</span>
-                <img class="video-thumb" id="vimg-1" />
-                <div class="video-views-overlay" id="vviews-overlay-1"></div>
-                <button class="video-remove-btn" onclick="removeVideoSlot(event,1)">×</button>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:11px;font-weight:700;color:var(--text3);min-width:20px;">#3</span>
+                <input class="form-input" id="vurl-2" placeholder="https://www.tiktok.com/@you/video/..." oninput="updateKitPreview()" />
               </div>
-              <input type="file" id="vfile-1" accept="image/*" style="display:none" onchange="handleVideoUpload(1,this)" />
-              <div class="video-slot-fields">
-                <input class="video-slot-input" id="vurl-1" placeholder="TikTok link…" oninput="updateKitPreview()" />
-                <input class="video-slot-input" id="vviews-1" placeholder="Views (e.g. 850K)" oninput="syncViewsOverlay(1)" />
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:11px;font-weight:700;color:var(--text3);min-width:20px;">#4</span>
+                <input class="form-input" id="vurl-3" placeholder="Optional" oninput="updateKitPreview()" />
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:11px;font-weight:700;color:var(--text3);min-width:20px;">#5</span>
+                <input class="form-input" id="vurl-4" placeholder="Optional" oninput="updateKitPreview()" />
               </div>
             </div>
-
-            <!-- Slot 2 -->
-            <div class="video-slot" id="vslot-2">
-              <div class="video-slot-num">#3</div>
-              <div class="video-upload-area" onclick="document.getElementById('vfile-2').click()">
-                <span class="video-upload-icon">📱</span>
-                <span class="video-upload-hint">Tap to upload<br>screenshot</span>
-                <img class="video-thumb" id="vimg-2" />
-                <div class="video-views-overlay" id="vviews-overlay-2"></div>
-                <button class="video-remove-btn" onclick="removeVideoSlot(event,2)">×</button>
-              </div>
-              <input type="file" id="vfile-2" accept="image/*" style="display:none" onchange="handleVideoUpload(2,this)" />
-              <div class="video-slot-fields">
-                <input class="video-slot-input" id="vurl-2" placeholder="TikTok link…" oninput="updateKitPreview()" />
-                <input class="video-slot-input" id="vviews-2" placeholder="Views (e.g. 500K)" oninput="syncViewsOverlay(2)" />
-              </div>
-            </div>
-
           </div>
         </div>
         <div>
@@ -2719,9 +2686,9 @@
               </div>
               <div><span class="kit-niche-badge" id="kit-prev-niche">Niche</span></div>
               <!-- Top Videos preview -->
-              <div class="kit-top-videos" id="kit-prev-videos" style="display:none;">
-                <div class="kit-tv-label">Top Videos</div>
-                <div class="kit-tv-grid" id="kit-tv-grid"></div>
+              <div id="kit-prev-videos" style="display:none;margin-top:14px;">
+                <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;">Top Videos</div>
+                <div id="kit-tv-links" style="display:flex;flex-direction:column;gap:6px;"></div>
               </div>
             </div>
           </div>
@@ -4680,15 +4647,9 @@ function syncViewsOverlay(idx) {
 
 function loadTopVideos(videos) {
   if (!videos || !videos.length) return;
-  videos.slice(0, 3).forEach((v, idx) => {
-    window._topVideos[idx] = v;
-    if (v.url)   document.getElementById('vurl-'   + idx).value = v.url;
-    if (v.views) document.getElementById('vviews-' + idx).value = v.views;
-    if (v.screenshot) {
-      document.getElementById('vimg-' + idx).src = v.screenshot;
-      document.getElementById('vslot-' + idx).classList.add('has-img');
-    }
-    syncViewsOverlay(idx);
+  videos.slice(0, 5).forEach((v, idx) => {
+    const el = document.getElementById('vurl-' + idx);
+    if (el && v.url) el.value = v.url;
   });
   updateKitPreview();
 }
@@ -4718,31 +4679,28 @@ function updateKitPreview() {
   document.getElementById('kit-prev-gmv').textContent = gmv ? '$'+fmtNum(gmv) : '—';
   document.getElementById('kit-prev-niche').textContent = niche;
 
-  // Top videos preview
+  // Top videos preview — show links as clickable badges
   const tvSection = document.getElementById('kit-prev-videos');
-  const tvGrid    = document.getElementById('kit-tv-grid');
-  const hasAny    = window._topVideos.some(v => v.screenshot);
-  tvSection.style.display = hasAny ? 'block' : 'none';
-  if (hasAny) {
-    tvGrid.innerHTML = window._topVideos.map((v, i) => {
-      if (v.screenshot) {
-        const views = document.getElementById('vviews-' + i).value.trim();
-        return `<div class="kit-tv-thumb">
-          <img src="${v.screenshot}" />
-          ${views ? `<div class="kit-tv-views">👁 ${views}</div>` : ''}
-        </div>`;
-      }
-      return `<div class="kit-tv-empty">📱</div>`;
+  const tvLinks   = document.getElementById('kit-tv-links');
+  const urls = [0,1,2,3,4].map(i => document.getElementById('vurl-'+i)?.value.trim()).filter(Boolean);
+  tvSection.style.display = urls.length ? 'block' : 'none';
+  if (urls.length) {
+    tvLinks.innerHTML = urls.map((url, i) => {
+      const label = url.length > 45 ? url.slice(0,45)+'…' : url;
+      return `<a href="${url}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 11px;text-decoration:none;color:var(--accent);font-size:11px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:12px;height:12px;flex-shrink:0;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Video #${i+1}
+        <span style="color:var(--text3);font-weight:400;margin-left:2px;">${label}</span>
+      </a>`;
     }).join('');
   }
 }
 
 async function saveMediaKit() {
-  const topVideos = [0, 1, 2].map(idx => ({
-    screenshot: window._topVideos[idx]?.screenshot || null,
-    url:   document.getElementById('vurl-'   + idx).value.trim(),
-    views: document.getElementById('vviews-' + idx).value.trim(),
-  }));
+  const topVideos = [0,1,2,3,4].map(idx => {
+    const url = document.getElementById('vurl-'+idx)?.value.trim();
+    return url ? { url } : null;
+  }).filter(Boolean);
   const updates = {
     tiktok_handle: document.getElementById('kit-handle').value.trim(),
     niche:     document.getElementById('kit-niche').value.trim(),
