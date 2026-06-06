@@ -3001,42 +3001,27 @@
       </div>
       <div class="ob-field">
         <label class="ob-label">Last 30-Day GMV *</label>
-        <input class="ob-input" id="ob-gmv30" type="text" placeholder="e.g. $4,200 or 4200" autocomplete="off" />
+        <input class="ob-input" id="ob-gmv30" type="text" placeholder="e.g. 4200" autocomplete="off" />
         <div class="ob-error-hint" id="ob-gmv30-err">Please enter your last 30-day GMV</div>
       </div>
       <div class="ob-field">
-        <label class="ob-label">Lifetime GMV (optional)</label>
-        <input class="ob-input" id="ob-gmv-lifetime" type="text" placeholder="e.g. $4,000,000" autocomplete="off" />
+        <label class="ob-label">All-Time GMV *</label>
+        <input class="ob-input" id="ob-gmv-lifetime" type="text" placeholder="e.g. 4000000" autocomplete="off" />
+        <div class="ob-error-hint" id="ob-gmv-lifetime-err">Please enter your all-time GMV</div>
       </div>
       <button class="ob-btn" onclick="obNext(2)">Continue →</button>
     </div>
 
-    <!-- Step 3: Goals -->
+    <!-- Step 3: Bio -->
     <div class="ob-step" id="ob-s3">
       <div class="ob-step-label">Step 4 of 4</div>
       <div class="ob-title">Almost there 🔥</div>
-      <div class="ob-sub">What does winning look like for you?</div>
+      <div class="ob-sub">Write a quick intro. Brands will see this on your profile.</div>
       <div class="ob-field">
-        <label class="ob-label">Desired Monthly Income *</label>
-        <div class="ob-tiles" id="ob-income-tiles">
-          <div class="ob-tile" onclick="obTile(this,'income')">$1K–$3K</div>
-          <div class="ob-tile" onclick="obTile(this,'income')">$3K–$5K</div>
-          <div class="ob-tile" onclick="obTile(this,'income')">$5K–$10K</div>
-          <div class="ob-tile" onclick="obTile(this,'income')">$10K–$25K</div>
-          <div class="ob-tile" onclick="obTile(this,'income')">$25K+</div>
-        </div>
-        <div class="ob-error-hint" id="ob-income-err">Please select your income goal</div>
-      </div>
-      <div class="ob-field">
-        <label class="ob-label">Biggest Challenge Right Now *</label>
-        <div class="ob-chips" id="ob-challenge-chips">
-          <div class="ob-chip" onclick="obChip(this,'challenge')">Getting brand deals</div>
-          <div class="ob-chip" onclick="obChip(this,'challenge')">Pricing confidently</div>
-          <div class="ob-chip" onclick="obChip(this,'challenge')">Tracking income</div>
-          <div class="ob-chip" onclick="obChip(this,'challenge')">Consistent content</div>
-          <div class="ob-chip" onclick="obChip(this,'challenge')">Scaling income</div>
-        </div>
-        <div class="ob-error-hint" id="ob-challenge-err">Please select your biggest challenge</div>
+        <label class="ob-label">Short Bio *</label>
+        <textarea class="ob-input" id="ob-bio" rows="4" placeholder="e.g. TikTok Shop affiliate with $4M+ in GMV. I specialize in K-beauty and skincare content that actually converts. Based in LA, open to monthly retainer deals." style="resize:none;line-height:1.6;"></textarea>
+        <div class="ob-error-hint" id="ob-bio-err">Please write a short bio</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:6px;">2–4 sentences. Keep it real — what makes you worth hiring?</div>
       </div>
       <button class="ob-btn" id="ob-finish-btn" onclick="obFinish()">Complete Setup →</button>
     </div>
@@ -3701,17 +3686,17 @@ function obNext(fromStep) {
     obShowErr('ob-niche-err', false);
   }
   if (fromStep === 2) {
-    const followers = document.getElementById('ob-followers').value.trim();
-    const gmv30     = document.getElementById('ob-gmv30').value.trim();
+    const followers   = document.getElementById('ob-followers').value.trim();
+    const gmv30       = document.getElementById('ob-gmv30').value.trim();
+    const gmvLifetime = document.getElementById('ob-gmv-lifetime').value.trim();
     let valid = true;
-    if (!followers) { obShowErr('ob-followers-err', true); obShake('ob-followers'); valid = false; }
-    else obShowErr('ob-followers-err', false);
-    if (!gmv30) { obShowErr('ob-gmv30-err', true); obShake('ob-gmv30'); valid = false; }
-    else obShowErr('ob-gmv30-err', false);
+    if (!followers)   { obShowErr('ob-followers-err', true);    obShake('ob-followers');    valid = false; } else obShowErr('ob-followers-err', false);
+    if (!gmv30)       { obShowErr('ob-gmv30-err', true);        obShake('ob-gmv30');        valid = false; } else obShowErr('ob-gmv30-err', false);
+    if (!gmvLifetime) { obShowErr('ob-gmv-lifetime-err', true); obShake('ob-gmv-lifetime'); valid = false; } else obShowErr('ob-gmv-lifetime-err', false);
     if (!valid) return;
-    _obData.followers    = followers.replace(/[^0-9]/g, '');
-    _obData.gmv30        = gmv30;
-    _obData.gmvLifetime  = document.getElementById('ob-gmv-lifetime').value.trim();
+    _obData.followers   = followers.replace(/[^0-9]/g, '');
+    _obData.gmv30       = gmv30;
+    _obData.gmvLifetime = gmvLifetime;
   }
 
   const cur = document.getElementById('ob-s' + fromStep);
@@ -3726,25 +3711,24 @@ function obNext(fromStep) {
 }
 
 async function obFinish() {
-  // Validate
-  if (!_obData.income) { obShowErr('ob-income-err', true); return; }
-  obShowErr('ob-income-err', false);
-  if (!_obData.challenge) { obShowErr('ob-challenge-err', true); return; }
-  obShowErr('ob-challenge-err', false);
+  // Validate bio
+  const bio = document.getElementById('ob-bio').value.trim();
+  if (!bio) { obShowErr('ob-bio-err', true); obShake('ob-bio'); return; }
+  obShowErr('ob-bio-err', false);
+  _obData.bio = bio;
 
   const btn = document.getElementById('ob-finish-btn');
   btn.textContent = 'Saving...'; btn.disabled = true;
 
   const updates = {
     role: 'creator', onboarded: true,
-    name:            _obData.name,
-    tiktok_handle:   _obData.handle,
-    niche:           _obData.niche,
-    followers:       _obData.followers,
-    last_30d_gmv:    _obData.gmv30,
-    total_gmv:       _obData.gmvLifetime || null,
-    desired_monthly_income: _obData.income,
-    biggest_challenge:      _obData.challenge,
+    name:          _obData.name,
+    tiktok_handle: _obData.handle,
+    niche:         _obData.niche,
+    followers:     _obData.followers,
+    last_30d_gmv:  _obData.gmv30,
+    total_gmv:     _obData.gmvLifetime ? parseFloat(_obData.gmvLifetime.replace(/[^0-9.]/g,'')) || null : null,
+    bio:           _obData.bio,
   };
 
   await sb.from('profiles').update(updates).eq('id', currentUser.id);
