@@ -219,6 +219,24 @@
         <div class="stat-card"><div class="stat-label">Pending Offers</div><div class="stat-value" id="stat-pending">0</div><div class="stat-sub">awaiting creator response</div></div>
         <div class="stat-card"><div class="stat-label">Creators Reached</div><div class="stat-value white" id="stat-reached">0</div><div class="stat-sub">total offers sent</div></div>
       </div>
+      <div style="margin-bottom:10px;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;">📊 Platform Stats</div>
+      <div class="stats-row" style="margin-bottom:28px;">
+        <div class="stat-card" style="border-color:rgba(0,229,160,.15);background:rgba(0,229,160,.03);">
+          <div class="stat-label">Creators on Platform</div>
+          <div class="stat-value" id="plat-creators">—</div>
+          <div class="stat-sub">verified affiliates</div>
+        </div>
+        <div class="stat-card" style="border-color:rgba(0,229,160,.15);background:rgba(0,229,160,.03);">
+          <div class="stat-label">Platform GMV</div>
+          <div class="stat-value" id="plat-gmv">—</div>
+          <div class="stat-sub">total affiliate-driven sales</div>
+        </div>
+        <div class="stat-card" style="border-color:rgba(0,229,160,.15);background:rgba(0,229,160,.03);">
+          <div class="stat-label">Brands on Platform</div>
+          <div class="stat-value" id="plat-brands">—</div>
+          <div class="stat-sub">active brand accounts</div>
+        </div>
+      </div>
       <div class="section-hdr">
         <div><div class="section-title">Recent Activity</div><div class="section-sub">Your latest offers and campaigns</div></div>
       </div>
@@ -389,7 +407,7 @@ async function initAuth() {
   document.getElementById('profile-budget').value  = profile.brand_budget||'';
   document.getElementById('profile-goal').value    = profile.brand_goal||'';
   document.getElementById('profile-website').value = profile.brand_website||'';
-  await Promise.all([loadCreators(), loadCampaigns()]);
+  await Promise.all([loadCreators(), loadCampaigns(), loadPlatformStats()]);
   document.getElementById('loading').style.display = 'none';
 }
 
@@ -634,6 +652,23 @@ function filterCreators() {
     const mG = !minGmv||(parseInt(c.total_gmv)||0)>=minGmv;
     return mQ&&mN&&mG;
   }));
+}
+
+async function loadPlatformStats() {
+  // Count creators
+  const { count: creatorCount } = await sb.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'creator');
+  // Sum GMV across all creators
+  const { data: gmvData } = await sb.from('profiles').select('total_gmv').eq('role', 'creator').not('total_gmv', 'is', null);
+  const totalGMV = (gmvData||[]).reduce((sum, r) => sum + (parseFloat(r.total_gmv)||0), 0);
+  // Count brands
+  const { count: brandCount } = await sb.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'brand');
+
+  document.getElementById('plat-creators').textContent = (creatorCount||0) >= 1000
+    ? ((creatorCount/1000).toFixed(1)+'K') : String(creatorCount||0);
+  document.getElementById('plat-gmv').textContent = totalGMV >= 1e6
+    ? '$'+(totalGMV/1e6).toFixed(1)+'M'
+    : totalGMV >= 1000 ? '$'+(totalGMV/1000).toFixed(0)+'K' : '$'+(totalGMV||0);
+  document.getElementById('plat-brands').textContent = String(brandCount||0);
 }
 
 async function loadCampaigns() {
