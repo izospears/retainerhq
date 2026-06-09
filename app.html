@@ -703,6 +703,10 @@
       100% { transform: scale(1.1); }
     }
     .stage-dot.popping { animation: stagePop .35s ease forwards; }
+    @keyframes oppPulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:.4; transform:scale(1.4); }
+    }
 
     /* ── EMAIL GENERATOR ── */
     .tabs {
@@ -3426,17 +3430,71 @@ async function checkPendingOffers() {
 }
 
 // ── OPPORTUNITIES ────────────────────────────────────────────────
+const _teaserCards = [
+  { brand:'K-Beauty Brand', niche:'Skincare', budget:2800, videos:4, followers:'50K', label:'A', msg:'Currently negotiating with brand', sub:'Deal dropping soon — stay tuned.' },
+  { brand:'Wellness Co.',   niche:'Health & Wellness', budget:1500, videos:3, followers:'25K', label:'W', msg:'Coming soon', sub:'This deal is almost ready.' },
+  { brand:'Korean Skincare',niche:'Beauty', budget:3200, videos:5, followers:'100K', label:'S', msg:'Finalizing contract terms', sub:'Expected to go live this week.' },
+  { brand:'Beauty Brand',   niche:'Makeup', budget:2000, videos:4, followers:'30K', label:'B', msg:'Currently negotiating with brand', sub:'Retainer deal in progress.' },
+  { brand:'Supplement Co.', niche:'Health', budget:1800, videos:3, followers:'20K', label:'S', msg:'Deal in progress', sub:'Launching soon — profile ready.' },
+  { brand:'Skincare Label', niche:'Skincare', budget:4000, videos:6, followers:'75K', label:'L', msg:'Coming soon', sub:'Exclusive retainer opportunity.' },
+  { brand:'Fashion Brand',  niche:'Fashion & Style', budget:2500, videos:4, followers:'50K', label:'F', msg:'Negotiation in progress', sub:'We\'re locking in the final terms.' },
+  { brand:'Hair Care Brand',niche:'Hair & Beauty', budget:1200, videos:2, followers:'15K', label:'H', msg:'Currently negotiating with brand', sub:'Partnership agreement in review.' },
+  { brand:'Fitness Brand',  niche:'Fitness & Wellness', budget:2200, videos:4, followers:'40K', label:'F', msg:'Finalizing deal terms', sub:'Contract being reviewed now.' },
+  { brand:'K-Beauty Label', niche:'Skincare', budget:3500, videos:5, followers:'60K', label:'K', msg:'Coming soon', sub:'One of our biggest deals yet.' },
+  { brand:'Wellness Brand', niche:'Wellness', budget:1600, videos:3, followers:'20K', label:'W', msg:'Currently negotiating', sub:'This brand reached out directly.' },
+  { brand:'Cosmetics Co.',  niche:'Makeup & Beauty', budget:2800, videos:4, followers:'45K', label:'C', msg:'Deal in progress', sub:'High-value retainer coming.' },
+  { brand:'Nutrition Brand',niche:'Health & Nutrition', budget:1400, videos:2, followers:'10K', label:'N', msg:'Coming soon', sub:'Exclusive to RetainerHQ creators.' },
+  { brand:'Luxury Skincare',niche:'Skincare', budget:5000, videos:5, followers:'100K', label:'L', msg:'Negotiating premium deal', sub:'Biggest budget on the platform.' },
+  { brand:'Body Care Brand',niche:'Body & Wellness', budget:1800, videos:3, followers:'25K', label:'B', msg:'Currently negotiating with brand', sub:'Details being finalized.' },
+  { brand:'Glow Brand',     niche:'Beauty', budget:2100, videos:4, followers:'35K', label:'G', msg:'Coming soon', sub:'Launching within days.' },
+  { brand:'Korean Brand',   niche:'K-Beauty', budget:3000, videos:5, followers:'50K', label:'K', msg:'Deal almost live', sub:'Stay tuned — dropping this week.' },
+  { brand:'Lifestyle Brand',niche:'Lifestyle', budget:1700, videos:3, followers:'20K', label:'L', msg:'Currently negotiating', sub:'A unique lifestyle partnership.' },
+  { brand:'Anti-Aging Co.', niche:'Skincare', budget:2600, videos:4, followers:'40K', label:'A', msg:'Finalizing contract', sub:'Premium skincare deal incoming.' },
+  { brand:'Beauty Platform',niche:'Beauty & Wellness', budget:2300, videos:4, followers:'30K', label:'B', msg:'Coming soon', sub:'Multi-month retainer deal.' },
+];
+
+function renderTeaserGrid() {
+  const grid = document.getElementById('opps-grid');
+  document.getElementById('opps-count').textContent = '20 deals in negotiation';
+  grid.innerHTML = _teaserCards.map(t => `
+    <div style="position:relative;border-radius:14px;overflow:hidden;background:var(--card);border:1px solid var(--border);">
+      <!-- blurred card body -->
+      <div style="padding:20px;filter:blur(5px);user-select:none;pointer-events:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="width:36px;height:36px;border-radius:9px;background:var(--accent-dim);border:1px solid rgba(0,229,160,.2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:var(--accent);flex-shrink:0;">${t.label}</div>
+          <div>
+            <div style="font-size:13px;font-weight:800;color:var(--text);">${t.brand}</div>
+            <div style="font-size:11px;color:var(--text2);">${t.niche}</div>
+          </div>
+          <div style="margin-left:auto;font-size:20px;font-weight:900;color:var(--accent);letter-spacing:-1px;">$${t.budget.toLocaleString()}<span style="font-size:10px;font-weight:400;color:var(--text3)">/mo</span></div>
+        </div>
+        <div style="height:12px;background:var(--border2);border-radius:6px;margin-bottom:8px;width:80%;"></div>
+        <div style="height:10px;background:var(--border);border-radius:6px;margin-bottom:6px;width:95%;"></div>
+        <div style="height:10px;background:var(--border);border-radius:6px;margin-bottom:14px;width:70%;"></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
+          <span style="background:var(--accent-dim);color:var(--accent);border:1px solid rgba(0,229,160,.2);border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;">${t.videos} videos/mo</span>
+          <span style="background:var(--bg2);color:var(--text2);border:1px solid var(--border);border-radius:20px;padding:2px 9px;font-size:10px;font-weight:700;">${t.followers}+ followers</span>
+        </div>
+        <div style="height:38px;background:var(--accent-dim);border-radius:9px;"></div>
+      </div>
+      <!-- floating overlay -->
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(8,12,20,0.55);backdrop-filter:blur(1px);">
+        <div style="background:rgba(0,229,160,0.12);border:1px solid rgba(0,229,160,0.35);border-radius:30px;padding:6px 16px;display:flex;align-items:center;gap:7px;">
+          <div style="width:6px;height:6px;border-radius:50%;background:#00E5A0;animation:oppPulse 1.8s ease-in-out infinite;flex-shrink:0;"></div>
+          <span style="font-size:12px;font-weight:800;color:#00E5A0;letter-spacing:.2px;">${t.msg}</span>
+        </div>
+        <div style="font-size:11px;color:rgba(240,244,255,0.55);font-weight:500;">${t.sub}</div>
+      </div>
+    </div>`).join('');
+}
+
 async function loadOpportunities() {
   const { data, error } = await sb.from('campaign_briefs').select('*').eq('status','active').order('created_at',{ascending:false});
   const grid = document.getElementById('opps-grid');
   const fmtN = n => { const x=parseInt(n); if(!x) return '—'; if(x>=1e6) return (x/1e6).toFixed(1)+'M'; if(x>=1e3) return (x/1e3).toFixed(1)+'K'; return String(x); };
 
   if (!data?.length) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text2);">
-      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px;">No opportunities yet</div>
-      <div style="font-size:13px;">Check back soon — brands are onboarding now.</div>
-    </div>`;
-    document.getElementById('opps-count').textContent = '';
+    renderTeaserGrid();
     return;
   }
 
