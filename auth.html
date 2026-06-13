@@ -277,7 +277,7 @@ window.addEventListener('load', () => {
       const { data: profile } = await sb.from('profiles').select('name, role, brand_company').eq('id', session.user.id).single();
       const displayName = profile?.brand_company || profile?.name || session.user.email;
       const role = profile?.role === 'brand' ? 'Brand Account' : 'Creator Account';
-      const dest = profile?.role === 'brand' ? '/brand-dashboard.html' : '/app.html';
+      const isBrand = profile?.role === 'brand';
 
       const banner = document.createElement('div');
       banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#0D1220;border-bottom:1px solid #1E2D45;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;z-index:999;font-family:Inter,sans-serif;';
@@ -287,7 +287,10 @@ window.addEventListener('load', () => {
           <span style="background:rgba(0,229,160,.1);color:#00E5A0;border:1px solid rgba(0,229,160,.2);border-radius:4px;padding:1px 7px;font-size:10px;font-weight:700;margin-left:8px;">${role}</span>
         </div>
         <div style="display:flex;gap:10px;">
-          <button onclick="window.location.href='${dest}'" style="background:#00E5A0;color:#000;border:none;border-radius:7px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Go to Dashboard</button>
+          ${isBrand
+            ? `<span style="font-size:12px;color:#8896B3;padding:7px 0;">You're on the waitlist — we'll be in touch!</span>`
+            : `<button onclick="window.location.href='/app.html'" style="background:#00E5A0;color:#000;border:none;border-radius:7px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Go to Dashboard</button>`
+          }
           <button onclick="sb.auth.signOut().then(()=>this.closest('div[style]').remove())" style="background:transparent;color:#8896B3;border:1px solid #253450;border-radius:7px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Sign Out</button>
         </div>`;
       document.body.prepend(banner);
@@ -323,6 +326,28 @@ function hideError() {
   document.getElementById('error-msg').style.display = 'none';
 }
 
+function showBrandWaitlist(name) {
+  document.querySelector('.card').innerHTML = `
+    <div style="text-align:center;padding:16px 0 8px;">
+      <div style="width:64px;height:64px;background:rgba(0,229,160,.1);border:2px solid rgba(0,229,160,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div style="font-size:20px;font-weight:800;color:#F0F4FF;margin-bottom:8px;">You're on the waitlist!</div>
+      <div style="font-size:14px;color:#8896B3;line-height:1.6;margin-bottom:24px;">
+        Hey ${name ? name.split(' ')[0] : 'there'} 👋 We're onboarding brands in batches to make sure every partnership gets our full attention.<br><br>
+        We'll reach out shortly with your access details.
+      </div>
+      <div style="background:#0D1220;border:1px solid #1E2D45;border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+        <div style="width:8px;height:8px;background:#00E5A0;border-radius:50%;flex-shrink:0;box-shadow:0 0 8px #00E5A0;"></div>
+        <div style="font-size:12px;color:#8896B3;text-align:left;">Your spot is confirmed. We'll email you within <strong style="color:#F0F4FF;">1–2 business days</strong>.</div>
+      </div>
+      <a href="/" style="display:inline-block;font-size:13px;color:#00E5A0;text-decoration:none;font-weight:600;">← Back to RetainerHQ.io</a>
+    </div>
+  `;
+}
+
 async function signIn() {
   const email    = document.getElementById('signin-email').value.trim();
   const password = document.getElementById('signin-password').value;
@@ -338,8 +363,12 @@ async function signIn() {
     btn.textContent = 'Sign In'; btn.disabled = false;
   } else {
     // Route based on role
-    const { data: profile } = await sb.from('profiles').select('role').eq('id', data.user.id).single();
-    window.location.href = profile?.role === 'brand' ? '/brand-dashboard.html' : '/app.html';
+    const { data: profile } = await sb.from('profiles').select('role, name').eq('id', data.user.id).single();
+    if (profile?.role === 'brand') {
+      showBrandWaitlist(profile?.name);
+    } else {
+      window.location.href = '/app.html';
+    }
   }
 }
 
@@ -367,7 +396,13 @@ async function signUp() {
     await sb.from('profiles').update({ name, role: selectedRole, email }).eq('id', data.user.id);
   }
 
-  window.location.href = selectedRole === 'brand' ? '/brand-dashboard.html' : '/app.html';
+  if (selectedRole === 'brand') {
+    // Add to waitlist and show holding screen — no dashboard yet
+    try { await sb.from('waitlist').insert({ email, name }); } catch(_) {}
+    showBrandWaitlist(name);
+  } else {
+    window.location.href = '/app.html';
+  }
 }
 
 // Allow Enter key to submit
