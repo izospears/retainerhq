@@ -3302,7 +3302,9 @@ async function loadContracts() {
       status: c.status,
       start: c.start_date,
       expiry: c.expiry_date,
-      contact: c.contact || ''
+      contact: c.contact || '',
+      video_stages: c.video_stages || null,
+      requires_drafts: c.requires_drafts || false
     }));
   }
 }
