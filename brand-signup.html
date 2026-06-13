@@ -223,9 +223,7 @@ let sb;
 
 window.addEventListener('load', () => {
   sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  sb.auth.getSession().then(({ data: { session } }) => {
-    if (session) window.location.href = '/brand-dashboard.html';
-  });
+  // Don't auto-redirect brands — dashboard isn't live yet
 });
 
 function showError(msg) {
@@ -279,7 +277,31 @@ async function signUp() {
     }).eq('id', data.user.id);
   }
 
-  window.location.href = '/brand-dashboard.html';
+  // Add to waitlist and show holding screen — brand dashboard not live yet
+  try { await sb.from('waitlist').insert({ email, name: contactName }); } catch(_) {}
+  showWaitlist(contactName, companyName);
+}
+
+function showWaitlist(contactName, companyName) {
+  document.querySelector('.card').innerHTML = `
+    <div style="text-align:center;padding:20px 0 12px;">
+      <div style="width:64px;height:64px;background:rgba(0,229,160,.1);border:2px solid rgba(0,229,160,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div style="font-size:20px;font-weight:800;color:#F0F4FF;margin-bottom:8px;">You're on the waitlist!</div>
+      <div style="font-size:14px;color:#8896B3;line-height:1.65;margin-bottom:24px;">
+        Hey ${contactName ? contactName.split(' ')[0] : 'there'} 👋${companyName ? ` We've got <strong style="color:#F0F4FF;">${companyName}</strong> locked in.` : ''}<br><br>
+        We're onboarding brands in batches to make sure every partnership gets our full attention. We'll reach out shortly with your access and matched creator profiles.
+      </div>
+      <div style="background:#0D1220;border:1px solid #1E2D45;border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:10px;margin-bottom:24px;">
+        <div style="width:8px;height:8px;background:#00E5A0;border-radius:50%;flex-shrink:0;box-shadow:0 0 8px #00E5A0;animation:pulse 2s infinite;"></div>
+        <div style="font-size:12px;color:#8896B3;text-align:left;">Your spot is confirmed. Expect an email within <strong style="color:#F0F4FF;">1–2 business days</strong>.</div>
+      </div>
+      <a href="/" style="display:inline-block;font-size:13px;color:#00E5A0;text-decoration:none;font-weight:600;">← Back to RetainerHQ.io</a>
+    </div>
+    <style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>
+  `;
+  document.querySelector('.back-link').style.display = 'none';
 }
 </script>
 </body>
