@@ -4902,7 +4902,13 @@ function updateKitPreview() {
   const followers = document.getElementById('kit-followers').value;
   const gmv = document.getElementById('kit-gmv').value;
   const bio = document.getElementById('kit-bio').value || 'Your bio will appear here...';
-  document.getElementById('kit-prev-avatar').textContent = name.slice(0,2).toUpperCase();
+  const avatarUrl = mediaKitProfile?.avatar_url;
+  const prevAv = document.getElementById('kit-prev-avatar');
+  if (avatarUrl) {
+    prevAv.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;" />`;
+  } else {
+    prevAv.textContent = name.slice(0,2).toUpperCase();
+  }
   document.getElementById('kit-prev-name').textContent = name;
   document.getElementById('kit-prev-handle').textContent = handle.startsWith('@') ? handle : '@'+handle;
   document.getElementById('kit-prev-bio').textContent = bio;
@@ -4984,12 +4990,13 @@ async function applyCrop() {
     if (upErr) throw upErr;
 
     const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
-    const avatarUrl = urlData.publicUrl + '?t=' + Date.now();
+    const cleanUrl  = urlData.publicUrl;                   // saved to DB — no timestamp
+    const displayUrl = cleanUrl + '?t=' + Date.now();     // cache-bust for immediate display only
 
-    await sb.from('profiles').update({ avatar_url: avatarUrl }).eq('id', currentUser.id);
-    if (mediaKitProfile) mediaKitProfile.avatar_url = avatarUrl;
+    await sb.from('profiles').update({ avatar_url: cleanUrl }).eq('id', currentUser.id);
+    if (mediaKitProfile) mediaKitProfile.avatar_url = cleanUrl;
 
-    setAvatarEverywhere(avatarUrl);
+    setAvatarEverywhere(displayUrl);
     closeCropModal();
     showToast('Profile photo updated ✅');
   } catch (e) {
