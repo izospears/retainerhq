@@ -1482,8 +1482,15 @@
       border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
       font-size: 16px; font-weight: 800; color: #000;
-      flex-shrink: 0;
+      flex-shrink: 0; overflow: hidden;
     }
+    .kit-avatar img { width:100%;height:100%;object-fit:cover;display:block; }
+    .av-upload-wrap { position:relative;width:88px;height:88px;margin:0 auto 6px;cursor:pointer;flex-shrink:0; }
+    .av-upload-circle { width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#00B8FF);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#000;overflow:hidden;border:2.5px solid rgba(0,229,160,.3); }
+    .av-upload-circle img { width:100%;height:100%;object-fit:cover;display:block; }
+    .av-upload-overlay { position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s; }
+    .av-upload-wrap:hover .av-upload-overlay { opacity:1; }
+    .av-uploading { opacity:.6;pointer-events:none; }
     .kit-name { font-size: 16px; font-weight: 800; letter-spacing: -.3px; }
     .kit-handle { font-size: 12px; color: var(--accent); margin-top: 2px; }
     .kit-bio { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 16px; }
@@ -2659,6 +2666,17 @@
 
       <div class="kit-layout">
         <div class="kit-form">
+          <!-- Profile photo upload -->
+          <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:22px;">
+            <input type="file" id="av-file-input" accept="image/*" style="display:none;" onchange="uploadAvatar(this.files[0])" />
+            <div class="av-upload-wrap" onclick="document.getElementById('av-file-input').click()">
+              <div class="av-upload-circle" id="av-upload-circle">IS</div>
+              <div class="av-upload-overlay">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" width="22" height="22"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              </div>
+            </div>
+            <div style="font-size:11px;color:var(--text3);margin-top:7px;">Click to upload profile photo</div>
+          </div>
           <div class="form-group">
             <label class="form-label">TikTok Handle</label>
             <input class="form-input" id="kit-handle" placeholder="@yourhandle" />
@@ -2719,6 +2737,7 @@
                   <div class="kit-handle" id="kit-prev-handle">@handle</div>
                 </div>
               </div>
+
               <div class="kit-bio" id="kit-prev-bio">Your bio will appear here...</div>
               <div class="kit-stats">
                 <div class="kit-stat"><div class="kit-stat-val" id="kit-prev-followers">—</div><div class="kit-stat-lbl">Followers</div></div>
@@ -3274,7 +3293,11 @@ async function initAuth() {
     } else {
       document.querySelector('.user-plan').textContent = isPro ? 'Pro Affiliate' : 'Free Plan';
     }
-    document.querySelector('.avatar').textContent = (profile.name || 'U').slice(0,2).toUpperCase();
+    if (profile.avatar_url) {
+      setAvatarEverywhere(profile.avatar_url);
+    } else {
+      document.querySelector('.avatar').textContent = (profile.name || 'U').slice(0,2).toUpperCase();
+    }
     // Show upgrade banner for free users only
     if (!isPro && profile.role !== 'brand') {
       document.getElementById('upgrade-banner').style.display = 'block';
@@ -4854,6 +4877,8 @@ function loadMediaKitForm(profile) {
   if (profile.total_gmv) document.getElementById('kit-gmv').value = profile.total_gmv;
   if (profile.bio) document.getElementById('kit-bio').value = profile.bio;
   if (profile.top_videos) loadTopVideos(profile.top_videos);
+  // Set avatar if already uploaded
+  if (profile.avatar_url) setAvatarEverywhere(profile.avatar_url);
   updateKitPreview();
 }
 
@@ -4886,6 +4911,84 @@ function updateKitPreview() {
         <span style="color:var(--text3);font-weight:400;margin-left:2px;">${label}</span>
       </a>`;
     }).join('');
+  }
+}
+
+// ── AVATAR UPLOAD ─────────────────────────────────────────
+async function uploadAvatar(file) {
+  if (!file || !currentUser) return;
+  const wrap = document.getElementById('av-upload-circle');
+  wrap.classList.add('av-uploading');
+
+  try {
+    // Resize to 400x400 square using canvas
+    const blob = await resizeImageToBlob(file, 400);
+    const path = `${currentUser.id}/avatar.jpg`;
+
+    // Upload to Supabase Storage (upsert = overwrite existing)
+    const { error: upErr } = await sb.storage
+      .from('avatars')
+      .upload(path, blob, { upsert: true, contentType: 'image/jpeg' });
+    if (upErr) throw upErr;
+
+    // Get public URL
+    const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
+    const avatarUrl = urlData.publicUrl + '?t=' + Date.now(); // cache bust
+
+    // Save URL to profile
+    await sb.from('profiles').update({ avatar_url: avatarUrl }).eq('id', currentUser.id);
+    if (mediaKitProfile) mediaKitProfile.avatar_url = avatarUrl;
+
+    setAvatarEverywhere(avatarUrl);
+    showToast('Profile photo updated ✅');
+  } catch (e) {
+    showToast('Upload failed — ' + (e.message || 'try again'));
+  } finally {
+    wrap.classList.remove('av-uploading');
+  }
+}
+
+function resizeImageToBlob(file, size) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      // Center-crop to square
+      const min = Math.min(img.width, img.height);
+      const sx  = (img.width  - min) / 2;
+      const sy  = (img.height - min) / 2;
+      ctx.drawImage(img, sx, sy, min, min, 0, 0, size, size);
+      URL.revokeObjectURL(objectUrl);
+      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Canvas toBlob failed')), 'image/jpeg', 0.88);
+    };
+    img.onerror = reject;
+    img.src = objectUrl;
+  });
+}
+
+function setAvatarEverywhere(url) {
+  const imgTag = url ? `<img src="${url}" style="width:100%;height:100%;object-fit:cover;display:block;" />` : null;
+
+  // Sidebar avatar (small square)
+  const sidebarAv = document.querySelector('.avatar');
+  if (sidebarAv) {
+    if (url) { sidebarAv.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;" />`; }
+    else { sidebarAv.textContent = (mediaKitProfile?.name || 'U').slice(0,2).toUpperCase(); }
+  }
+
+  // Upload circle in media kit form
+  const uploadCircle = document.getElementById('av-upload-circle');
+  if (uploadCircle) {
+    uploadCircle.innerHTML = url ? `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />` : (mediaKitProfile?.name||'U').slice(0,2).toUpperCase();
+  }
+
+  // Kit preview avatar
+  const prevAv = document.getElementById('kit-prev-avatar');
+  if (prevAv) {
+    prevAv.innerHTML = url ? `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;" />` : (mediaKitProfile?.name||'U').slice(0,2).toUpperCase();
   }
 }
 
