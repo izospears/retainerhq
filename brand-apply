@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RetainerHQ — Brand Application</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080C14; --card: #111827; --accent: #00E5A0; --blue: #00B8FF;
+      --text: #F0F4FF; --text2: #8896B3; --text3: #4A5878;
+      --border: #1E2D45; --border2: #253450; --red: #FF6B6B;
+    }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── AURORA BACKGROUND ── */
+    .aurora { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+    .aurora-1 { width: 700px; height: 700px; background: rgba(0,229,160,0.07); filter: blur(120px); top: -250px; left: -200px; animation: drift1 14s ease-in-out infinite; }
+    .aurora-2 { width: 600px; height: 600px; background: rgba(0,184,255,0.06); filter: blur(100px); bottom: -150px; right: -150px; animation: drift2 17s ease-in-out infinite; }
+    .aurora-3 { width: 450px; height: 450px; background: rgba(130,80,255,0.05); filter: blur(90px); top: 40%; left: 40%; animation: drift3 20s ease-in-out infinite; }
+    @keyframes drift1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(80px,70px)} }
+    @keyframes drift2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-70px,-90px)} }
+    @keyframes drift3 { 0%,100%{transform:scale(1) translate(0,0)} 50%{transform:scale(1.25) translate(-30px,20px)} }
+
+    /* ── TOPBAR ── */
+    #topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 58px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px;
+      border-bottom: 1px solid rgba(255,255,255,.04);
+      background: rgba(8,12,20,.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+    .logo-mark {
+      width: 30px; height: 30px;
+      background: linear-gradient(135deg, var(--accent), var(--blue));
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-mark svg { width: 14px; height: 14px; }
+    .logo-text { font-size: 15px; font-weight: 900; letter-spacing: -.4px; color: var(--text); }
+    .progress-wrap { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .step-label { font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: .5px; text-transform: uppercase; }
+    .progress-bar-track { width: 160px; height: 3px; background: rgba(255,255,255,.06); border-radius: 99px; overflow: hidden; }
+    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--blue)); border-radius: 99px; transition: width .5s cubic-bezier(.4,0,.2,1); width: 0%; box-shadow: 0 0 8px rgba(0,229,160,.5); }
+
+    /* ── MAIN STAGE ── */
+    #stage {
+      position: relative; z-index: 10;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 80px 24px 80px;
+    }
+    #step-content {
+      width: 100%; max-width: 580px;
+      transition: transform .4s cubic-bezier(.34,1.36,.64,1), opacity .3s;
+    }
+
+    /* ── INTRO SCREEN ── */
+    .intro-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(0,229,160,.08); border: 1px solid rgba(0,229,160,.2);
+      border-radius: 20px; padding: 5px 14px;
+      font-size: 11px; font-weight: 700; letter-spacing: .3px; color: var(--accent);
+      margin-bottom: 28px;
+    }
+    .intro-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse-dot 2s ease-in-out infinite; }
+    @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.7)} }
+    .intro-title {
+      font-size: clamp(36px,6vw,56px);
+      font-weight: 900; line-height: 1.08; letter-spacing: -2px;
+      margin-bottom: 18px;
+    }
+    .intro-title span { background: linear-gradient(135deg, var(--accent), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .intro-sub { font-size: 16px; color: var(--text2); line-height: 1.65; margin-bottom: 40px; max-width: 460px; }
+    .intro-stats { display: flex; gap: 28px; margin-bottom: 40px; flex-wrap: wrap; }
+    .intro-stat-val { font-size: 22px; font-weight: 900; letter-spacing: -.5px; }
+    .intro-stat-lbl { font-size: 11px; color: var(--text3); font-weight: 600; margin-top: 2px; }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 16px 32px;
+      background: var(--accent); color: #000;
+      border-radius: 12px; border: none;
+      font-family: inherit; font-size: 15px; font-weight: 800;
+      cursor: pointer; transition: all .2s;
+      position: relative; overflow: hidden;
+    }
+    .cta-btn::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.25) 50%, transparent 100%);
+      transform: translateX(-100%); transition: transform .4s;
+    }
+    .cta-btn:hover { background: #00f0a8; box-shadow: 0 0 32px rgba(0,229,160,.4), 0 8px 24px rgba(0,0,0,.3); transform: translateY(-1px); }
+    .cta-btn:hover::after { transform: translateX(100%); }
+    .cta-btn svg { width: 18px; height: 18px; transition: transform .2s; }
+    .cta-btn:hover svg { transform: translateX(3px); }
+
+    /* ── QUESTION SCREEN ── */
+    .q-step { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px; }
+    .q-title { font-size: clamp(26px,4.5vw,38px); font-weight: 900; letter-spacing: -1.2px; line-height: 1.1; margin-bottom: 8px; }
+    .q-sub { font-size: 14px; color: var(--text2); margin-bottom: 36px; line-height: 1.6; }
+
+    /* TEXT INPUT */
+    .q-input-wrap { position: relative; margin-bottom: 8px; }
+    .q-input {
+      width: 100%; background: rgba(255,255,255,.03); border: 1.5px solid var(--border2);
+      border-radius: 12px; padding: 18px 20px; color: var(--text);
+      font-size: 20px; font-family: inherit; font-weight: 600;
+      transition: border-color .2s, box-shadow .2s, background .2s;
+      outline: none;
+    }
+    .q-input::placeholder { color: var(--text3); font-weight: 400; font-size: 18px; }
+    .q-input:focus {
+      border-color: var(--accent); background: rgba(0,229,160,.03);
+      box-shadow: 0 0 0 4px rgba(0,229,160,.08), 0 8px 24px rgba(0,0,0,.2);
+    }
+    .q-input-hint { font-size: 12px; color: var(--text3); margin-top: 8px; }
+
+    /* PILLS */
+    .pill-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px,1fr)); gap: 10px; margin-bottom: 8px; }
+    .pill {
+      padding: 14px 16px; border-radius: 12px;
+      border: 1.5px solid var(--border2); background: rgba(255,255,255,.02);
+      cursor: pointer; transition: all .2s; user-select: none;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; font-weight: 600; color: var(--text2);
+      position: relative; overflow: hidden;
+    }
+    .pill::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,229,160,.06), rgba(0,184,255,.06));
+      opacity: 0; transition: opacity .2s;
+    }
+    .pill:hover { border-color: var(--border2); color: var(--text); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,.2); }
+    .pill:hover::after { opacity: 1; }
+    .pill.selected {
+      border-color: var(--accent); background: rgba(0,229,160,.08);
+      color: var(--accent); transform: translateY(-1px);
+      box-shadow: 0 0 0 1px rgba(0,229,160,.2), 0 4px 20px rgba(0,229,160,.12);
+    }
+    .pill.selected::after { opacity: 0; }
+    .pill-icon { font-size: 18px; flex-shrink: 0; line-height: 1; }
+    .pill-text { flex: 1; }
+    .pill-name { font-size: 13px; font-weight: 700; line-height: 1.2; }
+    .pill-sub { font-size: 10px; font-weight: 600; color: inherit; opacity: .7; margin-top: 2px; letter-spacing: .1px; }
+    .pill-check {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 1.5px solid currentColor; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .pill.selected .pill-check { background: var(--accent); border-color: var(--accent); }
+    .pill.selected .pill-check::after { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #000; display: block; }
+    .multi-hint { font-size: 11px; color: var(--text3); margin-bottom: 12px; font-weight: 600; letter-spacing: .3px; text-transform: uppercase; }
+
+    /* NAV BUTTONS */
+    .nav-row { display: flex; align-items: center; justify-content: space-between; margin-top: 36px; }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: transparent; border: none; color: var(--text3);
+      font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+      padding: 10px 0; transition: color .15s;
+    }
+    .btn-back:hover { color: var(--text2); }
+    .btn-back svg { width: 14px; height: 14px; }
+    .btn-next {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; border-radius: 11px;
+      background: var(--accent); color: #000; border: none;
+      font-family: inherit; font-size: 14px; font-weight: 800; cursor: pointer;
+      transition: all .2s; position: relative; overflow: hidden;
+    }
+    .btn-next::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+      transform: translateX(-100%); transition: transform .4s;
+    }
+    .btn-next:hover { background: #00f0a8; box-shadow: 0 0 24px rgba(0,229,160,.4), 0 4px 16px rgba(0,0,0,.2); transform: translateY(-1px); }
+    .btn-next:hover::after { transform: translateX(100%); }
+    .btn-next:disabled { opacity: .4; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-next svg { width: 16px; height: 16px; transition: transform .2s; }
+    .btn-next:hover svg { transform: translateX(3px); }
+    .btn-skip { font-size: 12px; color: var(--text3); background: none; border: none; font-family: inherit; cursor: pointer; padding: 10px 0; }
+    .btn-skip:hover { color: var(--text2); }
+    .error-toast {
+      background: rgba(255,107,107,.1); border: 1px solid rgba(255,107,107,.3);
+      border-radius: 9px; padding: 10px 14px; font-size: 13px; color: var(--red);
+      margin-top: 12px; display: none;
+    }
+
+    /* PASSWORD STRENGTH */
+    .pw-strength { display: flex; gap: 4px; margin-top: 10px; }
+    .pw-bar { flex: 1; height: 3px; background: var(--border); border-radius: 2px; transition: background .3s; }
+    .pw-bar.weak { background: var(--red); }
+    .pw-bar.ok { background: var(--blue); }
+    .pw-bar.strong { background: var(--accent); }
+    .pw-label { font-size: 11px; color: var(--text3); margin-top: 6px; }
+
+    /* SUCCESS SCREEN */
+    .success-icon {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg, rgba(0,229,160,.15), rgba(0,184,255,.15));
+      border: 1px solid rgba(0,229,160,.3);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 28px;
+      animation: success-pop .6s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes success-pop { 0%{transform:scale(0);opacity:0} 100%{transform:scale(1);opacity:1} }
+    .success-icon svg { width: 36px; height: 36px; }
+    .success-title { font-size: 36px; font-weight: 900; letter-spacing: -1px; margin-bottom: 10px; text-align: center; }
+    .success-sub { font-size: 15px; color: var(--text2); line-height: 1.65; text-align: center; margin-bottom: 36px; }
+    .next-steps { background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 28px; }
+    .next-step-row { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 16px; }
+    .next-step-row:last-child { margin-bottom: 0; }
+    .next-num {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: rgba(0,229,160,.1); border: 1px solid rgba(0,229,160,.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; color: var(--accent); flex-shrink: 0;
+    }
+    .next-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+    .next-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+    /* CONFETTI CANVAS */
+    #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 999; }
+
+    /* SPINNER */
+    .spinner { width: 20px; height: 20px; border: 2px solid rgba(0,0,0,.2); border-top-color: #000; border-radius: 50%; animation: spin .6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<!-- AURORA -->
+<div class="aurora aurora-1"></div>
+<div class="aurora aurora-2"></div>
+<div class="aurora aurora-3"></div>
+
+<!-- CONFETTI -->
+<canvas id="confetti-canvas"></canvas>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <a href="/auth.html" class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <span class="logo-text">RetainerHQ</span>
+  </a>
+  <div class="progress-wrap" id="progress-wrap" style="opacity:0;transition:opacity .4s;">
+    <div class="step-label" id="step-label">Step 1 of 8</div>
+    <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill"></div></div>
+  </div>
+</div>
+
+<!-- STAGE -->
+<div id="stage">
+  <div id="step-content"></div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://tbfcwqcqpfbqaknktkyp.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiZmN3cWNxcGZicWFrbmt0a3lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NDQyOTIsImV4cCI6MjA5MzIyMDI5Mn0.40OJm-heqGOiiGqE3QWHoafkRx8Snd3nH3cs19D7L4E';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const QUESTIONS = [
+  { id: 'company',  type: 'text',     title: "What's your brand called?",        sub: "This is the name your creators will see.",           placeholder: "e.g. Glow Lab, Pure Origins, LUMIQ…", inputType: 'text' },
+  { id: 'niche',    type: 'pills',    title: "What industry is {company}?",       sub: "We'll match you with creators in your niche.",
+    options: [
+      { val:'beauty',   icon:'🌸', name:'Beauty & Skincare' },
+      { val:'health',   icon:'💚', name:'Health & Wellness' },
+      { val:'fashion',  icon:'👗', name:'Fashion & Apparel' },
+      { val:'home',     icon:'🏡', name:'Home & Kitchen' },
+      { val:'fitness',  icon:'💪', name:'Fitness & Sports' },
+      { val:'tech',     icon:'🔌', name:'Tech & Gadgets' },
+      { val:'food',     icon:'🍔', name:'Food & Beverage' },
+      { val:'pets',     icon:'🐾', name:'Pet Products' },
+      { val:'baby',     icon:'👶', name:'Baby & Kids' },
+      { val:'other',    icon:'✨', name:'Other' }
+    ]
+  },
+  { id: 'budget',   type: 'pills',    title: "What's your monthly creator budget?", sub: "We use this to match you with the right tier of talent. Easy to change later.",
+    options: [
+      { val:'under2k',   icon:'🌱', name:'Under $2K',    sub:'Just getting started' },
+      { val:'2k5k',      icon:'📈', name:'$2K – $5K',    sub:'Growing fast' },
+      { val:'5k15k',     icon:'🚀', name:'$5K – $15K',   sub:'Scaling seriously' },
+      { val:'15k50k',    icon:'💎', name:'$15K – $50K',  sub:'Enterprise level' },
+      { val:'50kplus',   icon:'👑', name:'$50K+',         sub:'Full-scale operation' },
+    ]
+  },
+  { id: 'goals',    type: 'multi',    title: "What are you looking for?",         sub: "Select all that apply — the more we know, the better we can help.",
+    options: [
+      { val:'retainers',   icon:'📅', name:'Monthly creator retainers' },
+      { val:'campaigns',   icon:'🎯', name:'One-time campaign bursts' },
+      { val:'seeding',     icon:'📦', name:'Product seeding & UGC content' },
+      { val:'affiliate',   icon:'🛒', name:'TikTok Shop affiliate management' },
+      { val:'ambassadors', icon:'⭐', name:'Long-term brand ambassadors' },
+    ]
+  },
+  { id: 'website',  type: 'text',     title: "Your brand's website?",             sub: "Optional — helps us verify your brand before approval.", placeholder: "https://yourbrand.com", inputType: 'url',  optional: true },
+  { id: 'name',     type: 'text',     title: "Your name?",                        sub: "The person who will manage this account.",            placeholder: "e.g. Sarah Chen", inputType: 'text' },
+  { id: 'email',    type: 'text',     title: "Your email address?",               sub: "We'll send your approval confirmation here. No spam — ever.", placeholder: "you@company.com", inputType: 'email' },
+  { id: 'password', type: 'password', title: "Create a password.",                sub: "Min. 6 characters. You'll use this to log into the dashboard.", placeholder: "••••••••" }
+];
+
+let currentStep = -1; // -1 = intro
+const answers = {};
+
+// ── TRANSITIONS ──────────────────────────────────────────────────────────────
+function slide(dir, callback) {
+  const el = document.getElementById('step-content');
+  el.style.transition = 'transform .3s cubic-bezier(.4,0,.2,1), opacity .25s';
+  el.style.transform = dir === 'forward' ? 'translateX(-50px)' : 'translateX(50px)';
+  el.style.opacity = '0';
+  setTimeout(() => {
+    callback();
+    el.style.transition = 'none';
+    el.style.transform = dir === 'forward' ? 'translateX(60px)' : 'translateX(-60px)';
+    el.style.opacity = '0';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      el.style.transition = 'transform .45s cubic-bezier(.34,1.36,.64,1), opacity .3s';
+      el.style.transform = 'translateX(0)';
+      el.style.opacity = '1';
+    }));
+  }, 260);
+}
+
+function goTo(step, dir='forward') {
+  slide(dir, () => {
+    currentStep = step;
+    render();
+    updateProgress();
+  });
+}
+
+function updateProgress() {
+  const wrap = document.getElementById('progress-wrap');
+  const fill = document.getElementById('progress-fill');
+  const label = document.getElementById('step-label');
+  const total = QUESTIONS.length;
+  if (currentStep < 0) {
+    wrap.style.opacity = '0';
+  } else if (currentStep < total) {
+    wrap.style.opacity = '1';
+    label.textContent = `Step ${currentStep + 1} of ${total}`;
+    fill.style.width = `${((currentStep + 1) / total) * 100}%`;
+  } else {
+    fill.style.width = '100%';
+    label.textContent = 'Complete!';
+  }
+}
+
+// ── PARTICLE BURST ────────────────────────────────────────────────────────────
+function burst(el) {
+  const rect = el.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const colors = ['#00E5A0', '#00B8FF', '#fff', '#00f0a8', '#7B61FF'];
+  for (let i = 0; i < 14; i++) {
+    const p = document.createElement('div');
+    const angle = (i / 14) * Math.PI * 2;
+    const dist = 32 + Math.random() * 28;
+    const size = 3 + Math.random() * 4;
+    p.style.cssText = `
+      position:fixed;left:${cx}px;top:${cy}px;
+      width:${size}px;height:${size}px;border-radius:50%;
+      background:${colors[i % colors.length]};pointer-events:none;z-index:9990;
+      transform:translate(-50%,-50%);transition:all .55s cubic-bezier(.2,0,.8,1);
+    `;
+    document.body.appendChild(p);
+    requestAnimationFrame(() => {
+      p.style.transform = `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px)) scale(0)`;
+      p.style.opacity = '0';
+    });
+    setTimeout(() => p.remove(), 650);
+  }
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render() {
+  const el = document.getElementById('step-content');
+
+  // INTRO
+  if (currentStep === -1) {
+    el.innerHTML = `
+      <div style="text-align:left;">
+        <div class="intro-badge"><div class="intro-badge-dot"></div>Now accepting brand applications</div>
+        <div class="intro-title">Scale your brand<br>with <span>TikTok Shop</span><br>creator power.</div>
+        <div class="intro-sub">We personally match brands with top-performing TikTok Shop affiliates. Every partner is vetted. Every deal is managed. Tell us about your brand — it takes 2 minutes.</div>
+        <div class="intro-stats">
+          <div><div class="intro-stat-val" style="color:var(--accent);">$2.1M+</div><div class="intro-stat-lbl">Creator GMV Generated</div></div>
+          <div><div class="intro-stat-val" style="color:var(--blue);">400+</div><div class="intro-stat-lbl">Active Creator Partners</div></div>
+          <div><div class="intro-stat-val" style="color:var(--text);">100%</div><div class="intro-stat-lbl">Manually Reviewed</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <button class="cta-btn" onclick="goTo(0)">
+            Apply as a Brand
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+          <a href="/auth.html" style="font-size:13px;color:var(--text2);font-weight:600;text-decoration:none;transition:color .15s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'">
+            Already have an account →
+          </a>
+        </div>
+      </div>`;
+    return;
+  }
+
+  // SUCCESS
+  if (currentStep >= QUESTIONS.length) {
+    el.innerHTML = `
+      <div style="text-align:center;">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="success-title">Application Submitted! 🎉</div>
+        <div class="success-sub">
+          Thanks, <strong>${answers.name?.split(' ')[0] || 'there'}</strong> — <strong>${answers.company || 'your brand'}</strong> is in the queue.<br>
+          Isaac will personally review your application and reach out within 1–2 business days.
+        </div>
+        <div class="next-steps">
+          <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;">What happens next</div>
+          <div class="next-step-row">
+            <div class="next-num">1</div>
+            <div><div class="next-title">Personal review</div><div class="next-desc">Isaac reviews your brand, niche, and goals to ensure it's the right fit.</div></div>
+          </div>
+          <div class="next-step-row">
+            <div class="next-num">2</div>
+            <div><div class="next-title">Approval email</div><div class="next-desc">You'll get a confirmation at <strong style="color:var(--text);">${answers.email||'your email'}</strong> once you're approved.</div></div>
+          </div>
+          <div class="next-step-row">
+            <div class="next-num">3</div>
+            <div><div class="next-title">Dashboard access</div><div class="next-desc">Browse creators, post briefs, and send retainer offers — all in one place.</div></div>
+          </div>
+        </div>
+        <a href="/" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);text-decoration:none;font-weight:600;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'">
+          ← Back to RetainerHQ.io
+        </a>
+      </div>`;
+    setTimeout(() => launchConfetti(), 300);
+    return;
+  }
+
+  // QUESTIONS
+  const q = QUESTIONS[currentStep];
+  const titleText = q.title.replace('{company}', answers.company || 'your brand');
+  const isFirst = currentStep === 0;
+  const isLast = currentStep === QUESTIONS.length - 1;
+
+  let inputHtml = '';
+
+  if (q.type === 'text' || q.type === 'email') {
+    const val = answers[q.id] || '';
+    inputHtml = `
+      <div class="q-input-wrap">
+        <input class="q-input" id="q-input" type="${q.inputType||'text'}" placeholder="${q.placeholder}" value="${val}" autocomplete="off" autocapitalize="${q.inputType==='email'?'off':'on'}" />
+      </div>
+      ${q.optional ? '<div class="q-input-hint">Optional — you can skip this.</div>' : ''}
+      <div class="error-toast" id="q-error"></div>`;
+  }
+
+  if (q.type === 'password') {
+    const val = answers[q.id] || '';
+    inputHtml = `
+      <div class="q-input-wrap">
+        <input class="q-input" id="q-input" type="password" placeholder="${q.placeholder}" value="${val}" />
+      </div>
+      <div class="pw-strength" id="pw-strength"><div class="pw-bar" id="pb1"></div><div class="pw-bar" id="pb2"></div><div class="pw-bar" id="pb3"></div></div>
+      <div class="pw-label" id="pw-label">Enter your password</div>
+      <div class="error-toast" id="q-error"></div>`;
+  }
+
+  if (q.type === 'pills') {
+    const selected = answers[q.id] || null;
+    inputHtml = `
+      <div class="pill-grid">
+        ${q.options.map(o => `
+          <div class="pill ${selected===o.val?'selected':''}" id="pill-${o.val}" onclick="selectPill('${o.val}', this)">
+            <div class="pill-icon">${o.icon}</div>
+            <div class="pill-text">
+              <div class="pill-name">${o.name}</div>
+              ${o.sub ? `<div class="pill-sub">${o.sub}</div>` : ''}
+            </div>
+            <div class="pill-check"></div>
+          </div>`).join('')}
+      </div>
+      <div class="error-toast" id="q-error"></div>`;
+  }
+
+  if (q.type === 'multi') {
+    const selected = answers[q.id] || [];
+    inputHtml = `
+      <div class="multi-hint">Select all that apply</div>
+      <div class="pill-grid">
+        ${q.options.map(o => `
+          <div class="pill ${selected.includes(o.val)?'selected':''}" id="pill-${o.val}" onclick="toggleMulti('${o.val}', this)">
+            <div class="pill-icon">${o.icon}</div>
+            <div class="pill-text"><div class="pill-name">${o.name}</div></div>
+            <div class="pill-check"></div>
+          </div>`).join('')}
+      </div>
+      <div class="error-toast" id="q-error"></div>`;
+  }
+
+  const backHtml = isFirst
+    ? `<button class="btn-back" onclick="goTo(-1,'back')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Intro</button>`
+    : `<button class="btn-back" onclick="goTo(${currentStep-1},'back')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg> Back</button>`;
+
+  const skipHtml = q.optional
+    ? `<button class="btn-skip" onclick="skipStep()">Skip for now</button>`
+    : '';
+
+  const nextLabel = isLast ? 'Submit Application' : 'Continue';
+  const nextIcon = isLast
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
+
+  el.innerHTML = `
+    <div class="q-step">Step ${currentStep + 1} of ${QUESTIONS.length}</div>
+    <div class="q-title">${titleText}</div>
+    <div class="q-sub">${q.sub}</div>
+    ${inputHtml}
+    <div class="nav-row">
+      ${backHtml}
+      <div style="display:flex;align-items:center;gap:12px;">
+        ${skipHtml}
+        <button class="btn-next" id="btn-next" onclick="nextStep()">${nextLabel} ${nextIcon}</button>
+      </div>
+    </div>`;
+
+  // Auto-focus text inputs
+  setTimeout(() => {
+    const inp = document.getElementById('q-input');
+    if (inp) {
+      inp.focus();
+      // Password strength meter
+      if (q.type === 'password') {
+        inp.addEventListener('input', () => {
+          const v = inp.value;
+          const s = v.length >= 10 ? 'strong' : v.length >= 6 ? 'ok' : v.length >= 1 ? 'weak' : '';
+          const labels = { '':'Enter your password', weak:'Too short', ok:'Good', strong:'Strong password!' };
+          const lbl = document.getElementById('pw-label');
+          if (lbl) lbl.textContent = labels[s] || '';
+          ['pb1','pb2','pb3'].forEach((id,i) => {
+            const bar = document.getElementById(id);
+            if (!bar) return;
+            bar.className = 'pw-bar ' + (s === 'strong' ? 'strong' : s === 'ok' && i < 2 ? 'ok' : s === 'weak' && i === 0 ? 'weak' : '');
+          });
+        });
+        if (inp.value) inp.dispatchEvent(new Event('input'));
+      }
+    }
+    // Enter key
+    const allInputs = el.querySelectorAll('input');
+    allInputs.forEach(i => i.addEventListener('keydown', e => { if (e.key === 'Enter') nextStep(); }));
+  }, 60);
+}
+
+function selectPill(val, el) {
+  const q = QUESTIONS[currentStep];
+  const wasSelected = answers[q.id] === val;
+  answers[q.id] = wasSelected ? null : val;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
+  if (!wasSelected) {
+    el.classList.add('selected');
+    burst(el);
+    // Auto-advance after short delay
+    setTimeout(() => nextStep(), 400);
+  }
+}
+
+function toggleMulti(val, el) {
+  const q = QUESTIONS[currentStep];
+  if (!answers[q.id]) answers[q.id] = [];
+  const idx = answers[q.id].indexOf(val);
+  if (idx > -1) {
+    answers[q.id].splice(idx, 1);
+    el.classList.remove('selected');
+  } else {
+    answers[q.id].push(val);
+    el.classList.add('selected');
+    burst(el);
+  }
+}
+
+function skipStep() {
+  const q = QUESTIONS[currentStep];
+  answers[q.id] = '';
+  goTo(currentStep + 1);
+}
+
+function showError(msg) {
+  const e = document.getElementById('q-error');
+  if (e) { e.textContent = msg; e.style.display = 'block'; }
+}
+
+async function nextStep() {
+  const q = QUESTIONS[currentStep];
+  const e = document.getElementById('q-error');
+  if (e) e.style.display = 'none';
+
+  // Validate
+  if (q.type === 'text' || q.type === 'email') {
+    const inp = document.getElementById('q-input');
+    const val = inp ? inp.value.trim() : '';
+    if (!val && !q.optional) { showError('Please fill this in to continue.'); inp?.focus(); return; }
+    if (q.inputType === 'email' && val && !val.includes('@')) { showError('Please enter a valid email address.'); inp?.focus(); return; }
+    answers[q.id] = val;
+  }
+
+  if (q.type === 'password') {
+    const inp = document.getElementById('q-input');
+    const val = inp ? inp.value : '';
+    if (val.length < 6) { showError('Password must be at least 6 characters.'); inp?.focus(); return; }
+    answers[q.id] = val;
+  }
+
+  if (q.type === 'pills') {
+    if (!answers[q.id]) { showError('Please make a selection to continue.'); return; }
+  }
+
+  if (q.type === 'multi') {
+    if (!answers[q.id] || answers[q.id].length === 0) { showError('Please select at least one option.'); return; }
+  }
+
+  // Last step — create account
+  if (currentStep === QUESTIONS.length - 1) {
+    await submitApplication();
+    return;
+  }
+
+  goTo(currentStep + 1);
+}
+
+async function submitApplication() {
+  const btn = document.getElementById('btn-next');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<div class="spinner"></div> Creating account…'; }
+
+  try {
+    const { data, error } = await sb.auth.signUp({
+      email: answers.email,
+      password: answers.password
+    });
+
+    if (error) { if (btn) { btn.disabled = false; btn.innerHTML = 'Submit Application <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:16px;height:16px;"><polyline points="20 6 9 17 4 12"/></svg>'; } showError(error.message); return; }
+
+    if (data.user) {
+      await sb.from('profiles').update({
+        name: answers.name,
+        email: answers.email,
+        role: 'brand',
+        verified: false,
+        brand_company: answers.company,
+        brand_niche: answers.niche,
+        brand_budget: answers.budget,
+        brand_goal: Array.isArray(answers.goals) ? answers.goals.join(', ') : answers.goals,
+        brand_website: answers.website || null
+      }).eq('id', data.user.id);
+    }
+
+    goTo(QUESTIONS.length);
+  } catch (err) {
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Submit Application'; }
+    showError('Something went wrong. Please try again.');
+  }
+}
+
+// ── CONFETTI ──────────────────────────────────────────────────────────────────
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const pieces = [];
+  const colors = ['#00E5A0','#00B8FF','#7B61FF','#FFD166','#FF6B6B','#fff'];
+  for (let i = 0; i < 180; i++) {
+    pieces.push({
+      x: Math.random() * canvas.width,
+      y: -10 - Math.random() * 200,
+      w: 6 + Math.random() * 8,
+      h: 10 + Math.random() * 6,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rot: Math.random() * Math.PI * 2,
+      vx: (Math.random() - .5) * 4,
+      vy: 2 + Math.random() * 4,
+      vr: (Math.random() - .5) * .2,
+      opacity: 1
+    });
+  }
+
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    pieces.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.vy += .05;
+      if (frame > 120) p.opacity = Math.max(0, p.opacity - .012);
+      if (p.y < canvas.height + 20) alive = true;
+      ctx.save();
+      ctx.globalAlpha = p.opacity;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (alive && frame < 300) requestAnimationFrame(draw);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  draw();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+render();
+updateProgress();
+</script>
+</body>
+</html>
