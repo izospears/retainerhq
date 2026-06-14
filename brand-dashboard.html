@@ -883,8 +883,6 @@ async function loadCampaigns() {
     .eq('brand_id', brandProfile.id)
     .order('created_at', { ascending: false });
 
-  if (!offers?.length) return;
-
   // For active offers, pull contracts to get video pipeline
   const activeIds = offers.filter(o => o.status === 'active').map(o => o.creator_id);
   let contractMap = {};
@@ -912,14 +910,14 @@ async function loadCampaigns() {
     }
   }
 
-  allDeals = offers.map(o => ({ ...o, contract: contractMap[o.creator_id] || null }));
+  allDeals = (offers||[]).map(o => ({ ...o, contract: contractMap[o.creator_id] || null }));
 
   // Stats
-  const pending = offers.filter(o => o.status === 'pending').length;
-  const active  = offers.filter(o => o.status === 'active').length;
+  const pending = allDeals.filter(o => o.status === 'pending').length;
+  const active  = allDeals.filter(o => o.status === 'active').length;
   document.getElementById('stat-pending').textContent = pending;
   document.getElementById('stat-active').textContent  = active;
-  document.getElementById('stat-reached').textContent = offers.length;
+  document.getElementById('stat-reached').textContent = allDeals.length;
 
   renderDeals(allDeals);
 
