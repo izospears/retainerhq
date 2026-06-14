@@ -269,13 +269,13 @@
       </div>
     </div>
     <div style="padding:28px;">
-      <div class="stats-row">
+      <div class="stats-row" id="ob-my-stats">
         <div class="stat-card"><div class="stat-label">Active Campaigns</div><div class="stat-value white" id="stat-active">0</div><div class="stat-sub">running retainer deals</div></div>
         <div class="stat-card"><div class="stat-label">Pending Offers</div><div class="stat-value" id="stat-pending">0</div><div class="stat-sub">awaiting creator response</div></div>
         <div class="stat-card"><div class="stat-label">Creators Reached</div><div class="stat-value white" id="stat-reached">0</div><div class="stat-sub">total offers sent</div></div>
       </div>
       <div style="margin-bottom:10px;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;">📊 Platform Stats</div>
-      <div class="stats-row" style="margin-bottom:28px;">
+      <div class="stats-row" id="ob-platform-stats" style="margin-bottom:28px;">
         <div class="stat-card" style="border-color:rgba(0,229,160,.15);background:rgba(0,229,160,.03);">
           <div class="stat-label">Creators on Platform</div>
           <div class="stat-value" id="plat-creators">—</div>
@@ -331,6 +331,7 @@
           <option value="recent">Sort: Newest</option>
         </select>
       </div>
+      <div id="ob-creator-hint" style="height:0;overflow:hidden;"></div>
       <div class="creator-grid" id="creator-grid">
         <div class="empty-state" style="grid-column:1/-1;"><div class="spinner" style="margin:0 auto 16px;"></div><div class="empty-sub">Loading creators...</div></div>
       </div>
@@ -1211,29 +1212,29 @@ const OB_STEPS = [
     cta:'Show Me Around →'
   },
   {
-    type:'spot', page:'overview', target:'.stats-row', pos:'bottom',
+    type:'spot', page:'overview', target:'#ob-my-stats', pos:'bottom',
     title:'Your Command Center',
-    body:'Track active creator deals, pending offers, and total outreach — updated in real time. This is your growth dashboard.'
+    body:'Track active creator deals, pending offers, and total outreach — updated in real time as creators respond to your offers.'
   },
   {
-    type:'spot', page:'overview', target:'.stats-row + div + .stats-row', pos:'bottom',
+    type:'spot', page:'overview', target:'#ob-platform-stats', pos:'bottom',
     title:'Platform-Wide Scale',
-    body:'See the total GMV our creator network drives across all brands. You\'re joining a marketplace with verified, real sales data behind every creator.'
+    body:'See the total GMV our creator network has driven across all brands. Every number is verified — no inflated claims, no guessing.'
   },
   {
-    type:'spot', page:'creators', target:'#creator-grid', pos:'top',
+    type:'spot', page:'creators', target:'#ob-creator-hint', pos:'bottom',
     title:'130+ Verified Creators',
-    body:'Every creator is a TikTok Shop affiliate with real GMV history. Sorted by highest lifetime sales so the top performers are always first.'
+    body:'Every creator is a TikTok Shop affiliate sorted by lifetime GMV. The best performers are always at the top.'
   },
   {
-    type:'spot', page:'creators', target:'.creator-card', pos:'right',
+    type:'spot', page:'creators', target:'.creator-card', pos:'bottom',
     title:'Verified GMV. No Guessing.',
-    body:'Lifetime GMV, 30-day performance, follower count, niche — all verified by the platform. Click View Kit for full rates and top video content, then hit Send Offer.'
+    body:'Lifetime GMV, 30-day performance, follower count, niche — all verified. Click View Kit for full rates and top videos, then hit Send Offer.'
   },
   {
-    type:'spot', page:'campaigns', target:'#campaigns-list', pos:'top',
+    type:'spot', page:'campaigns', target:'#demo-deal-card', pos:'top',
     title:'Real-Time Deal Tracking',
-    body:'Once a creator accepts your offer, every video moves through a pipeline — scripting, filming, editing, posted. You see it all in one live view.'
+    body:'Every video moves through a live pipeline — scripting, filming, editing, posted. You see exactly where each piece of content is at all times.'
   },
   {
     type:'modal',
@@ -1341,76 +1342,109 @@ function obShowModal(step, idx) {
 }
 
 async function obShowSpot(step, idx) {
-  if (step.page) { showPage(step.page); await new Promise(r=>setTimeout(r,180)); }
+  if (step.page) {
+    showPage(step.page);
+    await new Promise(r => setTimeout(r, 250));
+  }
 
-  const el = document.querySelector(step.target);
+  let el = document.querySelector(step.target);
+
+  // Fallback targets so tour never silently dies
+  if (!el) {
+    const fallbacks = {
+      '#demo-deal-card': '#campaigns-list',
+      '.creator-card':   '#creator-grid',
+      '#ob-creator-hint':'#page-creators .topbar'
+    };
+    const fb = fallbacks[step.target];
+    if (fb) el = document.querySelector(fb);
+  }
   if (!el) { obNext(); return; }
+
+  // Scroll element fully into view, then wait for paint
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  await new Promise(r => setTimeout(r, 350));
 
   const PAD = 16;
   const r = el.getBoundingClientRect();
-  const spot = document.getElementById('ob-spot');
+  const vw = window.innerWidth, vh = window.innerHeight;
 
-  spot.style.transition = 'none';
-  // If already visible, enable smooth move
-  if (spot.style.opacity === '1') {
-    spot.style.transition = 'left .55s cubic-bezier(.4,0,.2,1),top .55s cubic-bezier(.4,0,.2,1),width .55s cubic-bezier(.4,0,.2,1),height .55s cubic-bezier(.4,0,.2,1)';
-  }
-  spot.style.left   = (r.left - PAD)+'px';
-  spot.style.top    = (r.top  - PAD)+'px';
-  spot.style.width  = (r.width  + PAD*2)+'px';
-  spot.style.height = (r.height + PAD*2)+'px';
+  // Clamp spotlight to visible viewport — avoids spotlighting off-screen areas
+  const clampedTop    = Math.max(r.top,    60);
+  const clampedBottom = Math.min(r.bottom, vh - 20);
+  const clampedLeft   = Math.max(r.left,   0);
+  const clampedRight  = Math.min(r.right,  vw);
+  const clampedH = Math.max(clampedBottom - clampedTop, 40);
+  const clampedW = Math.max(clampedRight  - clampedLeft, 40);
+
+  const spot = document.getElementById('ob-spot');
+  const alreadyVisible = spot.style.opacity === '1';
+  spot.style.transition = alreadyVisible
+    ? 'left .5s cubic-bezier(.4,0,.2,1),top .5s cubic-bezier(.4,0,.2,1),width .5s cubic-bezier(.4,0,.2,1),height .5s cubic-bezier(.4,0,.2,1),opacity .3s'
+    : 'opacity .4s';
+  spot.style.left   = (clampedLeft  - PAD) + 'px';
+  spot.style.top    = (clampedTop   - PAD) + 'px';
+  spot.style.width  = (clampedW + PAD * 2) + 'px';
+  spot.style.height = (clampedH + PAD * 2) + 'px';
   spot.style.opacity = '1';
   spot.classList.add('ob-pulse');
 
   // Tooltip content
-  const SPOT_IDX = OB_STEPS.filter((s,i)=>s.type==='spot'&&i<=idx).length;
-  const SPOT_TOTAL = OB_STEPS.filter(s=>s.type==='spot').length;
-  document.getElementById('ob-tip-counter').textContent = String(SPOT_IDX).padStart(2,'0')+' / '+String(SPOT_TOTAL).padStart(2,'0');
+  const SPOT_IDX   = OB_STEPS.filter((s,i) => s.type==='spot' && i<=idx).length;
+  const SPOT_TOTAL = OB_STEPS.filter(s => s.type==='spot').length;
+  document.getElementById('ob-tip-counter').textContent = String(SPOT_IDX).padStart(2,'0') + ' / ' + String(SPOT_TOTAL).padStart(2,'0');
   document.getElementById('ob-tip-title').textContent = step.title;
-  document.getElementById('ob-tip-body').textContent = step.body;
+  document.getElementById('ob-tip-body').textContent  = step.body;
 
-  // Dots
-  document.getElementById('ob-tip-dots').innerHTML = OB_STEPS.map((_,i)=>`<div class="ob-dot" style="height:6px;border-radius:3px;background:${i===idx?'#00E5A0':'rgba(255,255,255,.18)'};width:${i===idx?18:6}px;"></div>`).join('');
+  // Progress dots
+  document.getElementById('ob-tip-dots').innerHTML = OB_STEPS.map((_,i) =>
+    `<div class="ob-dot" style="height:6px;border-radius:3px;background:${i===idx?'#00E5A0':'rgba(255,255,255,.18)'};width:${i===idx?18:6}px;"></div>`
+  ).join('');
 
-  // Back/Next buttons
-  document.getElementById('ob-back-btn').style.visibility = idx > 1 ? 'visible':'hidden';
-  document.getElementById('ob-next-btn').textContent = idx===OB_N-2 ? 'Finish ✓' : 'Next →';
+  document.getElementById('ob-back-btn').style.visibility = idx > 1 ? 'visible' : 'hidden';
+  document.getElementById('ob-next-btn').textContent = idx === OB_N - 2 ? 'Finish ✓' : 'Next →';
 
-  // Position tooltip
-  const sr = { left:r.left-PAD, top:r.top-PAD, right:r.right+PAD, bottom:r.bottom+PAD, width:r.width+PAD*2, height:r.height+PAD*2 };
-  const TIP_W=360, TIP_EST_H=220, GAP=22;
+  // Tooltip position — use clamped spotlight rect
+  const sr = {
+    left:   clampedLeft  - PAD,
+    top:    clampedTop   - PAD,
+    right:  clampedRight + PAD,
+    bottom: clampedBottom + PAD,
+    width:  clampedW + PAD * 2,
+    height: clampedH + PAD * 2
+  };
+  const TIP_W = 360, TIP_H = 230, GAP = 20;
   const pos = step.pos || 'bottom';
-  const vw=window.innerWidth, vh=window.innerHeight;
   let tipL, tipT;
 
-  if (pos==='bottom') {
-    tipL = Math.max(16, Math.min(sr.left+sr.width/2-TIP_W/2, vw-TIP_W-16));
+  if (pos === 'bottom') {
+    tipL = Math.max(16, Math.min(sr.left + sr.width/2 - TIP_W/2, vw - TIP_W - 16));
     tipT = sr.bottom + GAP;
-    if (tipT+TIP_EST_H>vh-20) tipT = sr.top - TIP_EST_H - GAP;
-  } else if (pos==='top') {
-    tipL = Math.max(16, Math.min(sr.left+sr.width/2-TIP_W/2, vw-TIP_W-16));
-    tipT = sr.top - TIP_EST_H - GAP;
-    if (tipT<60) tipT = sr.bottom + GAP;
-  } else if (pos==='right') {
+    if (tipT + TIP_H > vh - 10) tipT = sr.top - TIP_H - GAP; // flip up
+    if (tipT < 60) tipT = Math.max(60, vh/2 - TIP_H/2);       // center fallback
+  } else if (pos === 'top') {
+    tipL = Math.max(16, Math.min(sr.left + sr.width/2 - TIP_W/2, vw - TIP_W - 16));
+    tipT = sr.top - TIP_H - GAP;
+    if (tipT < 60) tipT = sr.bottom + GAP;                     // flip down
+    if (tipT + TIP_H > vh - 10) tipT = Math.max(60, vh/2 - TIP_H/2);
+  } else if (pos === 'right') {
     tipL = sr.right + GAP;
-    if (tipL+TIP_W>vw-16) tipL = sr.left-TIP_W-GAP;
-    tipT = Math.max(80, Math.min(sr.top+sr.height/2-TIP_EST_H/2, vh-TIP_EST_H-20));
+    if (tipL + TIP_W > vw - 16) tipL = sr.left - TIP_W - GAP; // flip left
+    tipT = Math.max(80, Math.min(sr.top + sr.height/2 - TIP_H/2, vh - TIP_H - 20));
   }
 
   const tip = document.getElementById('ob-tip');
-  tip.style.left = tipL+'px';
-  tip.style.top  = tipT+'px';
-  tip.style.transform = 'translateY(10px)';
+  tip.style.left = tipL + 'px';
+  tip.style.top  = tipT + 'px';
+  tip.style.transform = 'translateY(8px)';
   tip.style.opacity = '0';
   tip.style.pointerEvents = 'all';
 
-  requestAnimationFrame(()=>{
-    requestAnimationFrame(()=>{
-      tip.style.transition = 'opacity .35s, transform .45s cubic-bezier(.34,1.4,.64,1)';
-      tip.style.transform = 'translateY(0)';
-      tip.style.opacity = '1';
-    });
-  });
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    tip.style.transition = 'opacity .35s, transform .45s cubic-bezier(.34,1.4,.64,1)';
+    tip.style.transform  = 'translateY(0)';
+    tip.style.opacity    = '1';
+  }));
 }
 </script>
 
