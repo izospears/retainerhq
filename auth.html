@@ -367,9 +367,7 @@ async function signIn() {
     // Route based on role
     const { data: profile } = await sb.from('profiles').select('role, name').eq('id', data.user.id).single();
     if (profile?.role === 'brand') {
-      const isAdmin = email.endsWith('@retainerhq.io') || email === 'isaacspears01@gmail.com';
-      if (isAdmin) { window.location.href = '/brand-dashboard.html'; return; }
-      showBrandWaitlist(profile?.name);
+      window.location.href = '/brand-dashboard.html';
     } else {
       window.location.href = '/app.html';
     }
@@ -400,13 +398,7 @@ async function signUp() {
     await sb.from('profiles').update({ name, role: selectedRole, email }).eq('id', data.user.id);
   }
 
-  if (selectedRole === 'brand') {
-    // Add to waitlist and show holding screen — no dashboard yet
-    try { await sb.from('waitlist').insert({ email, name }); } catch(_) {}
-    showBrandWaitlist(name);
-  } else {
-    window.location.href = '/app.html';
-  }
+  window.location.href = selectedRole === 'brand' ? '/brand-dashboard.html' : '/app.html';
 }
 
 // Allow Enter key to submit
