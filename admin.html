@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RetainerHQ — Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #080C14; --bg2: #0D1220; --card: #111827; --card2: #161F30;
+      --accent: #00E5A0; --accent2: #00C88A; --accent-dim: rgba(0,229,160,0.08);
+      --text: #F0F4FF; --text2: #8896B3; --text3: #4A5878;
+      --border: #1E2D45; --border2: #253450; --red: #FF6B6B; --yellow: #FFD166;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+    /* LOADING / AUTH GATE */
+    #auth-loading { position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999; }
+    .spinner { width:32px;height:32px;border:2.5px solid rgba(0,229,160,.15);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* TOPBAR */
+    .topbar { height:60px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50; }
+    .topbar-left { display:flex;align-items:center;gap:12px; }
+    .logo-mark { width:30px;height:30px;background:linear-gradient(135deg,var(--accent),#00B8FF);border-radius:7px;display:flex;align-items:center;justify-content:center; }
+    .logo-mark svg { width:14px;height:14px; }
+    .logo-text { font-size:15px;font-weight:900;letter-spacing:-.4px; }
+    .admin-badge { font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#000;background:var(--accent);border-radius:4px;padding:2px 7px; }
+    .topbar-right { display:flex;align-items:center;gap:12px; }
+    .user-pill { display:flex;align-items:center;gap:8px;padding:5px 12px;background:var(--card);border:1px solid var(--border);border-radius:20px; }
+    .user-dot { width:8px;height:8px;border-radius:50%;background:var(--accent); }
+    .user-email { font-size:12px;font-weight:600;color:var(--text2); }
+    .btn { display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .15s; }
+    .btn-ghost { background:transparent;color:var(--text2);border:1px solid var(--border2); }
+    .btn-ghost:hover { color:var(--red);border-color:rgba(255,107,107,.3);background:rgba(255,107,107,.05); }
+
+    /* CONTENT */
+    .container { max-width:1000px;margin:0 auto;padding:32px 24px; }
+    .page-header { margin-bottom:32px; }
+    .page-title { font-size:22px;font-weight:900;letter-spacing:-.5px;margin-bottom:6px; }
+    .page-sub { font-size:13px;color:var(--text2); }
+
+    /* STAT PILLS */
+    .stats-row { display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap; }
+    .stat-pill { background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 20px;display:flex;align-items:center;gap:12px; }
+    .stat-icon { width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center; }
+    .stat-icon svg { width:16px;height:16px; }
+    .stat-num { font-size:20px;font-weight:900;letter-spacing:-.5px; }
+    .stat-lbl { font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase; }
+
+    /* SECTION */
+    .section { background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:24px; }
+    .section-header { padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
+    .section-title { font-size:13px;font-weight:800;letter-spacing:-.1px; }
+    .section-count { font-size:11px;font-weight:700;color:var(--text3); }
+
+    /* TABLE */
+    table { width:100%;border-collapse:collapse; }
+    th { font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;padding:10px 20px;text-align:left;border-bottom:1px solid var(--border); }
+    td { padding:14px 20px;border-bottom:1px solid rgba(30,45,69,.5);font-size:13px;vertical-align:middle; }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:rgba(255,255,255,.015); }
+
+    /* BADGES */
+    .badge { display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.3px; }
+    .badge-pending { background:rgba(255,209,102,.1);color:var(--yellow);border:1px solid rgba(255,209,102,.25); }
+    .badge-verified { background:var(--accent-dim);color:var(--accent);border:1px solid rgba(0,229,160,.2); }
+    .badge-dot { width:5px;height:5px;border-radius:50%;background:currentColor; }
+
+    /* ACTION BUTTONS */
+    .btn-approve { background:var(--accent);color:#000;padding:6px 14px;border-radius:7px;font-size:11px;font-weight:800;border:none;cursor:pointer;font-family:inherit;transition:all .15s; }
+    .btn-approve:hover { background:#00f0a8;box-shadow:0 0 12px rgba(0,229,160,.3); }
+    .btn-approve:disabled { opacity:.4;cursor:not-allowed; }
+    .btn-revoke { background:transparent;color:var(--red);border:1px solid rgba(255,107,107,.3);padding:6px 14px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s; }
+    .btn-revoke:hover { background:rgba(255,107,107,.08); }
+    .btn-revoke:disabled { opacity:.4;cursor:not-allowed; }
+
+    /* AVATAR */
+    .av { width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#00B8FF);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#000;flex-shrink:0; }
+
+    /* EMPTY STATE */
+    .empty { padding:40px;text-align:center;color:var(--text3);font-size:13px; }
+
+    /* TOAST */
+    .toast { position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--border2);border-radius:10px;padding:12px 18px;font-size:13px;font-weight:600;z-index:1000;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none; }
+    .toast.show { opacity:1;transform:translateY(0); }
+    .toast.ok { border-color:rgba(0,229,160,.35);color:var(--accent); }
+    .toast.err { border-color:rgba(255,107,107,.35);color:var(--red); }
+
+    /* ACCESS DENIED */
+    #access-denied { display:none;position:fixed;inset:0;background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center;z-index:999; }
+  </style>
+</head>
+<body>
+
+<!-- AUTH LOADING -->
+<div id="auth-loading"><div class="spinner"></div></div>
+
+<!-- ACCESS DENIED -->
+<div id="access-denied" style="display:none;position:fixed;inset:0;background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center;z-index:999;">
+  <div style="font-size:48px;margin-bottom:16px;">🔒</div>
+  <div style="font-size:20px;font-weight:900;letter-spacing:-.4px;margin-bottom:8px;">Access Denied</div>
+  <div style="font-size:13px;color:var(--text2);margin-bottom:24px;">This page is restricted to RetainerHQ admins only.</div>
+  <a href="/auth.html" style="background:var(--accent);color:#000;padding:10px 20px;border-radius:9px;font-size:13px;font-weight:800;text-decoration:none;">Go to Login</a>
+</div>
+
+<!-- MAIN CONTENT (hidden until auth passes) -->
+<div id="main-content" style="display:none;">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <span class="logo-text">RetainerHQ</span>
+      <span class="admin-badge">Admin</span>
+    </div>
+    <div class="topbar-right">
+      <div class="user-pill">
+        <div class="user-dot"></div>
+        <span class="user-email" id="admin-email">—</span>
+      </div>
+      <button class="btn btn-ghost" onclick="sb.auth.signOut().then(()=>location.href='/auth.html')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:13px;height:13px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
+    </div>
+  </div>
+
+  <!-- CONTAINER -->
+  <div class="container">
+    <div class="page-header">
+      <div class="page-title">Brand Approvals</div>
+      <div class="page-sub">Review and approve brand accounts before they access the dashboard.</div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-pill">
+        <div class="stat-icon" style="background:rgba(255,209,102,.1);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#FFD166" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div><div class="stat-num" id="stat-pending">—</div><div class="stat-lbl">Pending</div></div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-icon" style="background:var(--accent-dim);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div><div class="stat-num" id="stat-approved">—</div><div class="stat-lbl">Approved</div></div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-icon" style="background:rgba(0,184,255,.1);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#00B8FF" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div><div class="stat-num" id="stat-total">—</div><div class="stat-lbl">Total Brands</div></div>
+      </div>
+    </div>
+
+    <!-- PENDING SECTION -->
+    <div class="section">
+      <div class="section-header">
+        <div>
+          <div class="section-title">⏳ Pending Approval</div>
+        </div>
+        <div class="section-count" id="pending-count">Loading…</div>
+      </div>
+      <div id="pending-table-wrap">
+        <div class="empty"><div class="spinner" style="margin:0 auto;"></div></div>
+      </div>
+    </div>
+
+    <!-- APPROVED SECTION -->
+    <div class="section">
+      <div class="section-header">
+        <div>
+          <div class="section-title">✅ Approved Brands</div>
+        </div>
+        <div class="section-count" id="approved-count">Loading…</div>
+      </div>
+      <div id="approved-table-wrap">
+        <div class="empty"><div class="spinner" style="margin:0 auto;"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://tbfcwqcqpfbqaknktkyp.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiZmN3cWNxcGZicWFrbmt0a3lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NDQyOTIsImV4cCI6MjA5MzIyMDI5Mn0.40OJm-heqGOiiGqE3QWHoafkRx8Snd3nH3cs19D7L4E';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const ADMIN_EMAIL = 'isaacspears01@gmail.com';
+
+function initials(s) { return (s||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+
+function toast(msg, type='ok') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+}
+
+function pendingRow(b) {
+  return `<tr>
+    <td>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="av">${initials(b.brand_company||b.name||'B')}</div>
+        <div>
+          <div style="font-weight:700;">${b.brand_company||b.name||'—'}</div>
+          <div style="font-size:11px;color:var(--text3);">${b.email||'—'}</div>
+        </div>
+      </div>
+    </td>
+    <td><span style="font-size:12px;color:var(--text2);">${b.brand_niche||'—'}</span></td>
+    <td><span style="font-size:12px;color:var(--text2);">${b.brand_website||'—'}</span></td>
+    <td><span class="badge badge-pending"><span class="badge-dot"></span>Pending</span></td>
+    <td style="font-size:11px;color:var(--text3);">${fmtDate(b.created_at)}</td>
+    <td>
+      <button class="btn-approve" id="approve-btn-${b.id}" onclick="approveBrand('${b.id}', '${(b.brand_company||b.name||'Brand').replace(/'/g,"\\'")}')">
+        Approve →
+      </button>
+    </td>
+  </tr>`;
+}
+
+function approvedRow(b) {
+  return `<tr>
+    <td>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="av">${initials(b.brand_company||b.name||'B')}</div>
+        <div>
+          <div style="font-weight:700;">${b.brand_company||b.name||'—'}</div>
+          <div style="font-size:11px;color:var(--text3);">${b.email||'—'}</div>
+        </div>
+      </div>
+    </td>
+    <td><span style="font-size:12px;color:var(--text2);">${b.brand_niche||'—'}</span></td>
+    <td><span class="badge badge-verified"><span class="badge-dot"></span>Verified</span></td>
+    <td style="font-size:11px;color:var(--text3);">${fmtDate(b.created_at)}</td>
+    <td>
+      <button class="btn-revoke" id="revoke-btn-${b.id}" onclick="revokeBrand('${b.id}', '${(b.brand_company||b.name||'Brand').replace(/'/g,"\\'")}')">
+        Revoke
+      </button>
+    </td>
+  </tr>`;
+}
+
+async function loadBrands() {
+  const { data, error } = await sb.from('profiles').select('*').eq('role', 'brand').order('created_at', { ascending: false });
+  if (error) { toast('Failed to load brands', 'err'); return; }
+
+  const pending  = (data||[]).filter(b => !b.verified);
+  const approved = (data||[]).filter(b => b.verified);
+
+  // Update stats
+  document.getElementById('stat-pending').textContent  = pending.length;
+  document.getElementById('stat-approved').textContent = approved.length;
+  document.getElementById('stat-total').textContent    = (data||[]).length;
+
+  // Pending table
+  document.getElementById('pending-count').textContent = pending.length + ' brand' + (pending.length !== 1 ? 's' : '');
+  document.getElementById('pending-table-wrap').innerHTML = pending.length
+    ? `<table>
+        <thead><tr>
+          <th>Brand</th><th>Niche</th><th>Website</th><th>Status</th><th>Applied</th><th>Action</th>
+        </tr></thead>
+        <tbody>${pending.map(pendingRow).join('')}</tbody>
+       </table>`
+    : `<div class="empty">No pending applications — you're all caught up ✓</div>`;
+
+  // Approved table
+  document.getElementById('approved-count').textContent = approved.length + ' brand' + (approved.length !== 1 ? 's' : '');
+  document.getElementById('approved-table-wrap').innerHTML = approved.length
+    ? `<table>
+        <thead><tr>
+          <th>Brand</th><th>Niche</th><th>Status</th><th>Joined</th><th>Action</th>
+        </tr></thead>
+        <tbody>${approved.map(approvedRow).join('')}</tbody>
+       </table>`
+    : `<div class="empty">No approved brands yet.</div>`;
+}
+
+async function approveBrand(id, name) {
+  const btn = document.getElementById('approve-btn-' + id);
+  if (btn) { btn.disabled = true; btn.textContent = 'Approving…'; }
+  const { error } = await sb.from('profiles').update({ verified: true }).eq('id', id);
+  if (error) {
+    toast('Error: ' + error.message, 'err');
+    if (btn) { btn.disabled = false; btn.textContent = 'Approve →'; }
+    return;
+  }
+  toast('✓ ' + name + ' approved!', 'ok');
+  await loadBrands();
+}
+
+async function revokeBrand(id, name) {
+  if (!confirm('Revoke access for ' + name + '? They will see the pending screen again.')) return;
+  const btn = document.getElementById('revoke-btn-' + id);
+  if (btn) { btn.disabled = true; btn.textContent = 'Revoking…'; }
+  const { error } = await sb.from('profiles').update({ verified: false }).eq('id', id);
+  if (error) {
+    toast('Error: ' + error.message, 'err');
+    if (btn) { btn.disabled = false; btn.textContent = 'Revoke'; }
+    return;
+  }
+  toast(name + ' access revoked.', 'err');
+  await loadBrands();
+}
+
+async function init() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location.href = '/auth.html'; return; }
+
+  // Strict admin check
+  if (session.user.email !== ADMIN_EMAIL) {
+    document.getElementById('auth-loading').style.display = 'none';
+    const d = document.getElementById('access-denied');
+    d.style.display = 'flex';
+    return;
+  }
+
+  document.getElementById('admin-email').textContent = session.user.email;
+  document.getElementById('auth-loading').style.display = 'none';
+  document.getElementById('main-content').style.display = 'block';
+  await loadBrands();
+}
+
+init();
+</script>
+</body>
+</html>
