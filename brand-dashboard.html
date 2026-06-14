@@ -254,6 +254,7 @@
   <div class="page" id="page-creators">
     <div class="topbar"><div class="topbar-title">Browse Creators</div></div>
     <div style="padding:28px;">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:16px;">Creators sorted by highest GMV. Click <strong style="color:var(--text);">View Kit</strong> to see full profile, rates, and top videos.</div>
       <div class="filters">
         <input class="search-input" type="text" id="search-input" placeholder="Search by name or handle..." oninput="filterCreators()" />
         <select class="filter-select" id="filter-niche" onchange="filterCreators()">
@@ -263,7 +264,16 @@
         </select>
         <select class="filter-select" id="filter-gmv" onchange="filterCreators()">
           <option value="">Any GMV</option>
-          <option value="100000">$100K+</option><option value="500000">$500K+</option><option value="1000000">$1M+</option>
+          <option value="10000">$10K+</option>
+          <option value="50000">$50K+</option>
+          <option value="100000">$100K+</option>
+          <option value="500000">$500K+</option>
+          <option value="1000000">$1M+</option>
+        </select>
+        <select class="filter-select" id="filter-sort" onchange="filterCreators()">
+          <option value="gmv">Sort: Highest GMV</option>
+          <option value="followers">Sort: Most Followers</option>
+          <option value="recent">Sort: Newest</option>
         </select>
       </div>
       <div class="creator-grid" id="creator-grid">
@@ -613,7 +623,7 @@ async function viewApplicants(briefId, briefTitle, count) {
 }
 
 async function loadCreators() {
-  const { data } = await sb.from('profiles').select('*').eq('role', 'creator');
+  const { data } = await sb.from('profiles').select('*').eq('role', 'creator').order('total_gmv', { ascending: false, nullsFirst: false });
   allCreators = data || [];
   renderCreators(allCreators);
 }
@@ -621,37 +631,50 @@ async function loadCreators() {
 function renderCreators(list) {
   const grid = document.getElementById('creator-grid');
   if (!list.length) { grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="empty-title">No creators found</div></div>`; return; }
-  grid.innerHTML = list.map(c => `<div class="creator-card">
-    <div class="creator-top">
-      <div class="creator-avatar">${initials(c.name||'C')}</div>
-      <div class="creator-info">
-        <div class="creator-name">${c.name||'Creator'}</div>
-        <div class="creator-handle">${hdl(c)}</div>
-        ${c.niche?`<span class="creator-niche">${c.niche}</span>`:''}
+  grid.innerHTML = list.map(c => {
+    const hasGmv = c.total_gmv && parseFloat(c.total_gmv) > 0;
+    const fmt30d = c.last_30d_gmv ? ('$'+fmtN(c.last_30d_gmv)) : '—';
+    return `<div class="creator-card">
+      <div class="creator-top">
+        <div class="creator-avatar">${initials(c.name||'C')}</div>
+        <div class="creator-info">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="creator-name">${c.name||'Creator'}</div>
+            ${hasGmv?`<span style="background:rgba(0,229,160,.15);color:var(--accent);border:1px solid rgba(0,229,160,.3);border-radius:4px;padding:1px 5px;font-size:8px;font-weight:800;letter-spacing:.5px;">GMV ✓</span>`:''}
+          </div>
+          <div class="creator-handle">${hdl(c)}</div>
+          ${c.niche?`<span class="creator-niche">${c.niche}</span>`:''}
+        </div>
       </div>
-    </div>
-    <div class="creator-stats">
-      <div class="creator-stat"><div class="creator-stat-val">${fmtN(c.followers)}</div><div class="creator-stat-lbl">Followers</div></div>
-      <div class="creator-stat"><div class="creator-stat-val">${c.total_gmv?'$'+fmtN(c.total_gmv):'—'}</div><div class="creator-stat-lbl">Lifetime GMV</div></div>
-    </div>
-    ${c.bio?`<div class="creator-bio">${c.bio.slice(0,90)}${c.bio.length>90?'…':''}</div>`:''}
-    <div class="creator-actions">
-      <button class="btn btn-ghost" onclick="viewMediaKit('${c.id}')">View Kit</button>
-      <button class="btn btn-primary" onclick="openOfferModal('${c.id}','${(c.name||'Creator').replace(/'/g,"\\'")}','${hdl(c)}')">Send Offer</button>
-    </div>
-  </div>`).join('');
+      <div class="creator-stats" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="creator-stat"><div class="creator-stat-val">${fmtN(c.followers)}</div><div class="creator-stat-lbl">Followers</div></div>
+        <div class="creator-stat"><div class="creator-stat-val" style="${hasGmv?'color:var(--accent)':''}">${hasGmv?'$'+fmtN(c.total_gmv):'—'}</div><div class="creator-stat-lbl">Lifetime GMV</div></div>
+        <div class="creator-stat"><div class="creator-stat-val" style="${c.last_30d_gmv?'color:var(--accent)':''}">${fmt30d}</div><div class="creator-stat-lbl">Last 30d GMV</div></div>
+      </div>
+      ${c.bio?`<div class="creator-bio">${c.bio.slice(0,90)}${c.bio.length>90?'…':''}</div>`:''}
+      <div class="creator-actions">
+        <button class="btn btn-ghost" onclick="viewMediaKit('${c.id}')">View Kit</button>
+        <button class="btn btn-primary" onclick="openOfferModal('${c.id}','${(c.name||'Creator').replace(/'/g,"\\'")}','${hdl(c)}')">Send Offer</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function filterCreators() {
   const q = document.getElementById('search-input').value.toLowerCase();
   const niche = document.getElementById('filter-niche').value.toLowerCase();
   const minGmv = parseInt(document.getElementById('filter-gmv').value)||0;
-  renderCreators(allCreators.filter(c => {
+  const sort = document.getElementById('filter-sort').value;
+  let filtered = allCreators.filter(c => {
     const mQ = !q||(c.name||'').toLowerCase().includes(q)||(c.tiktok_handle||'').toLowerCase().includes(q);
     const mN = !niche||(c.niche||'').toLowerCase().includes(niche.split('&')[0].trim());
-    const mG = !minGmv||(parseInt(c.total_gmv)||0)>=minGmv;
+    const mG = !minGmv||(parseFloat(c.total_gmv)||0)>=minGmv;
     return mQ&&mN&&mG;
-  }));
+  });
+  if (sort === 'followers') filtered.sort((a,b) => (parseInt(b.followers)||0)-(parseInt(a.followers)||0));
+  else if (sort === 'recent') filtered.sort((a,b) => new Date(b.created_at)-new Date(a.created_at));
+  else filtered.sort((a,b) => (parseFloat(b.total_gmv)||0)-(parseFloat(a.total_gmv)||0));
+  renderCreators(filtered);
 }
 
 async function loadPlatformStats() {
