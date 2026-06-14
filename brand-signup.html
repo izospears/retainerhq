@@ -277,6 +277,13 @@ async function signUp() {
     }).eq('id', data.user.id);
   }
 
+  // Admin emails go straight to dashboard — everyone else hits waitlist
+  const isAdmin = email.endsWith('@retainerhq.io') || email === 'isaacspears01@gmail.com';
+  if (isAdmin) {
+    window.location.href = '/brand-dashboard.html';
+    return;
+  }
+
   // Add to waitlist and show holding screen — brand dashboard not live yet
   try { await sb.from('waitlist').insert({ email, name: contactName }); } catch(_) {}
   showWaitlist(contactName, companyName);
