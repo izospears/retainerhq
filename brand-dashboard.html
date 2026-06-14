@@ -1348,55 +1348,46 @@ async function obShowSpot(step, idx) {
   }
 
   let el = document.querySelector(step.target);
-
-  // Fallback targets so tour never silently dies
   if (!el) {
-    const fallbacks = {
-      '#demo-deal-card': '#campaigns-list',
-      '.creator-card':   '#creator-grid',
-      '#ob-creator-hint':'#page-creators .topbar'
-    };
+    const fallbacks = { '#demo-deal-card':'#campaigns-list', '.creator-card':'#creator-grid', '#ob-creator-hint':'#page-creators .topbar' };
     const fb = fallbacks[step.target];
     if (fb) el = document.querySelector(fb);
   }
   if (!el) { obNext(); return; }
 
-  // Scroll element fully into view, then wait for paint
-  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  await new Promise(r => setTimeout(r, 350));
+  // Scroll target into center of viewport (instant so getBCR is accurate)
+  el.scrollIntoView({ behavior: 'instant', block: 'center' });
 
   const PAD = 16;
-  const r = el.getBoundingClientRect();
-  const vw = window.innerWidth, vh = window.innerHeight;
+  const r   = el.getBoundingClientRect();
+  const vw  = window.innerWidth, vh = window.innerHeight;
 
-  // Clamp spotlight to visible viewport — avoids spotlighting off-screen areas
-  const clampedTop    = Math.max(r.top,    60);
-  const clampedBottom = Math.min(r.bottom, vh - 20);
-  const clampedLeft   = Math.max(r.left,   0);
-  const clampedRight  = Math.min(r.right,  vw);
-  const clampedH = Math.max(clampedBottom - clampedTop, 40);
-  const clampedW = Math.max(clampedRight  - clampedLeft, 40);
+  // Clamp spotlight rect to visible area
+  const cT = Math.max(r.top,    60);
+  const cB = Math.min(r.bottom, vh - 20);
+  const cL = Math.max(r.left,   0);
+  const cR = Math.min(r.right,  vw);
+  const cH = Math.max(cB - cT, 40);
+  const cW = Math.max(cR - cL, 40);
 
   const spot = document.getElementById('ob-spot');
-  const alreadyVisible = spot.style.opacity === '1';
-  spot.style.transition = alreadyVisible
+  spot.style.transition = spot.style.opacity === '1'
     ? 'left .5s cubic-bezier(.4,0,.2,1),top .5s cubic-bezier(.4,0,.2,1),width .5s cubic-bezier(.4,0,.2,1),height .5s cubic-bezier(.4,0,.2,1),opacity .3s'
     : 'opacity .4s';
-  spot.style.left   = (clampedLeft  - PAD) + 'px';
-  spot.style.top    = (clampedTop   - PAD) + 'px';
-  spot.style.width  = (clampedW + PAD * 2) + 'px';
-  spot.style.height = (clampedH + PAD * 2) + 'px';
+  spot.style.left   = (cL - PAD) + 'px';
+  spot.style.top    = (cT - PAD) + 'px';
+  spot.style.width  = (cW + PAD*2) + 'px';
+  spot.style.height = (cH + PAD*2) + 'px';
   spot.style.opacity = '1';
   spot.classList.add('ob-pulse');
 
-  // Tooltip content
+  // ── Tooltip — always docked to bottom-center of screen ──
   const SPOT_IDX   = OB_STEPS.filter((s,i) => s.type==='spot' && i<=idx).length;
   const SPOT_TOTAL = OB_STEPS.filter(s => s.type==='spot').length;
   document.getElementById('ob-tip-counter').textContent = String(SPOT_IDX).padStart(2,'0') + ' / ' + String(SPOT_TOTAL).padStart(2,'0');
   document.getElementById('ob-tip-title').textContent = step.title;
   document.getElementById('ob-tip-body').textContent  = step.body;
 
-  // Progress dots
   document.getElementById('ob-tip-dots').innerHTML = OB_STEPS.map((_,i) =>
     `<div class="ob-dot" style="height:6px;border-radius:3px;background:${i===idx?'#00E5A0':'rgba(255,255,255,.18)'};width:${i===idx?18:6}px;"></div>`
   ).join('');
@@ -1404,40 +1395,15 @@ async function obShowSpot(step, idx) {
   document.getElementById('ob-back-btn').style.visibility = idx > 1 ? 'visible' : 'hidden';
   document.getElementById('ob-next-btn').textContent = idx === OB_N - 2 ? 'Finish ✓' : 'Next →';
 
-  // Tooltip position — use clamped spotlight rect
-  const sr = {
-    left:   clampedLeft  - PAD,
-    top:    clampedTop   - PAD,
-    right:  clampedRight + PAD,
-    bottom: clampedBottom + PAD,
-    width:  clampedW + PAD * 2,
-    height: clampedH + PAD * 2
-  };
-  const TIP_W = 360, TIP_H = 230, GAP = 20;
-  const pos = step.pos || 'bottom';
-  let tipL, tipT;
-
-  if (pos === 'bottom') {
-    tipL = Math.max(16, Math.min(sr.left + sr.width/2 - TIP_W/2, vw - TIP_W - 16));
-    tipT = sr.bottom + GAP;
-    if (tipT + TIP_H > vh - 10) tipT = sr.top - TIP_H - GAP; // flip up
-    if (tipT < 60) tipT = Math.max(60, vh/2 - TIP_H/2);       // center fallback
-  } else if (pos === 'top') {
-    tipL = Math.max(16, Math.min(sr.left + sr.width/2 - TIP_W/2, vw - TIP_W - 16));
-    tipT = sr.top - TIP_H - GAP;
-    if (tipT < 60) tipT = sr.bottom + GAP;                     // flip down
-    if (tipT + TIP_H > vh - 10) tipT = Math.max(60, vh/2 - TIP_H/2);
-  } else if (pos === 'right') {
-    tipL = sr.right + GAP;
-    if (tipL + TIP_W > vw - 16) tipL = sr.left - TIP_W - GAP; // flip left
-    tipT = Math.max(80, Math.min(sr.top + sr.height/2 - TIP_H/2, vh - TIP_H - 20));
-  }
-
   const tip = document.getElementById('ob-tip');
-  tip.style.left = tipL + 'px';
-  tip.style.top  = tipT + 'px';
-  tip.style.transform = 'translateY(8px)';
-  tip.style.opacity = '0';
+  const TIP_W = 380;
+  // Fixed bottom-center — always visible no matter where spotlight is
+  tip.style.left      = Math.round((vw - TIP_W) / 2) + 'px';
+  tip.style.bottom    = '32px';
+  tip.style.top       = 'auto';
+  tip.style.width     = TIP_W + 'px';
+  tip.style.transform = 'translateY(14px)';
+  tip.style.opacity   = '0';
   tip.style.pointerEvents = 'all';
 
   requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -1461,7 +1427,7 @@ async function obShowSpot(step, idx) {
   <div id="ob-spot" style="position:fixed;border-radius:18px;z-index:9993;opacity:0;pointer-events:none;transition:opacity .4s;"></div>
 
   <!-- Tooltip card (spotlight steps) -->
-  <div id="ob-tip" style="position:fixed;z-index:9996;width:360px;opacity:0;pointer-events:none;">
+  <div id="ob-tip" style="position:fixed;z-index:9997;width:380px;opacity:0;pointer-events:none;">
     <div style="background:rgba(10,16,28,.97);border:1px solid rgba(0,229,160,.22);border-radius:18px;padding:24px 26px;box-shadow:0 28px 90px rgba(0,0,0,.75),0 0 0 1px rgba(0,229,160,.06),0 0 50px rgba(0,229,160,.07);position:relative;overflow:hidden;">
       <!-- Subtle scan line -->
       <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,229,160,.3),transparent);animation:ob-scan 4s ease-in-out infinite;pointer-events:none;"></div>
