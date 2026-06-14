@@ -146,6 +146,18 @@
     #loading { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; }
     .spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
+    /* ── ONBOARDING ── */
+    @keyframes ob-scan { 0%{top:0;opacity:0} 8%{opacity:1} 92%{opacity:1} 100%{top:100%;opacity:0} }
+    @keyframes ob-twinkle { 0%,100%{opacity:.12;transform:scale(1)} 50%{opacity:.9;transform:scale(1.5)} }
+    @keyframes ob-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+    @keyframes ob-pulse-ring {
+      0%,100% { box-shadow:0 0 0 9999px rgba(8,12,20,.86),0 0 0 2px rgba(0,229,160,.65),0 0 60px rgba(0,229,160,.2); }
+      50%      { box-shadow:0 0 0 9999px rgba(8,12,20,.86),0 0 0 2px rgba(0,229,160,1),  0 0 100px rgba(0,229,160,.5); }
+    }
+    @keyframes ob-badge-in { from{opacity:0;transform:scale(.7)} to{opacity:1;transform:scale(1)} }
+    #ob-spot.ob-pulse { animation: ob-pulse-ring 2.2s ease-in-out infinite; }
+    #ob-overlay * { box-sizing: border-box; }
+    .ob-dot { transition: all .35s cubic-bezier(.4,0,.2,1); }
     /* Kit modal */
     .kit-modal { max-width: 600px; max-height: 88vh; overflow-y: auto; }
     .kit-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
@@ -232,6 +244,10 @@
         <div class="user-role">Brand Account</div>
       </div>
     </div>
+    <button class="sign-out-btn" onclick="localStorage.removeItem('rhq_brand_ob_v1');startOnboarding()" style="color:rgba(0,229,160,.5);" onmouseover="this.style.color='#00E5A0';this.style.background='rgba(0,229,160,.06)'" onmouseout="this.style.color='rgba(0,229,160,.5)';this.style.background='none'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Replay Tour
+    </button>
     <button class="sign-out-btn" onclick="signOut()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       Sign Out
@@ -490,6 +506,7 @@ async function initAuth() {
   document.getElementById('profile-website').value = profile.brand_website||'';
   await Promise.all([loadCreators(), loadCampaigns(), loadPlatformStats()]);
   document.getElementById('loading').style.display = 'none';
+  setTimeout(startOnboarding, 700);
 }
 
 function showPage(id) {
@@ -1181,6 +1198,273 @@ async function signOut() { await sb.auth.signOut(); window.location.href = '/aut
 function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
 
 initAuth();
+
+// ══════════════════════════════════════════════════
+//  BRAND ONBOARDING WALKTHROUGH
+// ══════════════════════════════════════════════════
+const OB_STEPS = [
+  {
+    type:'modal',
+    icon:`<svg style="width:54px;height:54px;display:block;margin:0 auto;" viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="27" cy="27" r="26" stroke="#00E5A0" stroke-width="1.5" stroke-dasharray="5 4" opacity=".35"/><circle cx="27" cy="27" r="18" stroke="#00E5A0" stroke-width="1.5" opacity=".6"/><circle cx="27" cy="27" r="10" fill="rgba(0,229,160,.12)" stroke="#00E5A0" stroke-width="1.5"/><path d="M22 27l3.5 3.5 7-7" stroke="#00E5A0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    title:'Welcome to RetainerHQ',
+    sub:'The TikTok Shop affiliate marketplace built for brands serious about GMV. Let\'s show you around — it only takes 60 seconds.',
+    cta:'Show Me Around →'
+  },
+  {
+    type:'spot', page:'overview', target:'.stats-row', pos:'bottom',
+    title:'Your Command Center',
+    body:'Track active creator deals, pending offers, and total outreach — updated in real time. This is your growth dashboard.'
+  },
+  {
+    type:'spot', page:'overview', target:'.stats-row + div + .stats-row', pos:'bottom',
+    title:'Platform-Wide Scale',
+    body:'See the total GMV our creator network drives across all brands. You\'re joining a marketplace with verified, real sales data behind every creator.'
+  },
+  {
+    type:'spot', page:'creators', target:'#creator-grid', pos:'top',
+    title:'130+ Verified Creators',
+    body:'Every creator is a TikTok Shop affiliate with real GMV history. Sorted by highest lifetime sales so the top performers are always first.'
+  },
+  {
+    type:'spot', page:'creators', target:'.creator-card', pos:'right',
+    title:'Verified GMV. No Guessing.',
+    body:'Lifetime GMV, 30-day performance, follower count, niche — all verified by the platform. Click View Kit for full rates and top video content, then hit Send Offer.'
+  },
+  {
+    type:'spot', page:'campaigns', target:'#campaigns-list', pos:'top',
+    title:'Real-Time Deal Tracking',
+    body:'Once a creator accepts your offer, every video moves through a pipeline — scripting, filming, editing, posted. You see it all in one live view.'
+  },
+  {
+    type:'modal',
+    icon:`<svg style="width:56px;height:56px;display:block;margin:0 auto;animation:ob-float 3s ease-in-out infinite;" viewBox="0 0 56 56" fill="none"><circle cx="28" cy="28" r="27" fill="rgba(0,229,160,.08)" stroke="#00E5A0" stroke-width="1.5"/><path d="M17 28l8 8 14-14" stroke="#00E5A0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+    title:"You're All Set",
+    sub:"Start browsing creators and send your first retainer offer. No middlemen, no waiting — direct access to 130+ verified affiliates.",
+    cta:'Browse Creators →',
+    ctaAction: () => { obFinish(); showPage('creators'); }
+  }
+];
+
+let obStep = 0;
+const OB_N = OB_STEPS.length;
+
+function startOnboarding() {
+  if (localStorage.getItem('rhq_brand_ob_v1')) return;
+  document.getElementById('ob-overlay').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+  obStep = 0;
+  setTimeout(() => obGo(0), 500);
+}
+
+function obFinish() {
+  localStorage.setItem('rhq_brand_ob_v1','1');
+  const ov = document.getElementById('ob-overlay');
+  ov.style.transition = 'opacity .45s';
+  ov.style.opacity = '0';
+  setTimeout(() => {
+    ov.style.display = 'none'; ov.style.opacity = ''; ov.style.transition = '';
+    document.body.style.overflow = '';
+  }, 450);
+}
+
+function obNext() { if (obStep < OB_N - 1) { obStep++; obGo(obStep); } else obFinish(); }
+function obPrev() { if (obStep > 0) { obStep--; obGo(obStep); } }
+
+async function obGo(idx) {
+  const step = OB_STEPS[idx];
+  // Progress bar
+  document.getElementById('ob-progress').style.width = (((idx+1)/OB_N)*100)+'%';
+
+  if (step.type === 'modal') {
+    obHideSpot();
+    obShowModal(step, idx);
+  } else {
+    obHideModal();
+    await obShowSpot(step, idx);
+  }
+}
+
+function obHideSpot() {
+  const spot = document.getElementById('ob-spot');
+  const tip  = document.getElementById('ob-tip');
+  spot.classList.remove('ob-pulse');
+  spot.style.opacity = '0';
+  tip.style.opacity = '0';
+  tip.style.pointerEvents = 'none';
+}
+
+function obHideModal() {
+  const m = document.getElementById('ob-modal');
+  m.style.opacity = '0';
+  m.style.pointerEvents = 'none';
+}
+
+function obShowModal(step, idx) {
+  // Stars
+  const sc = document.getElementById('ob-stars');
+  sc.innerHTML = '';
+  for (let i=0;i<50;i++) {
+    const s = document.createElement('div');
+    const sz = Math.random()<.15?3:Math.random()<.4?2:1.5;
+    const dur = 2+Math.random()*4, delay = Math.random()*5;
+    s.style.cssText=`position:absolute;width:${sz}px;height:${sz}px;border-radius:50%;background:${Math.random()>.75?'#00E5A0':'#fff'};left:${Math.random()*100}%;top:${Math.random()*100}%;animation:ob-twinkle ${dur}s ${delay}s ease-in-out infinite;pointer-events:none;`;
+    sc.appendChild(s);
+  }
+
+  document.getElementById('ob-modal-icon').innerHTML = step.icon||'';
+  document.getElementById('ob-modal-sub').textContent = step.sub;
+  const ctaBtn = document.getElementById('ob-modal-cta');
+  ctaBtn.textContent = step.cta;
+  ctaBtn.onclick = step.ctaAction || obNext;
+
+  // Typewriter on title
+  const titleEl = document.getElementById('ob-modal-title');
+  titleEl.textContent = '';
+  const txt = step.title; let ci = 0;
+  const tw = setInterval(()=>{ titleEl.textContent += txt[ci++]; if(ci>=txt.length) clearInterval(tw); }, 45);
+
+  const modal = document.getElementById('ob-modal');
+  const inner = document.getElementById('ob-modal-inner');
+  inner.style.transform = 'scale(.93) translateY(24px)';
+  inner.style.transition = 'none';
+  modal.style.opacity = '0';
+  modal.style.pointerEvents = 'all';
+
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      modal.style.transition = 'opacity .4s';
+      inner.style.transition = 'transform .55s cubic-bezier(.34,1.2,.64,1)';
+      modal.style.opacity = '1';
+      inner.style.transform = 'scale(1) translateY(0)';
+    });
+  });
+}
+
+async function obShowSpot(step, idx) {
+  if (step.page) { showPage(step.page); await new Promise(r=>setTimeout(r,180)); }
+
+  const el = document.querySelector(step.target);
+  if (!el) { obNext(); return; }
+
+  const PAD = 16;
+  const r = el.getBoundingClientRect();
+  const spot = document.getElementById('ob-spot');
+
+  spot.style.transition = 'none';
+  // If already visible, enable smooth move
+  if (spot.style.opacity === '1') {
+    spot.style.transition = 'left .55s cubic-bezier(.4,0,.2,1),top .55s cubic-bezier(.4,0,.2,1),width .55s cubic-bezier(.4,0,.2,1),height .55s cubic-bezier(.4,0,.2,1)';
+  }
+  spot.style.left   = (r.left - PAD)+'px';
+  spot.style.top    = (r.top  - PAD)+'px';
+  spot.style.width  = (r.width  + PAD*2)+'px';
+  spot.style.height = (r.height + PAD*2)+'px';
+  spot.style.opacity = '1';
+  spot.classList.add('ob-pulse');
+
+  // Tooltip content
+  const SPOT_IDX = OB_STEPS.filter((s,i)=>s.type==='spot'&&i<=idx).length;
+  const SPOT_TOTAL = OB_STEPS.filter(s=>s.type==='spot').length;
+  document.getElementById('ob-tip-counter').textContent = String(SPOT_IDX).padStart(2,'0')+' / '+String(SPOT_TOTAL).padStart(2,'0');
+  document.getElementById('ob-tip-title').textContent = step.title;
+  document.getElementById('ob-tip-body').textContent = step.body;
+
+  // Dots
+  document.getElementById('ob-tip-dots').innerHTML = OB_STEPS.map((_,i)=>`<div class="ob-dot" style="height:6px;border-radius:3px;background:${i===idx?'#00E5A0':'rgba(255,255,255,.18)'};width:${i===idx?18:6}px;"></div>`).join('');
+
+  // Back/Next buttons
+  document.getElementById('ob-back-btn').style.visibility = idx > 1 ? 'visible':'hidden';
+  document.getElementById('ob-next-btn').textContent = idx===OB_N-2 ? 'Finish ✓' : 'Next →';
+
+  // Position tooltip
+  const sr = { left:r.left-PAD, top:r.top-PAD, right:r.right+PAD, bottom:r.bottom+PAD, width:r.width+PAD*2, height:r.height+PAD*2 };
+  const TIP_W=360, TIP_EST_H=220, GAP=22;
+  const pos = step.pos || 'bottom';
+  const vw=window.innerWidth, vh=window.innerHeight;
+  let tipL, tipT;
+
+  if (pos==='bottom') {
+    tipL = Math.max(16, Math.min(sr.left+sr.width/2-TIP_W/2, vw-TIP_W-16));
+    tipT = sr.bottom + GAP;
+    if (tipT+TIP_EST_H>vh-20) tipT = sr.top - TIP_EST_H - GAP;
+  } else if (pos==='top') {
+    tipL = Math.max(16, Math.min(sr.left+sr.width/2-TIP_W/2, vw-TIP_W-16));
+    tipT = sr.top - TIP_EST_H - GAP;
+    if (tipT<60) tipT = sr.bottom + GAP;
+  } else if (pos==='right') {
+    tipL = sr.right + GAP;
+    if (tipL+TIP_W>vw-16) tipL = sr.left-TIP_W-GAP;
+    tipT = Math.max(80, Math.min(sr.top+sr.height/2-TIP_EST_H/2, vh-TIP_EST_H-20));
+  }
+
+  const tip = document.getElementById('ob-tip');
+  tip.style.left = tipL+'px';
+  tip.style.top  = tipT+'px';
+  tip.style.transform = 'translateY(10px)';
+  tip.style.opacity = '0';
+  tip.style.pointerEvents = 'all';
+
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      tip.style.transition = 'opacity .35s, transform .45s cubic-bezier(.34,1.4,.64,1)';
+      tip.style.transform = 'translateY(0)';
+      tip.style.opacity = '1';
+    });
+  });
+}
 </script>
+
+<!-- ═══════════ ONBOARDING OVERLAY ═══════════ -->
+<div id="ob-overlay" style="display:none;position:fixed;inset:0;z-index:9990;pointer-events:all;">
+
+  <!-- Thin progress bar at top -->
+  <div id="ob-progress" style="position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,#00E5A0,#00B8FF);z-index:10002;transition:width .5s cubic-bezier(.4,0,.2,1);border-radius:0 2px 2px 0;box-shadow:0 0 8px #00E5A0;"></div>
+
+  <!-- Skip button -->
+  <button onclick="obFinish()" style="position:fixed;top:14px;right:20px;z-index:10002;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:7px 14px;color:rgba(255,255,255,.4);font-size:11px;font-family:Inter,sans-serif;cursor:pointer;letter-spacing:.3px;transition:all .2s;" onmouseover="this.style.color='rgba(255,255,255,.8)'" onmouseout="this.style.color='rgba(255,255,255,.4)'">Skip tour ×</button>
+
+  <!-- Spotlight ring — darkness + neon border via box-shadow -->
+  <div id="ob-spot" style="position:fixed;border-radius:18px;z-index:9993;opacity:0;pointer-events:none;transition:opacity .4s;"></div>
+
+  <!-- Tooltip card (spotlight steps) -->
+  <div id="ob-tip" style="position:fixed;z-index:9996;width:360px;opacity:0;pointer-events:none;">
+    <div style="background:rgba(10,16,28,.97);border:1px solid rgba(0,229,160,.22);border-radius:18px;padding:24px 26px;box-shadow:0 28px 90px rgba(0,0,0,.75),0 0 0 1px rgba(0,229,160,.06),0 0 50px rgba(0,229,160,.07);position:relative;overflow:hidden;">
+      <!-- Subtle scan line -->
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,229,160,.3),transparent);animation:ob-scan 4s ease-in-out infinite;pointer-events:none;"></div>
+      <div id="ob-tip-counter" style="font-family:'Courier New',monospace;font-size:10px;font-weight:700;color:rgba(0,229,160,.55);letter-spacing:2.5px;margin-bottom:10px;"></div>
+      <div id="ob-tip-title" style="font-size:17px;font-weight:900;letter-spacing:-.3px;margin-bottom:9px;background:linear-gradient(125deg,#fff 55%,#00E5A0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.25;"></div>
+      <div id="ob-tip-body" style="font-size:13px;color:rgba(255,255,255,.55);line-height:1.75;margin-bottom:20px;"></div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button id="ob-back-btn" onclick="obPrev()" style="background:transparent;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 14px;color:rgba(255,255,255,.4);font-size:12px;font-family:Inter,sans-serif;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='rgba(255,255,255,.3)';this.style.color='rgba(255,255,255,.8)'" onmouseout="this.style.borderColor='rgba(255,255,255,.12)';this.style.color='rgba(255,255,255,.4)'">← Back</button>
+        <div id="ob-tip-dots" style="flex:1;display:flex;justify-content:center;align-items:center;gap:5px;"></div>
+        <button id="ob-next-btn" onclick="obNext()" style="background:linear-gradient(135deg,#00E5A0,#00C898);border:none;border-radius:8px;padding:9px 18px;color:#000;font-size:12px;font-weight:800;font-family:Inter,sans-serif;cursor:pointer;letter-spacing:.2px;box-shadow:0 0 20px rgba(0,229,160,.35);transition:all .2s;" onmouseover="this.style.boxShadow='0 0 35px rgba(0,229,160,.6)';this.style.transform='scale(1.04)'" onmouseout="this.style.boxShadow='0 0 20px rgba(0,229,160,.35)';this.style.transform='scale(1)'">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Center modal (welcome + done steps) -->
+  <div id="ob-modal" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:9996;opacity:0;pointer-events:none;">
+    <div id="ob-modal-inner" style="position:relative;background:rgba(8,13,24,.98);border:1px solid rgba(0,229,160,.18);border-radius:26px;padding:54px 58px;max-width:520px;width:90%;text-align:center;overflow:hidden;box-shadow:0 50px 130px rgba(0,0,0,.85),0 0 100px rgba(0,229,160,.07),0 0 0 1px rgba(0,229,160,.05);">
+      <!-- Animated scan line -->
+      <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,229,160,.5),transparent);animation:ob-scan 3.5s ease-in-out infinite;pointer-events:none;"></div>
+      <!-- Corner accents -->
+      <div style="position:absolute;top:18px;left:18px;width:18px;height:18px;border-top:1.5px solid rgba(0,229,160,.4);border-left:1.5px solid rgba(0,229,160,.4);border-radius:3px 0 0 0;"></div>
+      <div style="position:absolute;top:18px;right:18px;width:18px;height:18px;border-top:1.5px solid rgba(0,229,160,.4);border-right:1.5px solid rgba(0,229,160,.4);border-radius:0 3px 0 0;"></div>
+      <div style="position:absolute;bottom:18px;left:18px;width:18px;height:18px;border-bottom:1.5px solid rgba(0,229,160,.4);border-left:1.5px solid rgba(0,229,160,.4);border-radius:0 0 0 3px;"></div>
+      <div style="position:absolute;bottom:18px;right:18px;width:18px;height:18px;border-bottom:1.5px solid rgba(0,229,160,.4);border-right:1.5px solid rgba(0,229,160,.4);border-radius:0 0 3px 0;"></div>
+      <!-- Stars -->
+      <div id="ob-stars" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;"></div>
+      <!-- Content -->
+      <div style="position:relative;z-index:1;">
+        <div id="ob-modal-icon" style="margin-bottom:26px;"></div>
+        <div id="ob-modal-title" style="font-size:30px;font-weight:900;letter-spacing:-.6px;margin-bottom:14px;background:linear-gradient(135deg,#fff 45%,#00E5A0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;min-height:36px;"></div>
+        <div id="ob-modal-sub" style="font-size:14px;color:rgba(255,255,255,.45);line-height:1.85;margin-bottom:36px;max-width:380px;margin-left:auto;margin-right:auto;"></div>
+        <button id="ob-modal-cta" style="background:linear-gradient(135deg,#00E5A0,#00C898);border:none;border-radius:13px;padding:15px 34px;font-size:14px;font-weight:800;color:#000;font-family:Inter,sans-serif;cursor:pointer;letter-spacing:.3px;box-shadow:0 0 40px rgba(0,229,160,.35);transition:all .2s;" onmouseover="this.style.boxShadow='0 0 60px rgba(0,229,160,.6)';this.style.transform='scale(1.04)'" onmouseout="this.style.boxShadow='0 0 40px rgba(0,229,160,.35)';this.style.transform='scale(1)'"></button>
+        <div style="margin-top:18px;"><button onclick="obFinish()" style="background:none;border:none;color:rgba(255,255,255,.25);font-size:11px;font-family:Inter,sans-serif;cursor:pointer;letter-spacing:.3px;">skip for now</button></div>
+      </div>
+    </div>
+  </div>
+
+</div>
 </body>
 </html>
