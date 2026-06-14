@@ -475,10 +475,14 @@ function render() {
     const val = answers[q.id] || '';
     inputHtml = `
       <div class="q-input-wrap">
-        <input class="q-input" id="q-input" type="password" placeholder="${q.placeholder}" value="${val}" />
+        <input class="q-input" id="q-input" type="password" placeholder="Create a password" value="${val}" />
       </div>
       <div class="pw-strength" id="pw-strength"><div class="pw-bar" id="pb1"></div><div class="pw-bar" id="pb2"></div><div class="pw-bar" id="pb3"></div></div>
       <div class="pw-label" id="pw-label">Enter your password</div>
+      <div class="q-input-wrap" style="margin-top:14px;">
+        <input class="q-input" id="q-input-confirm" type="password" placeholder="Confirm password" style="border-color:var(--border2);" />
+      </div>
+      <div class="pw-match-label" id="pw-match-label" style="font-size:12px;margin-top:6px;min-height:18px;"></div>
       <div class="error-toast" id="q-error"></div>`;
   }
 
@@ -545,12 +549,13 @@ function render() {
     const inp = document.getElementById('q-input');
     if (inp) {
       inp.focus();
-      // Password strength meter
+      // Password strength meter + confirm match
       if (q.type === 'password') {
-        inp.addEventListener('input', () => {
+        const confirmInp = document.getElementById('q-input-confirm');
+        function updateStrength() {
           const v = inp.value;
           const s = v.length >= 10 ? 'strong' : v.length >= 6 ? 'ok' : v.length >= 1 ? 'weak' : '';
-          const labels = { '':'Enter your password', weak:'Too short', ok:'Good', strong:'Strong password!' };
+          const labels = { '':'Enter your password', weak:'Too short — keep going', ok:'Good', strong:'Strong password!' };
           const lbl = document.getElementById('pw-label');
           if (lbl) lbl.textContent = labels[s] || '';
           ['pb1','pb2','pb3'].forEach((id,i) => {
@@ -558,8 +563,25 @@ function render() {
             if (!bar) return;
             bar.className = 'pw-bar ' + (s === 'strong' ? 'strong' : s === 'ok' && i < 2 ? 'ok' : s === 'weak' && i === 0 ? 'weak' : '');
           });
-        });
-        if (inp.value) inp.dispatchEvent(new Event('input'));
+        }
+        function updateMatch() {
+          const matchLbl = document.getElementById('pw-match-label');
+          const conf = confirmInp ? confirmInp.value : '';
+          if (!conf) { matchLbl.textContent = ''; confirmInp.style.borderColor = 'var(--border2)'; return; }
+          if (conf === inp.value) {
+            matchLbl.innerHTML = '<span style="color:var(--accent);">✓ Passwords match</span>';
+            confirmInp.style.borderColor = 'var(--accent)';
+          } else {
+            matchLbl.innerHTML = '<span style="color:var(--red);">✗ Passwords don\'t match</span>';
+            confirmInp.style.borderColor = 'var(--red)';
+          }
+        }
+        inp.addEventListener('input', () => { updateStrength(); updateMatch(); });
+        if (confirmInp) {
+          confirmInp.addEventListener('input', updateMatch);
+          confirmInp.addEventListener('keydown', e => { if (e.key === 'Enter') nextStep(); });
+        }
+        if (inp.value) updateStrength();
       }
     }
     // Enter key
@@ -622,8 +644,12 @@ async function nextStep() {
 
   if (q.type === 'password') {
     const inp = document.getElementById('q-input');
+    const confirmInp = document.getElementById('q-input-confirm');
     const val = inp ? inp.value : '';
+    const confirmVal = confirmInp ? confirmInp.value : '';
     if (val.length < 6) { showError('Password must be at least 6 characters.'); inp?.focus(); return; }
+    if (!confirmVal) { showError('Please confirm your password.'); confirmInp?.focus(); return; }
+    if (val !== confirmVal) { showError('Passwords don\'t match — please try again.'); confirmInp?.focus(); return; }
     answers[q.id] = val;
   }
 
