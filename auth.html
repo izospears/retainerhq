@@ -277,7 +277,9 @@ window.addEventListener('load', () => {
       const { data: profile } = await sb.from('profiles').select('name, role, brand_company').eq('id', session.user.id).single();
       const displayName = profile?.brand_company || profile?.name || session.user.email;
       const role = profile?.role === 'brand' ? 'Brand Account' : 'Creator Account';
-      const isBrand = profile?.role === 'brand';
+      const userEmail = session.user.email || '';
+      const isAdminBrand = profile?.role === 'brand' && (userEmail.endsWith('@retainerhq.io') || userEmail === 'isaacspears01@gmail.com');
+      const isBrand = profile?.role === 'brand' && !isAdminBrand;
 
       const banner = document.createElement('div');
       banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#0D1220;border-bottom:1px solid #1E2D45;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;z-index:999;font-family:Inter,sans-serif;';
@@ -365,6 +367,8 @@ async function signIn() {
     // Route based on role
     const { data: profile } = await sb.from('profiles').select('role, name').eq('id', data.user.id).single();
     if (profile?.role === 'brand') {
+      const isAdmin = email.endsWith('@retainerhq.io') || email === 'isaacspears01@gmail.com';
+      if (isAdmin) { window.location.href = '/brand-dashboard.html'; return; }
       showBrandWaitlist(profile?.name);
     } else {
       window.location.href = '/app.html';
