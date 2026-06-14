@@ -497,6 +497,54 @@
   </div>
 </div>
 
+<!-- PENDING VERIFICATION SCREEN -->
+<div id="pending-screen" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column;">
+  <div style="text-align:center;max-width:480px;padding:40px 24px;">
+    <!-- Logo -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:48px;">
+      <div style="width:36px;height:36px;background:linear-gradient(135deg,#00E5A0,#00B8FF);border-radius:9px;display:flex;align-items:center;justify-content:center;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" style="width:17px;height:17px;"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <span style="font-size:17px;font-weight:900;letter-spacing:-.4px;">RetainerHQ</span>
+    </div>
+    <!-- Animated pulse ring -->
+    <div style="position:relative;width:96px;height:96px;margin:0 auto 32px;">
+      <div style="position:absolute;inset:0;border-radius:50%;border:2px solid rgba(0,229,160,.15);animation:pv-ring 2s ease-out infinite;"></div>
+      <div style="position:absolute;inset:8px;border-radius:50%;border:2px solid rgba(0,229,160,.25);animation:pv-ring 2s ease-out infinite .4s;"></div>
+      <div style="width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,rgba(0,229,160,.12),rgba(0,184,255,.12));border:1px solid rgba(0,229,160,.3);display:flex;align-items:center;justify-content:center;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" style="width:38px;height:38px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+    </div>
+    <div style="font-size:26px;font-weight:900;letter-spacing:-.6px;margin-bottom:12px;">Account Under Review</div>
+    <div style="font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:32px;">Your brand account is pending approval from the RetainerHQ team. Once we've confirmed your details and contract, you'll get instant access to the full dashboard and creator network.</div>
+    <!-- What happens next -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:left;margin-bottom:28px;">
+      <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;">What happens next</div>
+      ${[
+        ['Review your application','We verify your brand details and confirm your agreement.'],
+        ['Get your approval','You\'ll receive an email from Isaac once you\'re approved.'],
+        ['Full dashboard access','Browse creators, send offers, and run campaigns.']
+      ].map(([t,d],i) => `
+        <div style="display:flex;gap:12px;margin-bottom:${i<2?'14':'0'}px;">
+          <div style="width:22px;height:22px;border-radius:50%;background:var(--accent-dim);border:1px solid rgba(0,229,160,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:800;color:var(--accent);">${i+1}</div>
+          <div><div style="font-size:13px;font-weight:700;margin-bottom:2px;">${t}</div><div style="font-size:12px;color:var(--text2);">${d}</div></div>
+        </div>`).join('')}
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <a href="mailto:isaacspears01@gmail.com" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--accent);color:#000;border-radius:9px;font-size:13px;font-weight:800;text-decoration:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+        Contact Isaac
+      </a>
+      <button onclick="sb.auth.signOut().then(()=>location.href='/auth.html')" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:transparent;color:var(--text2);border:1px solid var(--border2);border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
+        Sign Out
+      </button>
+    </div>
+  </div>
+</div>
+<style>
+@keyframes pv-ring { 0%{transform:scale(.8);opacity:.6} 100%{transform:scale(1.6);opacity:0} }
+</style>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -529,6 +577,15 @@ async function initAuth() {
   const { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
   if (!profile || profile.role !== 'brand') { window.location.href = '/app.html'; return; }
   brandProfile = profile;
+
+  // Brand verification gate
+  if (!profile.verified) {
+    document.getElementById('loading').style.display = 'none';
+    const ps = document.getElementById('pending-screen');
+    ps.style.display = 'flex';
+    return;
+  }
+
   document.getElementById('sb-avatar').textContent = initials(profile.brand_company||profile.name||'B');
   document.getElementById('sb-name').textContent = profile.brand_company||profile.name||'Brand';
   document.getElementById('overview-title').textContent = 'Welcome back, '+(profile.brand_company||profile.name||'there');
