@@ -1069,9 +1069,75 @@ function buildDealCard(deal) {
     </div>`;
 }
 
+function buildDemoCard() {
+  const demoContract = {
+    video_stages: {
+      '0': 'posted', '1': 'posted', '2': 'posted',
+      '3': 'editing', '4': 'editing',
+      '5': 'filming',
+      '6': 'scripting', '7': 'scripting'
+    },
+    posted: 3,
+    value: 2400,
+    start_date: '2026-05-01',
+    expiry_date: '2026-07-31'
+  };
+
+  const pipeline = buildPipelineHtml(demoContract);
+  const start  = 'May 1, 2026';
+  const expiry = 'Jul 31, 2026';
+
+  return `
+    <div style="background:rgba(0,229,160,.04);border:1px dashed rgba(0,229,160,.3);border-radius:10px;padding:10px 14px;margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span style="font-size:11px;color:var(--text2);">This is a <strong style="color:var(--accent);">preview</strong> — showing what an active deal looks like once a creator logs their contract.</span>
+      <button onclick="document.getElementById('demo-deal-card').style.display='none';this.closest('div').style.display='none'" style="margin-left:auto;background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;line-height:1;padding:0 2px;">×</button>
+    </div>
+    <div id="demo-deal-card" class="deal-card deal-active" style="opacity:.85;">
+      <div class="deal-card-header">
+        <div class="deal-avatar" style="background:linear-gradient(135deg,#9B59B6,#00B8FF);">CL</div>
+        <div style="flex:1;min-width:0;">
+          <div class="deal-creator-name">Cyerra Lashae <span style="font-size:10px;font-weight:600;color:var(--text3);margin-left:6px;">DEMO</span></div>
+          <div class="deal-creator-meta">@cyerralashae · Beauty & Skincare · $142,000 lifetime GMV</div>
+        </div>
+        <div class="deal-badge" style="background:var(--accent-dim);color:var(--accent);">ACTIVE</div>
+      </div>
+      <div class="deal-terms">
+        <div class="deal-term">
+          <div class="deal-term-val">$800</div>
+          <div class="deal-term-lbl">per month</div>
+        </div>
+        <div class="deal-term">
+          <div class="deal-term-val">4</div>
+          <div class="deal-term-lbl">videos / mo</div>
+        </div>
+        <div class="deal-term">
+          <div class="deal-term-val">3</div>
+          <div class="deal-term-lbl">posted</div>
+        </div>
+        <div class="deal-term">
+          <div class="deal-term-val">$2,400</div>
+          <div class="deal-term-lbl">deal value</div>
+        </div>
+      </div>
+      ${pipeline}
+      <div class="deal-footer">
+        <div class="deal-dates">📅 ${start} → ${expiry}</div>
+        <div class="deal-actions">
+          <button class="btn" style="font-size:11px;padding:6px 12px;opacity:.5;cursor:default;">View Profile</button>
+        </div>
+      </div>
+    </div>`;
+}
+
 function renderDeals(deals) {
   const el = document.getElementById('campaigns-list');
-  if (!deals.length) {
+  const hasActive = deals.some(d => d.status === 'active');
+
+  // Show demo card when viewing "all" or "active" tab and no real active deals
+  const showDemo = !hasActive && (document.getElementById('tab-all')?.classList.contains('active') || document.getElementById('tab-active')?.classList.contains('active'));
+
+  if (!deals.length && !showDemo) {
     el.innerHTML = `<div class="empty-state">
       <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
       <div class="empty-title">No deals here</div>
@@ -1079,10 +1145,14 @@ function renderDeals(deals) {
     </div>`;
     return;
   }
+
   // Sort: active first, then pending, then declined
   const order = { active: 0, pending: 1, declined: 2 };
   const sorted = [...deals].sort((a,b) => (order[a.status]??3) - (order[b.status]??3));
-  el.innerHTML = `<div class="campaigns-list">${sorted.map(buildDealCard).join('')}</div>`;
+  const realCards = sorted.map(buildDealCard).join('');
+  const demoHtml  = showDemo ? buildDemoCard() : '';
+
+  el.innerHTML = `<div class="campaigns-list">${realCards}${demoHtml}</div>`;
 }
 
 function openOfferModal(creatorId, name, h) {
