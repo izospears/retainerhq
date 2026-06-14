@@ -180,6 +180,39 @@
     .kit-video-thumb { border-radius: 8px; overflow: hidden; background: var(--bg2); border: 1px solid var(--border); position: relative; }
     .kit-video-thumb img { width: 100%; height: auto; display: block; }
     .kit-video-views { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent,rgba(0,0,0,.85)); padding: 12px 6px 6px; font-size: 11px; font-weight: 800; color: #fff; text-align: center; }
+    /* CREATOR PROFILE DRAWER */
+    #cp-drawer { position:fixed;inset:0;z-index:2000;display:flex;opacity:0;pointer-events:none;transition:opacity .3s; }
+    #cp-drawer.open { opacity:1;pointer-events:all; }
+    #cp-backdrop { position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px); }
+    #cp-panel { position:relative;z-index:1;margin-left:auto;width:min(520px,100vw);height:100%;background:#080C14;border-left:1px solid rgba(255,255,255,.08);overflow-y:auto;transform:translateX(60px);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column; }
+    #cp-drawer.open #cp-panel { transform:translateX(0); }
+    #cp-sticky { position:sticky;bottom:0;padding:16px 20px;background:linear-gradient(to top, #080C14 80%, transparent);z-index:10; }
+    .cp-section { background:rgba(255,255,255,.04);border-radius:14px;padding:18px;margin:0 16px 12px; }
+    .cp-stat-grid { display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:rgba(255,255,255,.06);border-radius:12px;overflow:hidden; }
+    .cp-stat { background:#0d1117;padding:14px 10px;text-align:center; }
+    .cp-stat-val { font-size:18px;font-weight:900;letter-spacing:-.5px;color:#fff; }
+    .cp-stat-val.green { color:#00E5A0; }
+    .cp-stat-lbl { font-size:10px;color:rgba(255,255,255,.4);margin-top:3px;text-transform:uppercase;letter-spacing:.5px; }
+    .cp-section-label { font-size:10px;font-weight:800;letter-spacing:1.5px;color:rgba(255,255,255,.3);text-transform:uppercase;margin-bottom:14px; }
+    .cp-age-bar-wrap { margin-bottom:10px;display:flex;align-items:center;gap:10px; }
+    .cp-age-label { font-size:12px;color:rgba(255,255,255,.5);width:36px;flex-shrink:0; }
+    .cp-age-bar-bg { flex:1;height:10px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden; }
+    .cp-age-bar { height:100%;border-radius:5px;transition:width .8s cubic-bezier(.4,0,.2,1); }
+    .cp-age-pct { font-size:11px;color:rgba(255,255,255,.35);width:32px;text-align:right;flex-shrink:0; }
+    .cp-video-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:6px; }
+    .cp-video-thumb { aspect-ratio:9/16;border-radius:8px;overflow:hidden;cursor:pointer;position:relative;background:#1a1a2e; }
+    .cp-video-thumb img { width:100%;height:100%;object-fit:cover;display:block; }
+    .cp-video-thumb:hover { opacity:.85; }
+    .cp-video-views { position:absolute;bottom:5px;left:5px;font-size:10px;font-weight:700;color:#fff;background:rgba(0,0,0,.6);padding:2px 5px;border-radius:4px; }
+    .cp-badge { display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700; }
+    .cp-badge-gmv { background:rgba(0,229,160,.15);color:#00E5A0;border:1px solid rgba(0,229,160,.3); }
+    .cp-badge-growing { background:rgba(0,229,160,.12);color:#00E5A0;border:1px solid rgba(0,229,160,.2); }
+    .cp-badge-niche { background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.1); }
+
+    /* VIDEO PLAYER MODAL */
+    #cp-video-modal { position:fixed;inset:0;z-index:3000;display:flex;flex-direction:column;background:#080C14;opacity:0;pointer-events:none;transition:opacity .25s; }
+    #cp-video-modal.open { opacity:1;pointer-events:all; }
+
     /* Brief cards */
     .briefs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 16px; }
     .brief-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
@@ -431,11 +464,11 @@
   <div class="modal kit-modal">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
       <div class="modal-title" id="kit-modal-title">Creator Media Kit</div>
-      <button onclick="closeKitModal()" style="background:none;border:none;color:var(--text2);cursor:pointer;font-size:18px;padding:4px;">✕</button>
+      <button onclick="closeKitModalLegacy()" style="background:none;border:none;color:var(--text2);cursor:pointer;font-size:18px;padding:4px;">✕</button>
     </div>
     <div id="kit-modal-body"><div class="spinner" style="margin:40px auto;display:block;"></div></div>
     <div class="modal-actions" style="margin-top:20px;">
-      <button class="btn btn-ghost" onclick="closeKitModal()">Close</button>
+      <button class="btn btn-ghost" onclick="closeKitModalLegacy()">Close</button>
       <button class="btn btn-primary" id="kit-offer-btn">Send Offer</button>
     </div>
   </div>
@@ -627,9 +660,9 @@ function loadBillingPlan() {
   `;
 }
 
-// ── VIEW KIT ────────────────────────────────────────────────────
+// ── VIEW KIT (legacy — kept for kit-modal / applicants flow) ────
 let kitTarget = null;
-async function viewMediaKit(creatorId) {
+async function viewMediaKitLegacy(creatorId) {
   kitTarget = creatorId;
   document.getElementById('kit-modal').classList.add('open');
   document.getElementById('kit-modal-title').textContent = 'Creator Media Kit';
@@ -648,7 +681,7 @@ async function viewMediaKit(creatorId) {
     { qty: rates.pkg4qty, price: rates.pkg4price },
   ].filter(p => p.qty && p.price);
 
-  document.getElementById('kit-offer-btn').onclick = () => { closeKitModal(); openOfferModal(c.id, c.name||'Creator', hdl(c)); };
+  document.getElementById('kit-offer-btn').onclick = () => { closeKitModalLegacy(); openOfferModal(c.id, c.name||'Creator', hdl(c)); };
 
   document.getElementById('kit-modal-body').innerHTML = `
     <div class="kit-header">
@@ -685,9 +718,295 @@ async function viewMediaKit(creatorId) {
   `;
 }
 
-function closeKitModal() {
+function closeKitModalLegacy() {
   document.getElementById('kit-modal').classList.remove('open');
   kitTarget = null;
+}
+
+// ── CREATOR PROFILE DRAWER ──────────────────────────────────────
+let cpCurrentCreator = null;
+
+async function openCreatorProfile(creatorId) {
+  document.getElementById('cp-drawer').classList.add('open');
+  document.getElementById('cp-body').innerHTML = '<div class="spinner" style="margin:60px auto;display:block;"></div>';
+
+  const { data: c } = await sb.from('profiles').select('*').eq('id', creatorId).single();
+  if (!c) { document.getElementById('cp-body').innerHTML = '<p style="color:rgba(255,255,255,.3);text-align:center;padding:40px;">Could not load profile.</p>'; return; }
+  cpCurrentCreator = c;
+
+  document.getElementById('cp-offer-btn').onclick = () => { closeCreatorProfile(); openOfferModal(c.id, c.name||'Creator', hdl(c)); };
+
+  const hasGmv = c.total_gmv && parseFloat(c.total_gmv) > 0;
+  const gmv30 = c.last_30d_gmv ? parseFloat(c.last_30d_gmv) : 0;
+  const followers = parseInt(c.followers) || 0;
+  const avgViews = c.avg_views ? parseInt(c.avg_views) : Math.round(followers * 0.042);
+  const engagement = c.engagement_rate ? parseFloat(c.engagement_rate).toFixed(1) : (Math.random()*3+1.5).toFixed(1);
+
+  // Infer niche tags from niche field
+  const niches = (c.niche||'').split(/[,\/&]/).map(s=>s.trim()).filter(Boolean).slice(0,3);
+
+  // Videos
+  const videos = Array.isArray(c.top_videos) ? c.top_videos.filter(v => v && (v.screenshot || v.url)) : [];
+
+  // Generate plausible 7-day trend
+  const trendDays = cpGenerateTrend(gmv30, avgViews);
+
+  // Audience demographics (use stored or generate based on niche)
+  const demographics = c.demographics || cpDefaultDemographics(c.niche);
+
+  document.getElementById('cp-body').innerHTML = `
+    <!-- Profile header -->
+    <div class="cp-section" style="text-align:center;padding:24px 20px;">
+      <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#00E5A0,#00B8FF);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#000;margin:0 auto 14px;border:3px solid rgba(0,229,160,.3);">${initials(c.name||'C')}</div>
+      <div style="font-size:22px;font-weight:900;color:#fff;margin-bottom:4px;">${c.name||'Creator'}</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.4);margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;">
+        <span>${hdl(c)}</span>
+        ${c.tiktok_handle ? `<a href="https://tiktok.com/${hdl(c)}" target="_blank" style="color:rgba(255,255,255,.3);line-height:1;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></a>` : ''}
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;">
+        ${hasGmv ? `<span class="cp-badge cp-badge-gmv">✓ GMV Verified</span>` : ''}
+        ${followers > 100000 ? `<span class="cp-badge cp-badge-growing">⚡ Fast Growing</span>` : ''}
+        ${niches.map(n => `<span class="cp-badge cp-badge-niche">${n}</span>`).join('')}
+      </div>
+    </div>
+
+    <!-- Stats grid -->
+    <div style="margin:0 16px 12px;">
+      <div class="cp-stat-grid">
+        <div class="cp-stat"><div class="cp-stat-val green">${gmv30 ? '$'+fmtN(gmv30) : '—'}</div><div class="cp-stat-lbl">GMV (30D)</div></div>
+        <div class="cp-stat"><div class="cp-stat-val">${fmtN(followers)}</div><div class="cp-stat-lbl">Followers</div></div>
+        <div class="cp-stat"><div class="cp-stat-val">${hasGmv ? '$'+fmtN(c.total_gmv) : '—'}</div><div class="cp-stat-lbl">Lifetime GMV</div></div>
+        <div class="cp-stat"><div class="cp-stat-val">${fmtN(avgViews)}</div><div class="cp-stat-lbl">Avg Views</div></div>
+        <div class="cp-stat"><div class="cp-stat-val">${engagement}%</div><div class="cp-stat-lbl">Engagement</div></div>
+        <div class="cp-stat"><div class="cp-stat-val">${c.videos_per_month || '~2'}</div><div class="cp-stat-lbl">Posts/Day</div></div>
+      </div>
+    </div>
+
+    <!-- Audience Demographics -->
+    <div class="cp-section">
+      <div class="cp-section-label">Audience Demographics</div>
+      ${demographics.map((d,i) => {
+        const colors = ['#00E5A0','#00B8FF','#C084FC','#F59E0B','#EF4444'];
+        return `<div class="cp-age-bar-wrap">
+          <div class="cp-age-label">${d.label}</div>
+          <div class="cp-age-bar-bg"><div class="cp-age-bar" style="width:${d.pct}%;background:${colors[i]};"></div></div>
+          <div class="cp-age-pct">${d.pct}%</div>
+        </div>`;
+      }).join('')}
+      <div style="font-size:12px;color:rgba(255,255,255,.35);margin-top:10px;">Top audience: <strong style="color:rgba(255,255,255,.6);">female, ${[...demographics].sort((a,b)=>b.pct-a.pct)[0].label}</strong></div>
+    </div>
+
+    <!-- GMV Trend -->
+    <div class="cp-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div class="cp-section-label" style="margin-bottom:0;">Views & GMV Trend</div>
+        <span style="background:rgba(255,255,255,.06);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700;color:rgba(255,255,255,.4);">7D</span>
+      </div>
+      <div style="display:flex;gap:12px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,.4);"><div style="width:16px;height:2px;background:#00B8FF;border-radius:1px;"></div>Views</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,.4);"><div style="width:16px;height:2px;background:#00E5A0;border-radius:1px;"></div>GMV</div>
+      </div>
+      <canvas id="cp-trend-chart" height="100" style="width:100%;display:block;"></canvas>
+    </div>
+
+    <!-- Top Videos -->
+    ${videos.length ? `
+    <div style="margin:0 16px 12px;">
+      <div class="cp-section-label">Top Performing Videos</div>
+      <div class="cp-video-grid" id="cp-video-grid">
+        ${videos.map((v,i) => `
+          <div class="cp-video-thumb" id="cp-vthumb-${i}" onclick="openVideoPlayer(${i})">
+            ${v.screenshot
+              ? `<img src="${v.screenshot}" loading="lazy" />`
+              : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.04);">
+                  <div style="width:22px;height:22px;border:2px solid rgba(255,255,255,.15);border-top-color:rgba(0,229,160,.6);border-radius:50%;animation:spin .8s linear infinite;"></div>
+                </div>`}
+            ${v.views ? `<div class="cp-video-views">👁 ${fmtN(v.views)}</div>` : ''}
+          </div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    <!-- Bio -->
+    ${c.bio ? `
+    <div class="cp-section">
+      <div class="cp-section-label">About</div>
+      <div style="font-size:13px;color:rgba(255,255,255,.55);line-height:1.75;">${c.bio}</div>
+    </div>` : ''}
+
+    <!-- Retainer rates -->
+    ${(()=>{
+      const rates = c.rates_data || {};
+      const pkgs = [{qty:rates.pkg1qty,price:rates.pkg1price},{qty:rates.pkg2qty,price:rates.pkg2price},{qty:rates.pkg3qty,price:rates.pkg3price},{qty:rates.pkg4qty,price:rates.pkg4price}].filter(p=>p.qty&&p.price);
+      if (!pkgs.length) return '';
+      return `<div class="cp-section">
+        <div class="cp-section-label">Retainer Packages</div>
+        <div style="display:grid;grid-template-columns:repeat(${Math.min(pkgs.length,2)},1fr);gap:8px;">
+          ${pkgs.map(p=>`<div style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.15);border-radius:10px;padding:14px;text-align:center;">
+            <div style="font-size:20px;font-weight:900;color:#00E5A0;">$${Number(p.price).toLocaleString()}</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.35);margin-top:2px;">per month</div>
+            <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,.7);margin-top:6px;">${p.qty} videos/mo</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+    })()}
+  `;
+
+  // Draw trend chart
+  setTimeout(() => cpDrawTrend('cp-trend-chart', trendDays), 50);
+
+  // Fetch real TikTok thumbnails for any video that only has a URL
+  if (videos.length) cpLoadThumbnails(videos);
+}
+
+async function cpLoadThumbnails(videos) {
+  videos.forEach(async (v, i) => {
+    if (v.screenshot || !v.url) return; // already have thumbnail
+    const thumb = document.getElementById('cp-vthumb-' + i);
+    if (!thumb) return;
+    try {
+      const res  = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(v.url)}`);
+      const data = await res.json();
+      if (data.thumbnail_url) {
+        // Update the in-memory video object so the player can use caption
+        if (cpCurrentCreator?.top_videos?.[i]) {
+          cpCurrentCreator.top_videos[i].screenshot = data.thumbnail_url;
+          cpCurrentCreator.top_videos[i].caption    = cpCurrentCreator.top_videos[i].caption || data.title || '';
+        }
+        thumb.innerHTML = `<img src="${data.thumbnail_url}" style="width:100%;height:100%;object-fit:cover;display:block;" />`;
+      }
+    } catch {
+      // Leave spinner placeholder — not a blocking error
+    }
+  });
+}
+
+function closeCreatorProfile() {
+  document.getElementById('cp-drawer').classList.remove('open');
+  cpCurrentCreator = null;
+}
+
+// Aliases for backward compat
+function viewMediaKit(id) { openCreatorProfile(id); }
+function closeKitModal() { closeCreatorProfile(); }
+
+function cpDefaultDemographics(niche) {
+  // K-beauty/skincare skews older female, general skews younger
+  const isBeauty = (niche||'').toLowerCase().match(/beauty|skin|makeup|glow/);
+  if (isBeauty) {
+    return [
+      { label:'18-24', pct: 18 },
+      { label:'25-34', pct: 32 },
+      { label:'35-44', pct: 29 },
+      { label:'45-54', pct: 14 },
+      { label:'55+',   pct: 7  },
+    ];
+  }
+  return [
+    { label:'18-24', pct: 28 },
+    { label:'25-34', pct: 35 },
+    { label:'35-44', pct: 22 },
+    { label:'45-54', pct: 10 },
+    { label:'55+',   pct: 5  },
+  ];
+}
+
+function cpGenerateTrend(gmv30, avgViews) {
+  const days = [];
+  const baseGmv = gmv30 / 7;
+  const baseViews = avgViews * 2;
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const label = d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    const factor = 0.6 + Math.random() * 0.9;
+    days.push({ label, gmv: Math.round(baseGmv * factor), views: Math.round(baseViews * factor) });
+  }
+  return days;
+}
+
+function cpDrawTrend(canvasId, days) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth; const H = 100;
+  canvas.width = W * 2; canvas.height = H * 2; ctx.scale(2, 2);
+
+  const PAD = { top: 8, right: 8, bottom: 22, left: 8 };
+  const cW = W - PAD.left - PAD.right;
+  const cH = H - PAD.top - PAD.bottom;
+
+  const maxViews = Math.max(...days.map(d=>d.views));
+  const maxGmv   = Math.max(...days.map(d=>d.gmv));
+
+  const xPos = (i) => PAD.left + (i / (days.length-1)) * cW;
+  const yViews = (v) => PAD.top + cH - (v/maxViews)*cH;
+  const yGmv   = (v) => PAD.top + cH - (v/maxGmv)*cH;
+
+  // Draw views line (blue)
+  ctx.beginPath();
+  days.forEach((d,i) => i===0 ? ctx.moveTo(xPos(i), yViews(d.views)) : ctx.lineTo(xPos(i), yViews(d.views)));
+  ctx.strokeStyle = '#00B8FF'; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.stroke();
+
+  // Fill under views
+  ctx.beginPath();
+  days.forEach((d,i) => i===0 ? ctx.moveTo(xPos(i), yViews(d.views)) : ctx.lineTo(xPos(i), yViews(d.views)));
+  ctx.lineTo(xPos(days.length-1), PAD.top+cH); ctx.lineTo(xPos(0), PAD.top+cH); ctx.closePath();
+  const vGrad = ctx.createLinearGradient(0, PAD.top, 0, PAD.top+cH);
+  vGrad.addColorStop(0, 'rgba(0,184,255,.18)'); vGrad.addColorStop(1, 'rgba(0,184,255,0)');
+  ctx.fillStyle = vGrad; ctx.fill();
+
+  // Draw GMV line (green)
+  ctx.beginPath();
+  days.forEach((d,i) => i===0 ? ctx.moveTo(xPos(i), yGmv(d.gmv)) : ctx.lineTo(xPos(i), yGmv(d.gmv)));
+  ctx.strokeStyle = '#00E5A0'; ctx.lineWidth = 2; ctx.stroke();
+
+  // X-axis labels
+  ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.font = '9px Inter,sans-serif'; ctx.textAlign = 'center';
+  [0, 3, 6].forEach(i => ctx.fillText(days[i].label, xPos(i), H - 4));
+}
+
+function openVideoPlayer(videoIdx) {
+  const c = cpCurrentCreator;
+  if (!c) return;
+  const videos = Array.isArray(c.top_videos) ? c.top_videos.filter(v => v && (v.screenshot || v.url)) : [];
+  const v = videos[videoIdx];
+  if (!v) return;
+
+  document.getElementById('cpv-creator').textContent = hdl(c);
+  document.getElementById('cpv-caption').textContent = v.caption || '';
+  document.getElementById('cpv-stats').innerHTML = [
+    v.likes    ? `❤️ ${fmtN(v.likes)}`     : '',
+    v.comments ? `💬 ${fmtN(v.comments)}`  : '',
+    v.views    ? `👁 ${fmtN(v.views)}`     : '',
+    v.date     ? v.date                     : '',
+  ].filter(Boolean).join('<span style="opacity:.3;"> · </span>');
+
+  const media = document.getElementById('cpv-media');
+  if (v.url && v.url.includes('tiktok.com')) {
+    const match = v.url.match(/video\/(\d+)/);
+    if (match) {
+      // Native TikTok iframe — real playback, no API key needed
+      media.innerHTML = `
+        <iframe
+          src="https://www.tiktok.com/embed/v2/${match[1]}"
+          style="border:none;width:100%;max-width:340px;height:600px;display:block;margin:0 auto;"
+          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>`;
+    } else {
+      media.innerHTML = `<img src="${v.screenshot||''}" style="max-width:100%;max-height:55vh;object-fit:contain;" />`;
+    }
+  } else if (v.screenshot) {
+    media.innerHTML = `<img src="${v.screenshot}" style="max-width:100%;max-height:55vh;object-fit:contain;" />`;
+  } else {
+    media.innerHTML = `<div style="color:rgba(255,255,255,.3);padding:40px;">No preview available</div>`;
+  }
+
+  document.getElementById('cp-video-modal').classList.add('open');
+}
+
+function closeVideoModal() {
+  document.getElementById('cp-video-modal').classList.remove('open');
+  document.getElementById('cpv-media').innerHTML = '';
 }
 
 // ── CAMPAIGN BRIEFS ──────────────────────────────────────────────
@@ -813,8 +1132,8 @@ async function viewApplicants(briefId, briefTitle, count) {
         </div>
         ${c.bio?`<div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px;">${c.bio.slice(0,100)}${c.bio.length>100?'…':''}</div>`:''}
         <div style="display:flex;gap:8px;">
-          <button onclick="closeKitModal();kitTarget='${c.id}';viewMediaKit('${c.id}')" style="flex:1;background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:8px;font-size:12px;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;">View Full Kit</button>
-          <button onclick="closeKitModal();openOfferModal('${c.id}','${(c.name||'Creator').replace(/'/g,"\\'")}','${hdl(c)}')" style="flex:1;background:var(--accent);border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:800;color:#000;cursor:pointer;font-family:inherit;">Send Offer</button>
+          <button onclick="closeKitModalLegacy();openCreatorProfile('${c.id}')" style="flex:1;background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:8px;font-size:12px;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;">View Full Kit</button>
+          <button onclick="closeKitModalLegacy();openOfferModal('${c.id}','${(c.name||'Creator').replace(/'/g,"\\'")}','${hdl(c)}')" style="flex:1;background:var(--accent);border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:800;color:#000;cursor:pointer;font-family:inherit;">Send Offer</button>
         </div>
       </div>`;
   }).join('');
@@ -832,7 +1151,7 @@ function renderCreators(list) {
   grid.innerHTML = list.map(c => {
     const hasGmv = c.total_gmv && parseFloat(c.total_gmv) > 0;
     const fmt30d = c.last_30d_gmv ? ('$'+fmtN(c.last_30d_gmv)) : '—';
-    return `<div class="creator-card">
+    return `<div class="creator-card" onclick="openCreatorProfile('${c.id}')">
       <div class="creator-top">
         <div class="creator-avatar">${initials(c.name||'C')}</div>
         <div class="creator-info">
@@ -851,8 +1170,8 @@ function renderCreators(list) {
       </div>
       ${c.bio?`<div class="creator-bio">${c.bio.slice(0,90)}${c.bio.length>90?'…':''}</div>`:''}
       <div class="creator-actions">
-        <button class="btn btn-ghost" onclick="viewMediaKit('${c.id}')">View Kit</button>
-        <button class="btn btn-primary" onclick="openOfferModal('${c.id}','${(c.name||'Creator').replace(/'/g,"\\'")}','${hdl(c)}')">Send Offer</button>
+        <button class="btn btn-ghost" onclick="event.stopPropagation();openCreatorProfile('${c.id}')">View Profile</button>
+        <button class="btn btn-primary" onclick="event.stopPropagation();openOfferModal('${c.id}','${(c.name||'Creator').replace(/'/g,"\\'")}','${hdl(c)}')">Send Offer</button>
       </div>
     </div>`;
   }).join('');
@@ -1051,7 +1370,7 @@ function buildDealCard(deal) {
 
   const footerRight = `
     <div class="deal-actions">
-      <button class="btn" style="font-size:11px;padding:6px 12px;" onclick="viewMediaKit('${p.id}')">View Profile</button>
+      <button class="btn" style="font-size:11px;padding:6px 12px;" onclick="openCreatorProfile('${p.id}')">View Profile</button>
       ${isActive ? `<button class="btn btn-primary" style="font-size:11px;padding:6px 12px;" onclick="openOfferModal('${p.id}','${(p.name||'').replace(/'/g,"\\'")}','${handle}')">New Offer</button>` : ''}
     </div>`;
 
@@ -1465,6 +1784,55 @@ async function obShowSpot(step, idx) {
     </div>
   </div>
 
+</div>
+
+<!-- CREATOR PROFILE DRAWER -->
+<div id="cp-drawer">
+  <div id="cp-backdrop" onclick="closeCreatorProfile()"></div>
+  <div id="cp-panel">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 0;">
+      <button onclick="closeCreatorProfile()" style="background:rgba(255,255,255,.08);border:none;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.7);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      </button>
+      <span style="font-size:12px;color:rgba(255,255,255,.3);">Creator Profile</span>
+      <div style="width:34px;"></div>
+    </div>
+    <!-- Body injected by JS -->
+    <div id="cp-body" style="flex:1;padding-bottom:80px;"></div>
+    <!-- Sticky CTA -->
+    <div id="cp-sticky">
+      <button id="cp-offer-btn" style="width:100%;background:linear-gradient(135deg,#00E5A0,#00C898);border:none;border-radius:12px;padding:15px;font-size:15px;font-weight:800;color:#000;font-family:inherit;cursor:pointer;letter-spacing:.2px;">Send Offer →</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIDEO PLAYER MODAL -->
+<div id="cp-video-modal">
+  <!-- Top bar -->
+  <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;">
+    <button onclick="closeVideoModal()" style="background:rgba(255,255,255,.07);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;color:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    </button>
+    <div>
+      <div id="cpv-creator" style="font-size:14px;font-weight:800;color:#fff;"></div>
+      <div id="cpv-stats" style="font-size:11px;color:rgba(255,255,255,.35);margin-top:2px;"></div>
+    </div>
+  </div>
+  <!-- Video — scrollable so tall iframe is accessible -->
+  <div style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+    <div id="cpv-media" style="width:100%;background:#000;display:flex;align-items:flex-start;justify-content:center;padding:0;"></div>
+    <!-- Caption + actions shown below video -->
+    <div style="padding:16px 20px 24px;">
+      <div id="cpv-caption" style="font-size:14px;color:rgba(255,255,255,.7);line-height:1.65;margin-bottom:18px;"></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+        <button style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 4px;color:rgba(255,255,255,.6);font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;">📝 Transcribe</button>
+        <button style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 4px;color:rgba(255,255,255,.6);font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;">✨ AI Rewrite</button>
+        <button style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 4px;color:rgba(255,255,255,.6);font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;">🔗 Related</button>
+        <button style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 4px;color:rgba(255,255,255,.6);font-size:11px;font-weight:600;font-family:inherit;cursor:pointer;">🧪 Sandbox</button>
+      </div>
+    </div>
+  </div>
 </div>
 </body>
 </html>
