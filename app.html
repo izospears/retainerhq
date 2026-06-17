@@ -3607,11 +3607,28 @@ const OWNER_EMAIL = 'isaacspears01@gmail.com';
 let allRosterCreators = [];
 
 async function loadCreatorRoster() {
-  const { data, error } = await sb.from('profiles').select('id, name, email, tiktok_handle, niche, followers, total_gmv, created_at, avatar_url, rates_data').eq('role', 'creator').order('created_at', { ascending: false });
-  if (error) { console.error(error); return; }
+  // Try with rates_data first; fall back without it if column doesn't exist yet
+  let data, error;
+  ({ data, error } = await sb.from('profiles').select('id, name, email, tiktok_handle, niche, followers, total_gmv, created_at, avatar_url, rates_data').eq('role', 'creator').order('created_at', { ascending: false }));
+  if (error) {
+    console.warn('rates_data column missing, retrying without it:', error.message);
+    ({ data, error } = await sb.from('profiles').select('id, name, email, tiktok_handle, niche, followers, total_gmv, created_at, avatar_url').eq('role', 'creator').order('created_at', { ascending: false }));
+  }
+  // Always update DOM — never leave it stuck on "Loading creators..."
+  const tbody = document.getElementById('roster-body');
+  if (error) {
+    console.error('loadCreatorRoster failed:', error);
+    if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="padding:40px;text-align:center;color:var(--red);">Failed to load creators. Check console for details.</td></tr>`;
+    return;
+  }
   allRosterCreators = data || [];
   document.getElementById('roster-count').textContent = allRosterCreators.length + ' creators signed up';
-  renderRoster(allRosterCreators);
+  try {
+    renderRoster(allRosterCreators);
+  } catch(e) {
+    console.error('renderRoster failed:', e);
+    if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="padding:40px;text-align:center;color:var(--red);">Error rendering roster. Check console.</td></tr>`;
+  }
 }
 
 function renderRoster(list) {
