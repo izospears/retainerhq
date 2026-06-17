@@ -89,6 +89,20 @@
     .toast.ok { border-color:rgba(0,229,160,.35);color:var(--accent); }
     .toast.err { border-color:rgba(255,107,107,.35);color:var(--red); }
 
+    /* TABS */
+    .tab-row { display:flex;gap:4px;margin-bottom:28px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:4px;width:fit-content; }
+    .tab-btn { padding:8px 20px;border-radius:7px;border:none;background:transparent;color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s; }
+    .tab-btn.active { background:var(--accent);color:#000; }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+
+    /* RATE PACKAGES */
+    .rate-pkgs { display:flex;gap:6px;flex-wrap:wrap; }
+    .rate-pkg { background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.15);border-radius:8px;padding:6px 12px;text-align:center;min-width:80px; }
+    .rate-pkg-price { font-size:14px;font-weight:900;color:var(--accent); }
+    .rate-pkg-qty { font-size:10px;color:var(--text3);font-weight:600;margin-top:1px; }
+    .no-rates { font-size:11px;color:var(--text3);font-style:italic; }
+
     /* ACCESS DENIED */
     #access-denied { display:none;position:fixed;inset:0;background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center;z-index:999; }
   </style>
@@ -133,57 +147,101 @@
   <!-- CONTAINER -->
   <div class="container">
     <div class="page-header">
-      <div class="page-title">Brand Approvals</div>
-      <div class="page-sub">Review and approve brand accounts before they access the dashboard.</div>
+      <div class="page-title">RetainerHQ Admin</div>
+      <div class="page-sub">Manage brands, creators, and platform activity.</div>
     </div>
 
-    <!-- STATS -->
-    <div class="stats-row">
-      <div class="stat-pill">
-        <div class="stat-icon" style="background:rgba(255,209,102,.1);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#FFD166" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <!-- TABS -->
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="switchTab('brands')">🏢 Brands</button>
+      <button class="tab-btn" onclick="switchTab('creators')">🎬 Creators & Rates</button>
+    </div>
+
+    <!-- ── BRANDS TAB ── -->
+    <div class="tab-panel active" id="tab-brands">
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-pill">
+          <div class="stat-icon" style="background:rgba(255,209,102,.1);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#FFD166" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div><div class="stat-num" id="stat-pending">—</div><div class="stat-lbl">Pending</div></div>
         </div>
-        <div><div class="stat-num" id="stat-pending">—</div><div class="stat-lbl">Pending</div></div>
+        <div class="stat-pill">
+          <div class="stat-icon" style="background:var(--accent-dim);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div><div class="stat-num" id="stat-approved">—</div><div class="stat-lbl">Approved</div></div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-icon" style="background:rgba(0,184,255,.1);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#00B8FF" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div><div class="stat-num" id="stat-total">—</div><div class="stat-lbl">Total Brands</div></div>
+        </div>
       </div>
-      <div class="stat-pill">
-        <div class="stat-icon" style="background:var(--accent-dim);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+
+      <!-- PENDING SECTION -->
+      <div class="section">
+        <div class="section-header">
+          <div><div class="section-title">⏳ Pending Approval</div></div>
+          <div class="section-count" id="pending-count">Loading…</div>
         </div>
-        <div><div class="stat-num" id="stat-approved">—</div><div class="stat-lbl">Approved</div></div>
+        <div id="pending-table-wrap">
+          <div class="empty"><div class="spinner" style="margin:0 auto;"></div></div>
+        </div>
       </div>
-      <div class="stat-pill">
-        <div class="stat-icon" style="background:rgba(0,184,255,.1);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#00B8FF" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+
+      <!-- APPROVED SECTION -->
+      <div class="section">
+        <div class="section-header">
+          <div><div class="section-title">✅ Approved Brands</div></div>
+          <div class="section-count" id="approved-count">Loading…</div>
         </div>
-        <div><div class="stat-num" id="stat-total">—</div><div class="stat-lbl">Total Brands</div></div>
+        <div id="approved-table-wrap">
+          <div class="empty"><div class="spinner" style="margin:0 auto;"></div></div>
+        </div>
       </div>
     </div>
 
-    <!-- PENDING SECTION -->
-    <div class="section">
-      <div class="section-header">
-        <div>
-          <div class="section-title">⏳ Pending Approval</div>
+    <!-- ── CREATORS TAB ── -->
+    <div class="tab-panel" id="tab-creators">
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-pill">
+          <div class="stat-icon" style="background:rgba(0,184,255,.1);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#00B8FF" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </div>
+          <div><div class="stat-num" id="stat-creators">—</div><div class="stat-lbl">Total Creators</div></div>
         </div>
-        <div class="section-count" id="pending-count">Loading…</div>
+        <div class="stat-pill">
+          <div class="stat-icon" style="background:var(--accent-dim);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div><div class="stat-num" id="stat-with-rates">—</div><div class="stat-lbl">Have Rates Set</div></div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-icon" style="background:rgba(123,97,255,.1);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#7B61FF" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div><div class="stat-num" id="stat-creator-gmv">—</div><div class="stat-lbl">Avg GMV (30d)</div></div>
+        </div>
       </div>
-      <div id="pending-table-wrap">
-        <div class="empty"><div class="spinner" style="margin:0 auto;"></div></div>
+
+      <!-- CREATORS TABLE -->
+      <div class="section">
+        <div class="section-header">
+          <div><div class="section-title">🎬 All Creators</div></div>
+          <div class="section-count" id="creator-count">Loading…</div>
+        </div>
+        <div id="creator-table-wrap">
+          <div class="empty"><div class="spinner" style="margin:0 auto;"></div></div>
+        </div>
       </div>
     </div>
 
-    <!-- APPROVED SECTION -->
-    <div class="section">
-      <div class="section-header">
-        <div>
-          <div class="section-title">✅ Approved Brands</div>
-        </div>
-        <div class="section-count" id="approved-count">Loading…</div>
-      </div>
-      <div id="approved-table-wrap">
-        <div class="empty"><div class="spinner" style="margin:0 auto;"></div></div>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -318,11 +376,93 @@ async function revokeBrand(id, name) {
   await loadBrands();
 }
 
+// ── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['brands','creators'][i] === tab));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'creators') loadCreators();
+}
+
+// ── CREATORS ─────────────────────────────────────────────────────────────────
+function fmtRate(rates_data) {
+  if (!rates_data) return '<span class="no-rates">No rates set</span>';
+  const pkgs = [
+    { qty: rates_data.pkg1qty, price: rates_data.pkg1price },
+    { qty: rates_data.pkg2qty, price: rates_data.pkg2price },
+    { qty: rates_data.pkg3qty, price: rates_data.pkg3price },
+    { qty: rates_data.pkg4qty, price: rates_data.pkg4price },
+  ].filter(p => p.qty && p.price);
+  if (!pkgs.length) return '<span class="no-rates">No rates set</span>';
+  return `<div class="rate-pkgs">${pkgs.map(p => `
+    <div class="rate-pkg">
+      <div class="rate-pkg-price">$${Number(p.price).toLocaleString()}</div>
+      <div class="rate-pkg-qty">${p.qty} vids/mo</div>
+    </div>`).join('')}</div>`;
+}
+
+function creatorRow(c) {
+  const handle = c.tiktok_handle ? '@' + c.tiktok_handle.replace('@','') : '—';
+  const gmv = c.gmv_lifetime ? '$' + Number(c.gmv_lifetime).toLocaleString() : '—';
+  const gmv30 = c.gmv_30d ? '$' + Number(c.gmv_30d).toLocaleString() : '—';
+  const followers = c.followers ? Number(c.followers).toLocaleString() : '—';
+  const avatarHtml = c.avatar_url
+    ? `<img src="${c.avatar_url}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;" />`
+    : `<div class="av">${initials(c.name||'C')}</div>`;
+  return `<tr>
+    <td>
+      <div style="display:flex;align-items:center;gap:10px;">
+        ${avatarHtml}
+        <div>
+          <div style="font-weight:700;">${c.name||'—'}</div>
+          <div style="font-size:11px;color:var(--text3);">${handle}</div>
+        </div>
+      </div>
+    </td>
+    <td><span style="font-size:12px;color:var(--text2);">${c.niche||'—'}</span></td>
+    <td><span style="font-size:12px;color:var(--text2);">${followers}</span></td>
+    <td>
+      <div style="font-size:13px;font-weight:800;color:var(--accent);">${gmv30}</div>
+      <div style="font-size:10px;color:var(--text3);">30d GMV</div>
+    </td>
+    <td><div style="font-size:12px;color:var(--text2);">${gmv}</div><div style="font-size:10px;color:var(--text3);">lifetime</div></td>
+    <td>${fmtRate(c.rates_data)}</td>
+  </tr>`;
+}
+
+async function loadCreators() {
+  document.getElementById('creator-table-wrap').innerHTML = '<div class="empty"><div class="spinner" style="margin:0 auto;"></div></div>';
+  const { data, error } = await sb.from('profiles').select('*').eq('role','creator').order('gmv_30d', { ascending: false });
+  if (error) { toast('Failed to load creators', 'err'); return; }
+
+  const creators = data || [];
+  const withRates = creators.filter(c => {
+    const r = c.rates_data;
+    return r && (r.pkg1price || r.pkg2price || r.pkg3price || r.pkg4price);
+  });
+  const totalGmv = creators.reduce((s, c) => s + (Number(c.gmv_30d) || 0), 0);
+  const avgGmv = creators.length ? Math.round(totalGmv / creators.length) : 0;
+
+  document.getElementById('stat-creators').textContent = creators.length;
+  document.getElementById('stat-with-rates').textContent = withRates.length;
+  document.getElementById('stat-creator-gmv').textContent = avgGmv ? '$' + avgGmv.toLocaleString() : '—';
+  document.getElementById('creator-count').textContent = creators.length + ' creator' + (creators.length !== 1 ? 's' : '');
+
+  document.getElementById('creator-table-wrap').innerHTML = creators.length
+    ? `<table>
+        <thead><tr>
+          <th>Creator</th><th>Niche</th><th>Followers</th><th>30d GMV</th><th>Lifetime GMV</th><th>Rate Packages</th>
+        </tr></thead>
+        <tbody>${creators.map(creatorRow).join('')}</tbody>
+       </table>`
+    : `<div class="empty">No creators yet.</div>`;
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
 async function init() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = '/auth.html'; return; }
 
-  // Strict admin check
   if (session.user.email !== ADMIN_EMAIL) {
     document.getElementById('auth-loading').style.display = 'none';
     const d = document.getElementById('access-denied');
