@@ -3633,7 +3633,7 @@ async function loadCreatorRoster() {
 
 function renderRoster(list) {
   const fmtN = n => { const x=parseInt(n); if(!x) return '—'; if(x>=1e6) return (x/1e6).toFixed(1)+'M'; if(x>=1000) return (x/1000).toFixed(1)+'K'; return String(x); };
-  const isOwner = profile && profile.email === OWNER_EMAIL;
+  const isOwner = currentUser && currentUser.email === OWNER_EMAIL;
   const colspan = isOwner ? 7 : 6;
 
   // Inject rates column header for owner only
