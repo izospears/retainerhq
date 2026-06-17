@@ -105,12 +105,36 @@
 
     /* ACCESS DENIED */
     #access-denied { display:none;position:fixed;inset:0;background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center;z-index:999; }
+
+    /* LOGIN GATE */
+    #login-gate { display:none;position:fixed;inset:0;background:var(--bg);align-items:center;justify-content:center;z-index:999; }
+    .login-box { background:var(--card);border:1px solid var(--border2);border-radius:18px;padding:36px;width:100%;max-width:380px; }
+    .login-title { font-size:20px;font-weight:900;letter-spacing:-.4px;margin-bottom:6px; }
+    .login-sub { font-size:13px;color:var(--text2);margin-bottom:28px; }
+    .login-input { width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:9px;padding:11px 13px;color:var(--text);font-size:13px;font-family:inherit;outline:none;margin-bottom:12px;transition:border-color .2s; }
+    .login-input:focus { border-color:var(--accent); }
+    .login-btn { width:100%;background:var(--accent);color:#000;border:none;border-radius:9px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .15s; }
+    .login-btn:hover { background:#00f0a8; }
+    .login-err { font-size:12px;color:var(--red);margin-top:8px;min-height:16px; }
   </style>
 </head>
 <body>
 
 <!-- AUTH LOADING -->
 <div id="auth-loading"><div class="spinner"></div></div>
+
+<!-- LOGIN GATE -->
+<div id="login-gate" style="display:none;">
+  <div class="login-box">
+    <div style="font-size:28px;margin-bottom:14px;">🔐</div>
+    <div class="login-title">Admin Login</div>
+    <div class="login-sub">Sign in with your RetainerHQ admin account.</div>
+    <input class="login-input" id="login-email" type="email" placeholder="Email" />
+    <input class="login-input" id="login-password" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()" />
+    <div class="login-err" id="login-err"></div>
+    <button class="login-btn" onclick="doLogin()">Sign In →</button>
+  </div>
+</div>
 
 <!-- ACCESS DENIED -->
 <div id="access-denied" style="display:none;position:fixed;inset:0;background:var(--bg);align-items:center;justify-content:center;flex-direction:column;text-align:center;z-index:999;">
@@ -459,14 +483,40 @@ async function loadCreators() {
 }
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
+function showLogin() {
+  document.getElementById('auth-loading').style.display = 'none';
+  document.getElementById('login-gate').style.display = 'flex';
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-err');
+  errEl.textContent = '';
+  if (!email || !pass) { errEl.textContent = 'Enter your email and password.'; return; }
+  const btn = document.querySelector('.login-btn');
+  btn.textContent = 'Signing in…'; btn.disabled = true;
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  btn.textContent = 'Sign In →'; btn.disabled = false;
+  if (error) { errEl.textContent = error.message; return; }
+  if (data.user.email !== ADMIN_EMAIL) {
+    await sb.auth.signOut();
+    errEl.textContent = 'This account does not have admin access.';
+    return;
+  }
+  document.getElementById('login-gate').style.display = 'none';
+  document.getElementById('admin-email').textContent = data.user.email;
+  document.getElementById('main-content').style.display = 'block';
+  await loadBrands();
+}
+
 async function init() {
   const { data: { session } } = await sb.auth.getSession();
-  if (!session) { window.location.href = '/auth.html'; return; }
+  if (!session) { showLogin(); return; }
 
   if (session.user.email !== ADMIN_EMAIL) {
     document.getElementById('auth-loading').style.display = 'none';
-    const d = document.getElementById('access-denied');
-    d.style.display = 'flex';
+    document.getElementById('access-denied').style.display = 'flex';
     return;
   }
 
