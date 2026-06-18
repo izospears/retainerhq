@@ -2939,47 +2939,209 @@
 </div>
 
 <!-- PAYMENT MODAL -->
-<div class="modal-overlay" id="payment-modal">
-  <div class="modal">
-    <div class="modal-title">Log Payment</div>
-    <div class="form-group">
-      <label class="form-label">Contract</label>
-      <select class="form-select" id="pay-contract"></select>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Amount ($) *</label>
-        <input class="form-input" id="pay-amount" type="number" placeholder="2000" />
+<div class="modal-overlay" id="payment-modal" onclick="if(event.target===this)closePaymentModal()">
+  <div class="pay-modal-card" id="pay-modal-inner">
+    <!-- scan line -->
+    <div class="pay-scanline"></div>
+    <!-- corner accents -->
+    <div class="pay-corner tl"></div>
+    <div class="pay-corner tr"></div>
+    <div class="pay-corner bl"></div>
+    <div class="pay-corner br"></div>
+
+    <div class="pay-header">
+      <div class="pay-icon-ring">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
       </div>
-      <div class="form-group">
-        <label class="form-label">Status</label>
-        <select class="form-select" id="pay-status">
+      <div>
+        <div class="pay-title">Log Payment</div>
+        <div class="pay-subtitle">Record a payment against a contract</div>
+      </div>
+      <button class="pay-close" onclick="closePaymentModal()">✕</button>
+    </div>
+
+    <!-- CONTRACT CUSTOM DROPDOWN -->
+    <div class="pay-field-label">Contract</div>
+    <div class="pay-dropdown" id="pay-dropdown" onclick="togglePayDropdown()">
+      <div class="pay-dropdown-selected" id="pay-dropdown-label">
+        <span id="pay-dropdown-text">Select a contract...</span>
+        <svg class="pay-chevron" id="pay-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="pay-dropdown-list" id="pay-dropdown-list"></div>
+    </div>
+    <input type="hidden" id="pay-contract" />
+
+    <div class="pay-row">
+      <div>
+        <div class="pay-field-label">Amount ($)</div>
+        <input class="pay-input" id="pay-amount" type="number" placeholder="2000" />
+      </div>
+      <div>
+        <div class="pay-field-label">Status</div>
+        <select class="pay-input" id="pay-status">
           <option value="pending">Pending</option>
           <option value="paid">Paid</option>
           <option value="overdue">Overdue</option>
         </select>
       </div>
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Due Date</label>
-        <input class="form-input" id="pay-due" type="date" />
+    <div class="pay-row">
+      <div>
+        <div class="pay-field-label">Due Date</div>
+        <input class="pay-input" id="pay-due" type="date" />
       </div>
-      <div class="form-group">
-        <label class="form-label">Paid Date</label>
-        <input class="form-input" id="pay-paid" type="date" />
+      <div>
+        <div class="pay-field-label">Paid Date</div>
+        <input class="pay-input" id="pay-paid" type="date" />
       </div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Notes</label>
-      <input class="form-input" id="pay-notes" placeholder="e.g. Split payment, first installment" />
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closePaymentModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="addPayment()">Log Payment</button>
+    <div class="pay-field-label">Notes</div>
+    <input class="pay-input" id="pay-notes" placeholder="e.g. Split payment, first installment" style="width:100%;" />
+
+    <div class="pay-actions">
+      <button class="pay-btn-cancel" onclick="closePaymentModal()">Cancel</button>
+      <button class="pay-btn-log" onclick="addPayment()">
+        <span class="pay-btn-glow"></span>
+        ⚡ Log Payment
+      </button>
     </div>
   </div>
 </div>
+
+<style>
+/* ── PAY MODAL ── */
+.pay-modal-card {
+  position: relative;
+  background: linear-gradient(145deg, #0a1020, #0d1828, #0a1020);
+  border: 1px solid rgba(0,229,160,.3);
+  border-radius: 20px;
+  padding: 28px 28px 24px;
+  width: 100%; max-width: 500px;
+  box-shadow: 0 0 0 1px rgba(0,229,160,.08), 0 0 60px rgba(0,229,160,.12), 0 40px 80px rgba(0,0,0,.7);
+  overflow: hidden;
+  animation: payModalIn .35s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes payModalIn {
+  from { opacity:0; transform:scale(.88) translateY(30px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+.pay-scanline {
+  position:absolute;inset:0;pointer-events:none;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,229,160,.013) 3px, rgba(0,229,160,.013) 4px);
+  border-radius:20px;z-index:0;
+}
+.pay-corner {
+  position:absolute;width:16px;height:16px;pointer-events:none;z-index:2;
+  border-color:rgba(0,229,160,.7);border-style:solid;
+}
+.pay-corner.tl{top:10px;left:10px;border-width:2px 0 0 2px;}
+.pay-corner.tr{top:10px;right:10px;border-width:2px 2px 0 0;}
+.pay-corner.bl{bottom:10px;left:10px;border-width:0 0 2px 2px;}
+.pay-corner.br{bottom:10px;right:10px;border-width:0 2px 2px 0;}
+.pay-header{display:flex;align-items:center;gap:14px;margin-bottom:22px;position:relative;z-index:1;}
+.pay-icon-ring{width:44px;height:44px;border-radius:12px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 20px rgba(0,229,160,.15);}
+.pay-title{font-size:17px;font-weight:800;letter-spacing:-.3px;color:#fff;}
+.pay-subtitle{font-size:11px;color:rgba(136,150,179,.7);margin-top:2px;}
+.pay-close{margin-left:auto;background:none;border:none;color:rgba(136,150,179,.6);font-size:16px;cursor:pointer;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.pay-close:hover{background:rgba(255,107,107,.1);color:#FF6B6B;}
+.pay-field-label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(136,150,179,.8);margin-bottom:7px;margin-top:14px;position:relative;z-index:1;}
+/* ── CUSTOM DROPDOWN ── */
+.pay-dropdown{position:relative;z-index:10;cursor:pointer;margin-bottom:2px;}
+.pay-dropdown-selected{
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(0,229,160,.04);
+  border:1px solid rgba(0,229,160,.2);
+  border-radius:11px;padding:12px 16px;
+  font-size:13px;color:#8896B3;
+  transition:all .25s;
+  position:relative;overflow:hidden;
+}
+.pay-dropdown-selected::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(0,229,160,.05),transparent);
+  transform:translateX(-100%);transition:transform .5s;
+}
+.pay-dropdown.open .pay-dropdown-selected{
+  border-color:rgba(0,229,160,.6);
+  background:rgba(0,229,160,.07);
+  color:#fff;
+  box-shadow:0 0 0 3px rgba(0,229,160,.08),0 0 25px rgba(0,229,160,.12);
+}
+.pay-dropdown.open .pay-dropdown-selected::before{transform:translateX(100%);}
+.pay-chevron{color:#8896B3;transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.pay-dropdown.open .pay-chevron{transform:rotate(180deg);color:#00E5A0;}
+.pay-dropdown-list{
+  position:absolute;left:0;right:0;top:calc(100% + 8px);
+  background:linear-gradient(160deg,#0d1828,#091220);
+  border:1px solid rgba(0,229,160,.3);
+  border-radius:13px;
+  overflow:hidden;
+  max-height:0;
+  opacity:0;
+  transform:translateY(-10px) scaleY(.95);
+  transform-origin:top;
+  transition:max-height .4s cubic-bezier(.16,1,.3,1), opacity .25s, transform .3s cubic-bezier(.34,1.2,.64,1);
+  box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 30px rgba(0,229,160,.1);
+  z-index:100;
+}
+.pay-dropdown.open .pay-dropdown-list{
+  max-height:280px;opacity:1;transform:translateY(0) scaleY(1);overflow-y:auto;
+}
+.pay-option{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 16px;font-size:13px;color:#8896B3;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  cursor:pointer;position:relative;overflow:hidden;
+  transition:background .2s,color .15s;
+  opacity:0;transform:translateX(-12px);
+}
+.pay-dropdown.open .pay-option{
+  animation:payOptIn .3s cubic-bezier(.34,1.2,.64,1) both;
+}
+@keyframes payOptIn{from{opacity:0;transform:translateX(-12px);}to{opacity:1;transform:translateX(0);}}
+.pay-option::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--accent);transform:scaleY(0);transition:transform .2s;border-radius:0 2px 2px 0;
+}
+.pay-option:hover{background:rgba(0,229,160,.06);color:#fff;}
+.pay-option:hover::before{transform:scaleY(1);}
+.pay-option.selected{background:rgba(0,229,160,.1);color:#00E5A0;}
+.pay-option.selected::before{transform:scaleY(1);}
+.pay-option-name{font-weight:700;}
+.pay-option-val{font-size:11px;font-weight:600;color:var(--accent);opacity:.8;}
+.pay-option-flash{
+  position:absolute;inset:0;background:rgba(0,229,160,.25);
+  border-radius:inherit;pointer-events:none;opacity:0;
+}
+/* inputs */
+.pay-input{
+  width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+  border-radius:11px;padding:11px 14px;font-size:13px;color:#fff;font-family:inherit;
+  transition:border-color .2s,box-shadow .2s;position:relative;z-index:1;
+}
+.pay-input:focus{outline:none;border-color:rgba(0,229,160,.4);box-shadow:0 0 0 3px rgba(0,229,160,.07);}
+select.pay-input option{background:#0d1828;}
+.pay-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;position:relative;z-index:1;}
+/* actions */
+.pay-actions{display:flex;gap:10px;margin-top:22px;justify-content:flex-end;position:relative;z-index:1;}
+.pay-btn-cancel{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#8896B3;padding:11px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;}
+.pay-btn-cancel:hover{background:rgba(255,255,255,.07);color:#fff;}
+.pay-btn-log{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#00E5A0,#00C88A);
+  border:none;color:#000;padding:11px 22px;border-radius:10px;
+  font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;
+  transition:transform .15s,box-shadow .2s;
+  box-shadow:0 4px 20px rgba(0,229,160,.35);
+}
+.pay-btn-log:hover{transform:translateY(-1px);box-shadow:0 6px 30px rgba(0,229,160,.5);}
+.pay-btn-log:active{transform:scale(.97);}
+.pay-btn-glow{position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.3) 50%,transparent 100%);transform:translateX(-100%);transition:transform .5s;}
+.pay-btn-log:hover .pay-btn-glow{transform:translateX(100%);}
+/* scrollbar in dropdown */
+.pay-dropdown-list::-webkit-scrollbar{width:3px;}
+.pay-dropdown-list::-webkit-scrollbar-thumb{background:rgba(0,229,160,.3);border-radius:2px;}
+</style>
 
 <!-- TOAST -->
 <!-- EDIT CONTRACT MODAL -->
@@ -4847,12 +5009,93 @@ function renderIncome() {
   });
 }
 
+let _payDropdownOpen = false;
+let _paySelectedContract = null;
+
 function openPaymentModal() {
-  const sel = document.getElementById('pay-contract');
-  sel.innerHTML = contracts.map(c=>`<option value="${c.id}">${c.brand}</option>`).join('');
+  _paySelectedContract = null;
+  document.getElementById('pay-contract').value = '';
+  document.getElementById('pay-dropdown-text').textContent = contracts.length ? 'Select a contract...' : 'No contracts yet';
+  document.getElementById('pay-dropdown-text').style.color = '';
+  document.getElementById('pay-dropdown').classList.remove('open');
+  _payDropdownOpen = false;
+
+  // Build option list
+  const list = document.getElementById('pay-dropdown-list');
+  list.innerHTML = contracts.length
+    ? contracts.map((c, i) => `
+        <div class="pay-option" style="animation-delay:${i * 45}ms" onclick="selectPayContract('${c.id}','${(c.brand||'').replace(/'/g,"\\'")}',${c.value||0},event)">
+          <div class="pay-option-name">${c.brand || 'Unnamed'}</div>
+          <div class="pay-option-val">$${Number(c.value||0).toLocaleString()}</div>
+          <div class="pay-option-flash" id="pay-flash-${c.id}"></div>
+        </div>`).join('')
+    : `<div style="padding:20px;text-align:center;color:#4A5878;font-size:13px;">No contracts found</div>`;
+
+  // Reset fields
+  ['pay-amount','pay-due','pay-paid','pay-notes'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('pay-status').value = 'pending';
+
   document.getElementById('payment-modal').classList.add('open');
+
+  // Close dropdown on outside click
+  setTimeout(() => {
+    document.addEventListener('click', _payOutsideClick, { once: false });
+  }, 10);
 }
-function closePaymentModal() { document.getElementById('payment-modal').classList.remove('open'); }
+
+function _payOutsideClick(e) {
+  const dd = document.getElementById('pay-dropdown');
+  if (dd && !dd.contains(e.target)) {
+    dd.classList.remove('open');
+    _payDropdownOpen = false;
+  }
+}
+
+function togglePayDropdown() {
+  const dd = document.getElementById('pay-dropdown');
+  _payDropdownOpen = !_payDropdownOpen;
+  dd.classList.toggle('open', _payDropdownOpen);
+}
+
+function selectPayContract(id, brand, value, event) {
+  event.stopPropagation();
+  _paySelectedContract = id;
+  document.getElementById('pay-contract').value = id;
+
+  // Flash animation
+  const flash = document.getElementById('pay-flash-' + id);
+  if (flash) {
+    flash.style.opacity = '1';
+    setTimeout(() => { flash.style.transition = 'opacity .4s'; flash.style.opacity = '0'; }, 80);
+  }
+
+  // Mark selected
+  document.querySelectorAll('.pay-option').forEach(o => o.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+
+  // Update label
+  const label = document.getElementById('pay-dropdown-text');
+  label.textContent = `${brand}  ·  $${Number(value).toLocaleString()}`;
+  label.style.color = '#fff';
+
+  // Auto-fill amount
+  if (!document.getElementById('pay-amount').value) {
+    document.getElementById('pay-amount').value = value || '';
+  }
+
+  // Close after short delay
+  setTimeout(() => {
+    document.getElementById('pay-dropdown').classList.remove('open');
+    _payDropdownOpen = false;
+  }, 200);
+}
+
+function closePaymentModal() {
+  document.removeEventListener('click', _payOutsideClick);
+  document.getElementById('pay-dropdown').classList.remove('open');
+  _payDropdownOpen = false;
+  document.getElementById('payment-modal').classList.remove('open');
+}
 
 async function addPayment() {
   const amount = parseFloat(document.getElementById('pay-amount').value);
