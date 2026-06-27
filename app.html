@@ -5227,22 +5227,8 @@ async function toggleContractComplete(id) {
   if (error) { console.error(error); return; }
   c.status = newStatus;
 
-  // Animate the row
-  const row = document.getElementById('dash-row-' + id);
-  const btn = row ? row.querySelector('.complete-btn') : null;
-  if (row) {
-    if (newStatus === 'completed') {
-      row.classList.add('contract-completed');
-      if (btn) btn.classList.add('done');
-      // Burst flash on completion
-      row.style.transition = 'background .1s';
-      row.style.background = 'rgba(0,229,160,.25)';
-      setTimeout(() => { row.style.background = ''; row.style.transition = ''; }, 300);
-    } else {
-      row.classList.remove('contract-completed');
-      if (btn) btn.classList.remove('done');
-    }
-  }
+  // Re-render so badge, animation, and button all update correctly for every row
+  renderDashboard();
   showToast(newStatus === 'completed' ? '✅ Contract marked complete' : 'Contract reactivated');
 }
 
