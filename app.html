@@ -474,37 +474,30 @@
     .complete-btn.done svg { opacity: 1; transform: scale(1); }
 
     /* ── COMPLETED ROW FLASH ── */
+    @keyframes angelicShimmer {
+      0%   { background-position: 200% center; }
+      100% { background-position: -200% center; }
+    }
     @keyframes angelicPulse {
-      0%   { box-shadow: inset 0 0 0px rgba(0,229,160,0),  background-color: transparent; }
-      25%  { box-shadow: inset 0 0 40px rgba(0,229,160,.18), background-color: rgba(0,229,160,.07); }
-      50%  { box-shadow: inset 0 0 80px rgba(0,229,160,.28), background-color: rgba(0,229,160,.13); }
-      75%  { box-shadow: inset 0 0 40px rgba(0,229,160,.18), background-color: rgba(0,229,160,.07); }
-      100% { box-shadow: inset 0 0 0px rgba(0,229,160,0),  background-color: transparent; }
-    }
-    @keyframes shimmerSweep {
-      0%   { transform: translateX(-100%); }
-      100% { transform: translateX(400%); }
-    }
-    @keyframes borderGlow {
-      0%, 100% { border-color: rgba(0,229,160,.15); }
-      50%       { border-color: rgba(0,229,160,.7); }
+      0%, 100% { opacity: .7; }
+      50%       { opacity: 1; }
     }
     tr.contract-completed {
-      animation: angelicPulse 2s ease-in-out infinite;
-      border-top: 1px solid rgba(0,229,160,.2) !important;
-      border-bottom: 1px solid rgba(0,229,160,.2) !important;
-      position: relative;
+      background: linear-gradient(90deg,
+        rgba(0,229,160,.03) 0%,
+        rgba(0,229,160,.14) 30%,
+        rgba(180,255,230,.2) 50%,
+        rgba(0,229,160,.14) 70%,
+        rgba(0,229,160,.03) 100%
+      );
+      background-size: 250% 100%;
+      animation: angelicShimmer 2.2s ease-in-out infinite, angelicPulse 2.2s ease-in-out infinite;
+      outline: 1px solid rgba(0,229,160,.25);
+      outline-offset: -1px;
     }
-    tr.contract-completed td { color: var(--accent) !important; }
     tr.contract-completed td .brand-name { color: #fff !important; }
-    tr.contract-completed td .brand-niche { color: rgba(0,229,160,.6) !important; }
-    tr.contract-completed::after {
-      content: '';
-      position: absolute; top: 0; left: 0; width: 25%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(0,229,160,.18), rgba(180,255,230,.25), rgba(0,229,160,.18), transparent);
-      animation: shimmerSweep 2s ease-in-out infinite;
-      pointer-events: none;
-    }
+    tr.contract-completed td .brand-niche { color: rgba(0,229,160,.7) !important; }
+    tr.contract-completed .money { color: #00E5A0 !important; }
 
     .money { color: var(--accent); font-weight: 700; }
     .deadline { color: var(--text2); font-size: 12px; }
