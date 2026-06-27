@@ -461,6 +461,51 @@
     .badge-expired { background: rgba(255,107,107,.1); color: var(--red); }
     .badge-expired::before { background: var(--red); }
 
+    /* ── COMPLETE BUTTON ── */
+    .complete-btn {
+      width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0; cursor: pointer;
+      border: 2px solid rgba(0,229,160,.3); background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s; position: relative; overflow: hidden;
+    }
+    .complete-btn:hover { border-color: rgba(0,229,160,.8); background: rgba(0,229,160,.08); box-shadow: 0 0 12px rgba(0,229,160,.3); }
+    .complete-btn.done { border-color: var(--accent); background: rgba(0,229,160,.15); box-shadow: 0 0 16px rgba(0,229,160,.4); }
+    .complete-btn svg { opacity: 0; transform: scale(0); transition: all .25s cubic-bezier(.34,1.56,.64,1); }
+    .complete-btn.done svg { opacity: 1; transform: scale(1); }
+
+    /* ── COMPLETED ROW FLASH ── */
+    @keyframes angelicPulse {
+      0%   { box-shadow: inset 0 0 0px rgba(0,229,160,0),  background-color: transparent; }
+      25%  { box-shadow: inset 0 0 40px rgba(0,229,160,.18), background-color: rgba(0,229,160,.07); }
+      50%  { box-shadow: inset 0 0 80px rgba(0,229,160,.28), background-color: rgba(0,229,160,.13); }
+      75%  { box-shadow: inset 0 0 40px rgba(0,229,160,.18), background-color: rgba(0,229,160,.07); }
+      100% { box-shadow: inset 0 0 0px rgba(0,229,160,0),  background-color: transparent; }
+    }
+    @keyframes shimmerSweep {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(400%); }
+    }
+    @keyframes borderGlow {
+      0%, 100% { border-color: rgba(0,229,160,.15); }
+      50%       { border-color: rgba(0,229,160,.7); }
+    }
+    tr.contract-completed {
+      animation: angelicPulse 2s ease-in-out infinite;
+      border-top: 1px solid rgba(0,229,160,.2) !important;
+      border-bottom: 1px solid rgba(0,229,160,.2) !important;
+      position: relative;
+    }
+    tr.contract-completed td { color: var(--accent) !important; }
+    tr.contract-completed td .brand-name { color: #fff !important; }
+    tr.contract-completed td .brand-niche { color: rgba(0,229,160,.6) !important; }
+    tr.contract-completed::after {
+      content: '';
+      position: absolute; top: 0; left: 0; width: 25%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0,229,160,.18), rgba(180,255,230,.25), rgba(0,229,160,.18), transparent);
+      animation: shimmerSweep 2s ease-in-out infinite;
+      pointer-events: none;
+    }
+
     .money { color: var(--accent); font-weight: 700; }
     .deadline { color: var(--text2); font-size: 12px; }
     .deadline.warn { color: var(--yellow); }
@@ -4366,8 +4411,9 @@ function renderDashboard() {
   contracts.forEach(c => {
     const days = daysLeft(c.expiry);
     const dClass = deadlineClass(days);
+    const isCompleted = c.status === 'completed';
     tbody.innerHTML += `
-      <tr>
+      <tr id="dash-row-${c.id}" class="${isCompleted ? 'contract-completed' : ''}">
         <td><div class="brand-cell">
           <div class="brand-icon">${initials(c.brand)}</div>
           <div><div class="brand-name">${c.brand}</div><div class="brand-niche">${c.niche||''}</div></div>
@@ -4377,6 +4423,11 @@ function renderDashboard() {
         <td><span class="badge badge-${c.status}">${c.status.charAt(0).toUpperCase()+c.status.slice(1)}</span></td>
         <td><span class="deadline ${dClass}">${days !== null ? (days < 0 ? 'Expired' : days + 'd left') : '—'}</span></td>
         <td><span class="row-action" onclick="openDetail('${c.id}')">View <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg></span></td>
+        <td>
+          <button class="complete-btn ${isCompleted ? 'done' : ''}" onclick="toggleContractComplete('${c.id}')" title="${isCompleted ? 'Mark incomplete' : 'Mark complete'}">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </button>
+        </td>
       </tr>`;
   });
 }
@@ -5173,6 +5224,33 @@ function editPayment(id) {
       }, 50);
     }
   }
+}
+
+async function toggleContractComplete(id) {
+  const c = contracts.find(c => String(c.id) === String(id));
+  if (!c) return;
+  const newStatus = c.status === 'completed' ? 'active' : 'completed';
+  const { error } = await sb.from('contracts').update({ status: newStatus }).eq('id', id);
+  if (error) { console.error(error); return; }
+  c.status = newStatus;
+
+  // Animate the row
+  const row = document.getElementById('dash-row-' + id);
+  const btn = row ? row.querySelector('.complete-btn') : null;
+  if (row) {
+    if (newStatus === 'completed') {
+      row.classList.add('contract-completed');
+      if (btn) btn.classList.add('done');
+      // Burst flash on completion
+      row.style.transition = 'background .1s';
+      row.style.background = 'rgba(0,229,160,.25)';
+      setTimeout(() => { row.style.background = ''; row.style.transition = ''; }, 300);
+    } else {
+      row.classList.remove('contract-completed');
+      if (btn) btn.classList.remove('done');
+    }
+  }
+  showToast(newStatus === 'completed' ? '✅ Contract marked complete' : 'Contract reactivated');
 }
 
 async function deletePayment(id) {
