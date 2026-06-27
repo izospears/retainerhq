@@ -5140,10 +5140,10 @@ async function addPayment() {
 function editPayment(id) {
   const p = payments.find(p => String(p.id) === String(id));
   if (!p) return;
-  _payEditId = id;
 
-  // Open modal in edit mode
+  // Open modal first (resets _payEditId to null inside), then set edit ID
   openPaymentModal();
+  _payEditId = id;
 
   // Update title + button
   document.querySelector('.pay-title').textContent = 'Edit Payment';
