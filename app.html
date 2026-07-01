@@ -461,6 +461,38 @@
     .badge-expired { background: rgba(255,107,107,.1); color: var(--red); }
     .badge-expired::before { background: var(--red); }
 
+    /* ── PERIOD FILTER ── */
+    .dash-period-wrap { position:relative; }
+    .dash-period-btn {
+      display:flex;align-items:center;gap:7px;
+      background:var(--card);border:1px solid var(--border2);
+      border-radius:10px;padding:8px 13px;cursor:pointer;
+      font-size:12px;font-weight:600;color:var(--text2);
+      transition:all .2s;user-select:none;
+    }
+    .dash-period-btn:hover { border-color:rgba(0,229,160,.4);color:var(--text); }
+    .dash-period-btn.open { border-color:rgba(0,229,160,.5);color:var(--text);background:var(--card2); }
+    .dash-period-chevron { transition:transform .25s cubic-bezier(.34,1.2,.64,1);color:var(--text3); }
+    .dash-period-btn.open .dash-period-chevron { transform:rotate(180deg);color:var(--accent); }
+    .dash-period-list {
+      position:absolute;right:0;top:calc(100% + 6px);
+      background:var(--card2);border:1px solid var(--border2);
+      border-radius:12px;min-width:180px;overflow:hidden;
+      max-height:0;opacity:0;transform:translateY(-6px);
+      transition:max-height .3s cubic-bezier(.16,1,.3,1),opacity .2s,transform .25s;
+      z-index:50;box-shadow:0 16px 40px rgba(0,0,0,.4);
+    }
+    .dash-period-list.open { max-height:320px;opacity:1;transform:translateY(0);overflow-y:auto; }
+    .dash-period-opt {
+      padding:10px 14px;font-size:12px;font-weight:600;color:var(--text2);
+      cursor:pointer;transition:background .15s,color .15s;
+      border-bottom:1px solid rgba(255,255,255,.04);
+    }
+    .dash-period-opt:hover { background:rgba(0,229,160,.06);color:var(--text); }
+    .dash-period-opt.active { color:var(--accent);background:rgba(0,229,160,.06); }
+    .dash-period-opt:last-child { border-bottom:none; }
+    .dash-period-divider { padding:6px 14px 4px;font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3); }
+
     /* ── COMPLETE BUTTON ── */
     .complete-btn {
       width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0; cursor: pointer;
@@ -2211,6 +2243,20 @@
       </div>
 
       <div class="deadline-alerts" id="deadline-alerts"></div>
+
+      <!-- PERIOD FILTER -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);">Overview</div>
+        <div class="dash-period-wrap" id="dash-period-wrap">
+          <div class="dash-period-btn" id="dash-period-btn" onclick="togglePeriodDrop()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span id="dash-period-label">Last 30 Days</span>
+            <svg class="dash-period-chevron" id="dash-period-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="dash-period-list" id="dash-period-list"></div>
+        </div>
+      </div>
+
       <div class="stats-grid">
         <div class="stat-card c-green">
           <div class="stat-icon-wrap">
@@ -4367,11 +4413,72 @@ function renderDeadlineAlerts(active) {
   });
 }
 
+// ── PERIOD FILTER ──
+let _dashPeriod = 'last30'; // 'last30' | 'alltime' | 'YYYY-MM'
+let _periodDropOpen = false;
+
+function initPeriodDrop() {
+  const list = document.getElementById('dash-period-list');
+  if (!list) return;
+  const now = new Date();
+  const months = [];
+  for (let i = 0; i < 12; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const label = d.toLocaleDateString('en-US', { month:'long', year:'numeric' });
+    months.push({ key, label });
+  }
+  list.innerHTML = `
+    <div class="dash-period-opt ${_dashPeriod==='last30'?'active':''}" onclick="selectPeriod('last30','Last 30 Days')">Last 30 Days</div>
+    <div class="dash-period-opt ${_dashPeriod==='alltime'?'active':''}" onclick="selectPeriod('alltime','All Time')">All Time</div>
+    <div class="dash-period-divider">By Month</div>
+    ${months.map(m=>`<div class="dash-period-opt ${_dashPeriod===m.key?'active':''}" onclick="selectPeriod('${m.key}','${m.label}')">${m.label}</div>`).join('')}
+  `;
+}
+
+function togglePeriodDrop() {
+  _periodDropOpen = !_periodDropOpen;
+  const btn = document.getElementById('dash-period-btn');
+  const list = document.getElementById('dash-period-list');
+  btn.classList.toggle('open', _periodDropOpen);
+  list.classList.toggle('open', _periodDropOpen);
+  if (_periodDropOpen) initPeriodDrop();
+}
+
+function selectPeriod(key, label) {
+  _dashPeriod = key;
+  document.getElementById('dash-period-label').textContent = label;
+  _periodDropOpen = false;
+  document.getElementById('dash-period-btn').classList.remove('open');
+  document.getElementById('dash-period-list').classList.remove('open');
+  renderDashboard();
+}
+
+function filterByPeriod(list) {
+  const now = new Date();
+  if (_dashPeriod === 'alltime') return list;
+  if (_dashPeriod === 'last30') {
+    const cutoff = new Date(now); cutoff.setDate(cutoff.getDate() - 30);
+    return list.filter(c => {
+      const d = c.start ? new Date(c.start) : (c.created_at ? new Date(c.created_at) : null);
+      return !d || d >= cutoff;
+    });
+  }
+  // month filter: 'YYYY-MM'
+  const [yr, mo] = _dashPeriod.split('-').map(Number);
+  return list.filter(c => {
+    const d = c.start ? new Date(c.start) : (c.created_at ? new Date(c.created_at) : null);
+    if (!d) return false;
+    return d.getFullYear() === yr && (d.getMonth()+1) === mo;
+  });
+}
+
 function renderDashboard() {
   checkOnboarding();
-  const active = contracts.filter(c => c.status === 'active');
+  const periodContracts = filterByPeriod(contracts);
+  const active = periodContracts.filter(c => c.status === 'active');
   const videosLeft = active.reduce((s,c) => s + Math.max(0, c.videos - c.posted), 0);
-  const avg = contracts.length ? Math.round(contracts.reduce((s,c)=>s+c.value,0) / contracts.length) : 0;
+  const avg = periodContracts.length ? Math.round(periodContracts.reduce((s,c)=>s+c.value,0) / periodContracts.length) : 0;
   const totalValue = active.reduce((s,c) => s + c.value, 0);
 
   renderDeadlineAlerts(active);
@@ -5561,8 +5668,17 @@ function buildCustomDropdown(sel) {
 }
 
 // Close dropdowns when clicking outside
-document.addEventListener('click', () => {
+document.addEventListener('click', (e) => {
   document.querySelectorAll('.csel-wrap.open').forEach(w => w.classList.remove('open'));
+  // Close period dropdown if clicking outside
+  const wrap = document.getElementById('dash-period-wrap');
+  if (wrap && !wrap.contains(e.target) && _periodDropOpen) {
+    _periodDropOpen = false;
+    const btn = document.getElementById('dash-period-btn');
+    const list = document.getElementById('dash-period-list');
+    if (btn) btn.classList.remove('open');
+    if (list) list.classList.remove('open');
+  }
 });
 
 // Init all dropdowns on load + re-init when modals open
