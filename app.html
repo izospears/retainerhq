@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RetainerHQ</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
   <style>
@@ -2078,6 +2079,56 @@
     @keyframes ct-twinkle { 0%,100%{opacity:.1;transform:scale(1)} 50%{opacity:.9;transform:scale(1.5)} }
     @keyframes ct-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
     @keyframes ct-confetti { to { transform: translateY(105vh) rotate(600deg); opacity:0; } }
+
+    /* ── AI INBOX ── */
+    .inbox-connect-state { text-align:center; padding:48px 20px; }
+    .inbox-connect-icon { width:64px;height:64px;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px; }
+    .inbox-connect-title { font-size:18px;font-weight:800;margin-bottom:8px; }
+    .inbox-connect-sub { font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:20px;max-width:360px;margin-left:auto;margin-right:auto; }
+    .inbox-feature-pills { display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:28px; }
+    .inbox-feature-pill { background:rgba(0,229,160,.07);border:1px solid rgba(0,229,160,.15);border-radius:99px;padding:5px 13px;font-size:11px;font-weight:600;color:var(--accent); }
+    .inbox-google-btn { display:inline-flex;align-items:center;gap:10px;background:#fff;color:#1f1f1f;border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;box-shadow:0 2px 12px rgba(0,0,0,.2); }
+    .inbox-google-btn:hover { transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,.35); }
+    .inbox-connect-note { font-size:11px;color:var(--text3);margin-top:14px; }
+    .inbox-setup-hint { background:rgba(91,155,255,.07);border:1px solid rgba(91,155,255,.18);border-radius:10px;padding:14px 16px;margin-top:24px;text-align:left;max-width:420px;margin-left:auto;margin-right:auto; }
+    .inbox-setup-hint-title { font-size:11px;font-weight:800;color:#5B9BFF;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px; }
+    .inbox-setup-hint-body { font-size:12px;color:var(--text2);line-height:1.6; }
+    .inbox-setup-hint code { background:rgba(255,255,255,.06);border-radius:4px;padding:1px 5px;font-size:11px;color:var(--text); }
+    .inbox-toolbar { display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border); }
+    .inbox-status-text { font-size:12px;color:var(--text3); }
+    .inbox-status-dot { display:inline-block;width:7px;height:7px;background:var(--accent);border-radius:50%;margin-right:6px;box-shadow:0 0 6px var(--accent); }
+    .inbox-toolbar-right { display:flex;gap:8px;align-items:center; }
+    .inbox-refresh-btn { background:transparent;border:1px solid var(--border2);border-radius:7px;padding:5px 12px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s; }
+    .inbox-refresh-btn:hover { border-color:var(--accent);color:var(--accent); }
+    .inbox-disconnect-btn { background:transparent;border:1px solid rgba(255,107,107,.2);border-radius:7px;padding:5px 10px;font-size:11px;color:var(--red);cursor:pointer;font-family:inherit;transition:all .15s; }
+    .inbox-disconnect-btn:hover { border-color:var(--red);background:rgba(255,107,107,.06); }
+    .inbox-card { background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;transition:border-color .2s; }
+    .inbox-card:hover { border-color:var(--border2); }
+    .inbox-card-header { display:flex;align-items:center;gap:12px;margin-bottom:8px; }
+    .inbox-sender-avatar { width:36px;height:36px;background:linear-gradient(135deg,var(--accent),#00B8FF);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#000;flex-shrink:0; }
+    .inbox-card-meta { flex:1;min-width:0; }
+    .inbox-from { font-size:13px;font-weight:700;color:var(--text); }
+    .inbox-subject { font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .inbox-brand-tag { background:rgba(0,229,160,.1);color:var(--accent);border:1px solid rgba(0,229,160,.2);border-radius:5px;padding:2px 8px;font-size:10px;font-weight:700;flex-shrink:0; }
+    .inbox-snippet { font-size:12px;color:var(--text3);line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
+    .inbox-reply-wrap { background:rgba(0,229,160,.04);border:1px solid rgba(0,229,160,.15);border-radius:10px;padding:14px;margin-bottom:12px; }
+    .inbox-reply-label { font-size:10px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px; }
+    .inbox-reply-ta { width:100%;background:transparent;border:none;color:var(--text);font-family:inherit;font-size:12px;line-height:1.7;resize:vertical;outline:none;min-height:180px; }
+    .inbox-actions { display:flex;gap:8px;flex-wrap:wrap; }
+    .inbox-btn { display:inline-flex;align-items:center;gap:5px;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;border:none; }
+    .inbox-btn-preview { background:rgba(0,229,160,.1);color:var(--accent);border:1px solid rgba(0,229,160,.2); }
+    .inbox-btn-preview:hover { background:rgba(0,229,160,.18); }
+    .inbox-btn-send { background:var(--accent);color:#000; }
+    .inbox-btn-send:hover { background:#00f0a8; }
+    .inbox-btn-draft { background:transparent;color:var(--text2);border:1px solid var(--border2); }
+    .inbox-btn-draft:hover { color:var(--text);border-color:var(--border); }
+    .inbox-card-feedback { margin-top:8px;padding:8px 12px;border-radius:7px;font-size:12px;font-weight:600; }
+    .inbox-feedback-ok { background:rgba(0,229,160,.1);color:var(--accent); }
+    .inbox-feedback-err { background:rgba(255,107,107,.1);color:var(--red); }
+    .inbox-empty { padding:48px 20px;text-align:center; }
+    .inbox-empty-icon { font-size:36px;margin-bottom:12px; }
+    .inbox-empty-title { font-size:14px;font-weight:700;margin-bottom:6px; }
+    .inbox-empty-sub { font-size:12px;color:var(--text3); }
   </style>
 </head>
 <body>
@@ -2431,6 +2482,7 @@
       <div class="tabs">
         <div class="tab active" onclick="switchTab('manual')">Manual Entry</div>
         <div class="tab" onclick="switchTab('paste')">Paste Their Email</div>
+        <div class="tab" onclick="switchTab('inbox')">⚡ AI Inbox</div>
       </div>
 
       <div class="tab-panel active" id="tab-manual">
@@ -2560,6 +2612,52 @@
           Generate Email
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/></svg>
         </button>
+      </div>
+
+      <!-- AI INBOX TAB -->
+      <div class="tab-panel" id="tab-inbox">
+        <!-- Not-connected state -->
+        <div id="inbox-connect" class="inbox-connect-state">
+          <div class="inbox-connect-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="inbox-connect-title">AI Inbox</div>
+          <div class="inbox-connect-sub">Connect your Gmail and RetainerHQ will automatically scan for brand deal emails — then generate a personalized reply using your real rates. Ready to send in one click.</div>
+          <div class="inbox-feature-pills">
+            <span class="inbox-feature-pill">✦ Detects brand emails</span>
+            <span class="inbox-feature-pill">✦ Pulls your rates</span>
+            <span class="inbox-feature-pill">✦ Send or draft in 1 click</span>
+            <span class="inbox-feature-pill">✦ Editable before sending</span>
+          </div>
+          <button class="inbox-google-btn" onclick="connectGmail()">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Connect Gmail
+          </button>
+          <div class="inbox-connect-note">Your emails stay private — we only read brand deal emails, never store them.</div>
+          <div class="inbox-setup-hint">
+            <div class="inbox-setup-hint-title">One-time setup required</div>
+            <div class="inbox-setup-hint-body">
+              This feature needs a Google OAuth Client ID. Isaac: go to <strong>console.cloud.google.com</strong> → Create Project → Enable Gmail API → Credentials → Create OAuth 2.0 Client ID (Web App) → add <code>https://retainerhq.io</code> as an authorized origin → paste the Client ID into <code>GMAIL_CLIENT_ID</code> in app.html.
+            </div>
+          </div>
+        </div>
+
+        <!-- Connected / active state -->
+        <div id="inbox-active" style="display:none;">
+          <div class="inbox-toolbar">
+            <div class="inbox-status-text">
+              <span class="inbox-status-dot"></span>
+              <span id="inbox-status-label">Scanning your inbox...</span>
+            </div>
+            <div class="inbox-toolbar-right">
+              <button class="inbox-refresh-btn" onclick="fetchBrandEmails()">↻ Refresh</button>
+              <button class="inbox-disconnect-btn" onclick="disconnectGmail()">Disconnect</button>
+            </div>
+          </div>
+          <div id="inbox-email-list">
+            <div class="inbox-empty"><div class="inbox-empty-icon">📡</div><div class="inbox-empty-title">Scanning...</div></div>
+          </div>
+        </div>
       </div>
 
       <div class="email-output" id="email-output" style="display:none;">
@@ -4985,10 +5083,15 @@ async function signOut() {
 }
 
 function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='manual')||(i===1&&tab==='paste')));
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='manual')||(i===1&&tab==='paste')||(i===2&&tab==='inbox')));
   document.getElementById('tab-manual').classList.toggle('active', tab==='manual');
   document.getElementById('tab-paste').classList.toggle('active', tab==='paste');
+  document.getElementById('tab-inbox').classList.toggle('active', tab==='inbox');
   document.getElementById('email-output').style.display = 'none';
+  if (tab === 'inbox' && _gmailToken && Date.now() < _gmailExpiry) {
+    showInboxConnected();
+    fetchBrandEmails();
+  }
 }
 
 // Type chip selection — replaces old <select> dropdowns
@@ -6141,6 +6244,319 @@ function ctDropConfetti() {
 // Backward compat stubs
 function startTour() { startCreatorTour(); }
 function endTour() { ctFinish(); }
+
+// ═══════════════════════════════════════════════════════════
+//  AI INBOX — Gmail OAuth + Brand Deal Detection + Auto-Reply
+// ═══════════════════════════════════════════════════════════
+
+// ── CONFIG: Replace with your Google Cloud OAuth Client ID ──
+const GMAIL_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
+
+let _gmailToken    = null;
+let _gmailExpiry   = 0;
+let _gmailClient   = null;
+
+// ── Init Google OAuth client (called lazily on first connect) ──
+function _initGmailOAuth() {
+  if (_gmailClient) return;
+  if (!window.google) { alert('Google SDK not loaded. Please refresh the page.'); return; }
+  if (!GMAIL_CLIENT_ID || GMAIL_CLIENT_ID.startsWith('YOUR_')) {
+    alert('Gmail integration not yet configured. Contact support@retainerhq.io.');
+    return;
+  }
+  _gmailClient = google.accounts.oauth2.initTokenClient({
+    client_id: GMAIL_CLIENT_ID,
+    scope: 'https://www.googleapis.com/auth/gmail.modify',
+    callback: (resp) => {
+      if (resp.error) {
+        console.error('Gmail OAuth error:', resp.error);
+        _setInboxStatus('Connection failed: ' + (resp.error_description || resp.error));
+        return;
+      }
+      _gmailToken  = resp.access_token;
+      _gmailExpiry = Date.now() + (parseInt(resp.expires_in) * 1000) - 60000;
+      showInboxConnected();
+      fetchBrandEmails();
+    }
+  });
+}
+
+function connectGmail() {
+  _initGmailOAuth();
+  if (!_gmailClient) return;
+  _gmailClient.requestAccessToken({ prompt: '' }); // prompt:'consent' forces re-auth; '' uses cached
+}
+
+function disconnectGmail() {
+  _gmailToken  = null;
+  _gmailExpiry = 0;
+  document.getElementById('inbox-connect').style.display = 'block';
+  document.getElementById('inbox-active').style.display  = 'none';
+}
+
+function showInboxConnected() {
+  document.getElementById('inbox-connect').style.display = 'none';
+  document.getElementById('inbox-active').style.display  = 'block';
+}
+
+function _setInboxStatus(msg) {
+  const el = document.getElementById('inbox-status-label');
+  if (el) el.textContent = msg;
+}
+
+// ── Core Gmail API fetch wrapper ──
+async function _gFetch(path, opts = {}) {
+  if (!_gmailToken || Date.now() >= _gmailExpiry) {
+    // Token expired — prompt re-auth silently
+    _gmailClient?.requestAccessToken({ prompt: '' });
+    return null;
+  }
+  const headers = { 'Authorization': 'Bearer ' + _gmailToken, 'Content-Type': 'application/json', ...(opts.headers || {}) };
+  const res = await fetch('https://www.googleapis.com/gmail/v1/users/me' + path, { ...opts, headers });
+  if (res.status === 401) { _gmailToken = null; connectGmail(); return null; }
+  if (!res.ok) throw new Error('Gmail API ' + res.status);
+  return res.json();
+}
+
+// ── Brand deal keyword detection ──
+const _BRAND_KW = ['collaboration','partnership','sponsorship','retainer','brand deal','content creator','ugc','affiliate','sponsored','campaign','rate card','rates','pricing','paid partnership','influencer','tiktok shop','tik tok'];
+
+function _isBrandEmail(subject, snippet) {
+  const t = ((subject || '') + ' ' + (snippet || '')).toLowerCase();
+  return _BRAND_KW.some(k => t.includes(k));
+}
+
+// ── Fetch and render brand deal emails ──
+async function fetchBrandEmails() {
+  _setInboxStatus('Scanning inbox for brand deals...');
+  const listEl = document.getElementById('inbox-email-list');
+  if (listEl) listEl.innerHTML = '<div class="inbox-empty"><div class="inbox-empty-icon">📡</div><div class="inbox-empty-title">Scanning...</div><div class="inbox-empty-sub">Looking for brand deal emails in the last 30 days</div></div>';
+
+  try {
+    const query = encodeURIComponent('in:inbox newer_than:30d -from:me');
+    const data  = await _gFetch('/messages?q=' + query + '&maxResults=50');
+    if (!data) return;
+
+    const msgs = data.messages || [];
+    if (msgs.length === 0) {
+      _setInboxStatus('No emails in the last 30 days');
+      if (listEl) listEl.innerHTML = '<div class="inbox-empty"><div class="inbox-empty-icon">🎉</div><div class="inbox-empty-title">All clear!</div><div class="inbox-empty-sub">No unreviewed emails from the last 30 days.</div></div>';
+      return;
+    }
+
+    // Fetch metadata for up to 40 messages in parallel
+    const details = await Promise.all(
+      msgs.slice(0, 40).map(m =>
+        _gFetch('/messages/' + m.id + '?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date')
+      )
+    );
+
+    const brandEmails = details.filter(d => d && _isBrandEmail(
+      d.payload?.headers?.find(h => h.name === 'Subject')?.value || '',
+      d.snippet || ''
+    ));
+
+    if (brandEmails.length === 0) {
+      _setInboxStatus('Last checked: just now · 0 brand leads');
+      if (listEl) listEl.innerHTML = '<div class="inbox-empty"><div class="inbox-empty-icon">📭</div><div class="inbox-empty-title">No brand deal emails found</div><div class="inbox-empty-sub">We scanned the last 30 days and didn\'t find any brand partnership inquiries. Try Refresh in a bit.</div></div>';
+      return;
+    }
+
+    _setInboxStatus('Last checked: just now · ' + brandEmails.length + ' lead' + (brandEmails.length > 1 ? 's' : '') + ' found');
+    _renderInboxEmails(brandEmails, listEl);
+
+  } catch(e) {
+    console.error('AI Inbox error:', e);
+    _setInboxStatus('Error scanning inbox');
+    if (listEl) listEl.innerHTML = '<div class="inbox-empty"><div class="inbox-empty-icon">⚠️</div><div class="inbox-empty-title">Scan failed</div><div class="inbox-empty-sub">Check console for details. Try disconnecting and reconnecting Gmail.</div></div>';
+  }
+}
+
+// ── Render email cards ──
+function _renderInboxEmails(emails, listEl) {
+  listEl.innerHTML = emails.map(email => {
+    const hdrs    = email.payload?.headers || [];
+    const subject = hdrs.find(h => h.name === 'Subject')?.value || '(No Subject)';
+    const from    = hdrs.find(h => h.name === 'From')?.value    || 'Unknown';
+    const snippet = email.snippet || '';
+
+    const nameMatch  = from.match(/^"?([^"<]+)"?\s*</);
+    const senderName = nameMatch ? nameMatch[1].trim() : from.split('@')[0];
+    const brandName  = _extractBrand(from);
+
+    const reply     = _buildReply(snippet, senderName, brandName);
+    const safeId    = email.id;
+    const safeFrom  = from.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const safeSub   = subject.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const safeThr   = email.threadId;
+
+    return `
+    <div class="inbox-card" id="icard-${safeId}">
+      <div class="inbox-card-header">
+        <div class="inbox-sender-avatar">${_esc(brandName.charAt(0).toUpperCase())}</div>
+        <div class="inbox-card-meta">
+          <div class="inbox-from">${_esc(senderName)}</div>
+          <div class="inbox-subject">${_esc(subject)}</div>
+        </div>
+        <div class="inbox-brand-tag">${_esc(brandName)}</div>
+      </div>
+      <div class="inbox-snippet">${_esc(snippet)}</div>
+      <div class="inbox-reply-wrap" id="ireply-${safeId}" style="display:none;">
+        <div class="inbox-reply-label">✦ AI-Generated Reply</div>
+        <textarea class="inbox-reply-ta" id="irta-${safeId}">${_esc(reply)}</textarea>
+      </div>
+      <div class="inbox-actions">
+        <button class="inbox-btn inbox-btn-preview" onclick="_togglePreview('${safeId}')">
+          ⚡ Preview Reply
+        </button>
+        <button class="inbox-btn inbox-btn-send" onclick="_sendReply('${safeId}','${safeFrom}','${safeSub}','${safeThr}')">
+          ↗ Send Reply
+        </button>
+        <button class="inbox-btn inbox-btn-draft" onclick="_draftReply('${safeId}','${safeFrom}','${safeSub}','${safeThr}')">
+          📋 Save Draft
+        </button>
+      </div>
+      <div class="inbox-card-feedback" id="ifb-${safeId}" style="display:none;"></div>
+    </div>`;
+  }).join('');
+}
+
+function _togglePreview(id) {
+  const wrap = document.getElementById('ireply-' + id);
+  const btn  = document.querySelector('#icard-' + id + ' .inbox-btn-preview');
+  if (!wrap) return;
+  const showing = wrap.style.display !== 'none';
+  wrap.style.display = showing ? 'none' : 'block';
+  if (btn) btn.textContent = showing ? '⚡ Preview Reply' : '⌃ Hide Reply';
+}
+
+// ── Build a personalized reply from rates ──
+function _buildReply(snippet, senderName, brandName) {
+  const me        = (mediaKitProfile?.name || currentUser?.email?.split('@')[0] || 'there');
+  const firstName = me.split(' ')[0];
+  const gmv       = mediaKitProfile?.total_gmv || mediaKitProfile?.gmv;
+  const gmvLine   = gmv ? `With $${Number(gmv).toLocaleString()}+ in attributed GMV` : 'With a strong track record in TikTok Shop affiliate content';
+
+  const rates = mediaKitProfile?.rates_data || JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
+  const pkgs  = [
+    { qty: rates.pkg1qty, price: rates.pkg1price },
+    { qty: rates.pkg2qty, price: rates.pkg2price },
+    { qty: rates.pkg3qty, price: rates.pkg3price },
+    { qty: rates.pkg4qty, price: rates.pkg4price },
+  ].filter(p => p.qty && p.price);
+
+  let rateBlock = '';
+  if (pkgs.length > 0) {
+    rateBlock = '\n\nHere\'s a look at my current monthly retainer packages:\n';
+    pkgs.forEach(p => { rateBlock += `• ${p.qty} video${p.qty > 1 ? 's' : ''}/month — $${Number(p.price).toLocaleString()}/mo\n`; });
+    rateBlock += '\nAll packages include full TikTok Shop affiliate video production, posting, and analytics.';
+  } else {
+    rateBlock = '\n\nI\'d love to share my rate card — what\'s the best way to send that over?';
+  }
+
+  return `Hi ${senderName.split(' ')[0]},
+
+Thank you for reaching out — I'm excited to hear more about a potential collaboration with ${brandName}!
+
+${gmvLine}, I specialize in creating authentic, high-converting TikTok Shop content that drives real results.${rateBlock}
+
+I'd love to get on a quick call or continue chatting over email — whatever works best for your team!
+
+Looking forward to connecting,
+${firstName}`;
+}
+
+// ── Extract brand name from email "From" field ──
+function _extractBrand(from) {
+  const domainMatch = from.match(/@([^.>\s]+)/);
+  if (domainMatch) {
+    const d = domainMatch[1].toLowerCase();
+    if (!['gmail','yahoo','outlook','hotmail','icloud','aol','me','live'].includes(d)) {
+      return d.charAt(0).toUpperCase() + d.slice(1);
+    }
+  }
+  const nameMatch = from.match(/^"?([^"<@\s]+)/);
+  return nameMatch ? nameMatch[1] : 'Brand';
+}
+
+// ── HTML escape helper ──
+function _esc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Encode email for Gmail API (RFC 2822 → base64url) ──
+function _encodeEmail(to, subject, body, threadId, inReplyTo) {
+  const lines = [
+    'To: ' + to,
+    'Subject: ' + subject,
+    inReplyTo ? 'In-Reply-To: ' + inReplyTo : '',
+    inReplyTo ? 'References: '  + inReplyTo : '',
+    'Content-Type: text/plain; charset=utf-8',
+    'MIME-Version: 1.0',
+    '',
+    body
+  ].filter(l => l !== '');
+  const raw = lines.join('\r\n');
+  return btoa(unescape(encodeURIComponent(raw))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+
+// ── Send reply ──
+async function _sendReply(msgId, toRaw, subjectRaw, threadId) {
+  const ta      = document.getElementById('irta-' + msgId);
+  const body    = ta ? ta.value : _buildReply('','','');
+  const subject = subjectRaw.toLowerCase().startsWith('re:') ? subjectRaw : 'Re: ' + subjectRaw;
+  const fbEl    = document.getElementById('ifb-' + msgId);
+
+  // Make sure reply is visible before sending
+  document.getElementById('ireply-' + msgId).style.display = 'block';
+
+  try {
+    const encoded = _encodeEmail(toRaw, subject, body, threadId, msgId);
+    const result  = await _gFetch('/messages/send', {
+      method: 'POST',
+      body: JSON.stringify({ raw: encoded, threadId })
+    });
+    if (result) {
+      _showFeedback(fbEl, '✓ Reply sent successfully!', 'ok');
+      setTimeout(() => {
+        const card = document.getElementById('icard-' + msgId);
+        if (card) { card.style.opacity = '0.45'; card.style.pointerEvents = 'none'; }
+      }, 1200);
+    }
+  } catch(e) {
+    console.error('Send error:', e);
+    _showFeedback(fbEl, 'Send failed — check your connection and try again.', 'err');
+  }
+}
+
+// ── Save as draft ──
+async function _draftReply(msgId, toRaw, subjectRaw, threadId) {
+  const ta      = document.getElementById('irta-' + msgId);
+  const body    = ta ? ta.value : _buildReply('','','');
+  const subject = subjectRaw.toLowerCase().startsWith('re:') ? subjectRaw : 'Re: ' + subjectRaw;
+  const fbEl    = document.getElementById('ifb-' + msgId);
+
+  document.getElementById('ireply-' + msgId).style.display = 'block';
+
+  try {
+    const encoded = _encodeEmail(toRaw, subject, body, threadId, msgId);
+    const result  = await _gFetch('/drafts', {
+      method: 'POST',
+      body: JSON.stringify({ message: { raw: encoded, threadId } })
+    });
+    if (result) _showFeedback(fbEl, '✓ Draft saved to Gmail!', 'ok');
+  } catch(e) {
+    console.error('Draft error:', e);
+    _showFeedback(fbEl, 'Draft failed — try again.', 'err');
+  }
+}
+
+function _showFeedback(el, msg, type) {
+  if (!el) return;
+  el.style.display = 'block';
+  el.className     = 'inbox-card-feedback inbox-feedback-' + type;
+  el.textContent   = msg;
+}
 </script>
 
 <!-- CREATOR TOUR v2 -->
