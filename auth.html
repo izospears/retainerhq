@@ -315,6 +315,29 @@ window.addEventListener('load', () => {
     sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
       auth: { flowType: 'implicit' }
     });
+
+    // ── PASSWORD RECOVERY — must register immediately after client creation ──
+    sb.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        document.getElementById('panel-signin').style.display = 'none';
+        document.getElementById('panel-signup').style.display = 'none';
+        document.getElementById('panel-forgot').style.display = 'none';
+        document.getElementById('panel-reset').style.display = 'block';
+        const tabs = document.querySelector('.tab-row');
+        if (tabs) tabs.style.display = 'none';
+      }
+    });
+
+    // Fallback: check hash directly in case event already fired before listener registered
+    if (window.location.hash.includes('type=recovery')) {
+      document.getElementById('panel-signin').style.display = 'none';
+      document.getElementById('panel-signup').style.display = 'none';
+      document.getElementById('panel-forgot').style.display = 'none';
+      document.getElementById('panel-reset').style.display = 'block';
+      const tabs = document.querySelector('.tab-row');
+      if (tabs) tabs.style.display = 'none';
+    }
+
     sb.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) return;
       // Show "already signed in" banner instead of silently redirecting
@@ -483,18 +506,6 @@ async function signUp() {
   window.location.href = selectedRole === 'brand' ? '/brand-dashboard.html' : '/app.html';
 }
 
-// ── DETECT PASSWORD RESET LINK ──
-// Supabase v2 fires PASSWORD_RECOVERY event when the reset link is clicked
-sb.auth.onAuthStateChange((event, session) => {
-  if (event === 'PASSWORD_RECOVERY') {
-    document.getElementById('panel-signin').style.display = 'none';
-    document.getElementById('panel-signup').style.display = 'none';
-    document.getElementById('panel-forgot').style.display = 'none';
-    document.getElementById('panel-reset').style.display = 'block';
-    const tabs = document.querySelector('.tab-row');
-    if (tabs) tabs.style.display = 'none';
-  }
-});
 
 async function doResetPassword() {
   const pw  = document.getElementById('reset-password').value;
