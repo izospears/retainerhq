@@ -482,24 +482,17 @@ async function signUp() {
 }
 
 // ── DETECT PASSWORD RESET LINK ──
-// Supabase puts #access_token=...&type=recovery in the URL
-(async () => {
-  const hash = window.location.hash;
-  if (hash.includes('type=recovery') || hash.includes('type=signup')) {
-    // Let Supabase process the token from the URL
-    const { data, error } = await sb.auth.getSession();
-    if (data?.session) {
-      // Hide all other panels, show reset panel
-      document.getElementById('panel-signin').style.display = 'none';
-      document.getElementById('panel-signup').style.display = 'none';
-      document.getElementById('panel-forgot').style.display = 'none';
-      document.getElementById('panel-reset').style.display = 'block';
-      // Hide the tab switcher
-      const tabs = document.querySelector('.tab-row');
-      if (tabs) tabs.style.display = 'none';
-    }
+// Supabase v2 fires PASSWORD_RECOVERY event when the reset link is clicked
+sb.auth.onAuthStateChange((event, session) => {
+  if (event === 'PASSWORD_RECOVERY') {
+    document.getElementById('panel-signin').style.display = 'none';
+    document.getElementById('panel-signup').style.display = 'none';
+    document.getElementById('panel-forgot').style.display = 'none';
+    document.getElementById('panel-reset').style.display = 'block';
+    const tabs = document.querySelector('.tab-row');
+    if (tabs) tabs.style.display = 'none';
   }
-})();
+});
 
 async function doResetPassword() {
   const pw  = document.getElementById('reset-password').value;
