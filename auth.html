@@ -415,7 +415,7 @@ async function sendReset() {
   btn.textContent = 'Sending...'; btn.disabled = true;
   hideError();
   const { error } = await sb.auth.resetPasswordForEmail(email, {
-    redirectTo: 'https://retainerhq.io/reset-password.html'
+    redirectTo: 'https://retainerhq.io/auth.html'
   });
   if (error) {
     showError(error.message);
