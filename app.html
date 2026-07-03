@@ -2653,10 +2653,10 @@
             </div>
             <div class="inbox-toolbar-right">
               <select class="inbox-period-select" id="inbox-period" onchange="fetchBrandEmails()">
-                <option value="30">Last 30 days</option>
+                <option value="7">Last 7 days</option>
+                <option value="30" selected>Last 30 days</option>
                 <option value="60">Last 60 days</option>
                 <option value="90">Last 90 days</option>
-                <option value="0">All time</option>
               </select>
               <button class="inbox-refresh-btn" onclick="fetchBrandEmails()">↻ Refresh</button>
               <button class="inbox-disconnect-btn" onclick="disconnectGmail()">Disconnect</button>
