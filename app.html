@@ -2100,6 +2100,8 @@
     .inbox-toolbar-right { display:flex;gap:8px;align-items:center; }
     .inbox-refresh-btn { background:transparent;border:1px solid var(--border2);border-radius:7px;padding:5px 12px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .15s; }
     .inbox-refresh-btn:hover { border-color:var(--accent);color:var(--accent); }
+    .inbox-period-select { background:var(--card);border:1px solid var(--border2);border-radius:7px;padding:5px 10px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;font-family:inherit;outline:none; }
+    .inbox-period-select:focus { border-color:var(--accent);color:var(--text); }
     .inbox-disconnect-btn { background:transparent;border:1px solid rgba(255,107,107,.2);border-radius:7px;padding:5px 10px;font-size:11px;color:var(--red);cursor:pointer;font-family:inherit;transition:all .15s; }
     .inbox-disconnect-btn:hover { border-color:var(--red);background:rgba(255,107,107,.06); }
     .inbox-card { background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;transition:border-color .2s; }
@@ -2650,6 +2652,12 @@
               <span id="inbox-status-label">Scanning your inbox...</span>
             </div>
             <div class="inbox-toolbar-right">
+              <select class="inbox-period-select" id="inbox-period" onchange="fetchBrandEmails()">
+                <option value="30">Last 30 days</option>
+                <option value="60">Last 60 days</option>
+                <option value="90">Last 90 days</option>
+                <option value="0">All time</option>
+              </select>
               <button class="inbox-refresh-btn" onclick="fetchBrandEmails()">↻ Refresh</button>
               <button class="inbox-disconnect-btn" onclick="disconnectGmail()">Disconnect</button>
             </div>
@@ -6333,7 +6341,9 @@ async function fetchBrandEmails() {
   if (listEl) listEl.innerHTML = '<div class="inbox-empty"><div class="inbox-empty-icon">📡</div><div class="inbox-empty-title">Scanning...</div><div class="inbox-empty-sub">Looking for brand deal emails in the last 30 days</div></div>';
 
   try {
-    const query = encodeURIComponent('in:inbox newer_than:30d -from:me');
+    const period = document.getElementById('inbox-period')?.value || '30';
+    const dateFilter = period === '0' ? '' : ` newer_than:${period}d`;
+    const query = encodeURIComponent(`in:inbox${dateFilter} -from:me`);
     const data  = await _gFetch('/messages?q=' + query + '&maxResults=50');
     if (!data) return;
 
