@@ -2775,73 +2775,45 @@
         <div class="section-title">My Rates</div>
         <button class="btn btn-primary" onclick="saveRatesData()">Save Rates</button>
       </div>
-      <div class="rates-layout">
-        <div class="rates-col">
-          <div class="rates-card">
-            <div class="rates-card-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-              GMV Stats
-            </div>
-            <div class="form-group">
-              <label class="form-label">Last 30-Day GMV ($)</label>
-              <input class="form-input" id="rate-gmv-30d" type="number" placeholder="e.g. 100000" />
-              <div class="form-hint">Your total sales generated in the past 30 days</div>
-            </div>
-            <div class="form-group" style="margin-top:18px;">
-              <label class="form-label">Lifetime GMV ($) <span style="color:var(--text3);font-weight:400;font-size:11px;">(optional)</span></label>
-              <input class="form-input" id="rate-gmv-lifetime" type="number" placeholder="e.g. 500000" />
-              <div class="form-hint">Total GMV you've generated across all deals ever</div>
-            </div>
+      <div style="max-width:560px;">
+        <div class="rates-card">
+          <div class="rates-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            My Rate Packages
           </div>
-        </div>
-        <div class="rates-col">
-          <div class="rates-card">
-            <div class="rates-card-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-              Package Rates
+          <div style="font-size:11px;color:var(--text3);margin-bottom:16px;">Set your packages below. The AI email generator uses these to reply to brand inquiries automatically.</div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+
+            <div style="display:grid;grid-template-columns:64px 1fr 120px;gap:8px;align-items:center;">
+              <input class="form-input" id="rate-pkg1-qty" type="number" placeholder="5" style="text-align:center;" />
+              <input class="form-input" id="rate-pkg1-type" placeholder="e.g. TikTok videos, UGC videos, Reels..." />
+              <div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--text3);font-size:13px;">$</span><input class="form-input" id="rate-pkg1-price" type="number" placeholder="1500" /></div>
             </div>
-            <div class="rates-packages">
-              <div class="rates-pkg-row">
-                <div class="rates-pkg-label">
-                  <input class="form-input" id="rate-pkg1-qty" type="number" placeholder="5" style="width:64px;" />
-                  <span class="rates-pkg-videos">videos</span>
-                </div>
-                <div class="rates-pkg-price">
-                  <span class="rates-pkg-dollar">$</span>
-                  <input class="form-input" id="rate-pkg1-price" type="number" placeholder="1500" />
-                </div>
-              </div>
-              <div class="rates-pkg-row">
-                <div class="rates-pkg-label">
-                  <input class="form-input" id="rate-pkg2-qty" type="number" placeholder="10" style="width:64px;" />
-                  <span class="rates-pkg-videos">videos</span>
-                </div>
-                <div class="rates-pkg-price">
-                  <span class="rates-pkg-dollar">$</span>
-                  <input class="form-input" id="rate-pkg2-price" type="number" placeholder="2000" />
-                </div>
-              </div>
-              <div class="rates-pkg-row">
-                <div class="rates-pkg-label">
-                  <input class="form-input" id="rate-pkg3-qty" type="number" placeholder="15" style="width:64px;" />
-                  <span class="rates-pkg-videos">videos</span>
-                </div>
-                <div class="rates-pkg-price">
-                  <span class="rates-pkg-dollar">$</span>
-                  <input class="form-input" id="rate-pkg3-price" type="number" placeholder="3000" />
-                </div>
-              </div>
-              <div class="rates-pkg-row">
-                <div class="rates-pkg-label">
-                  <input class="form-input" id="rate-pkg4-qty" type="number" placeholder="30" style="width:64px;" />
-                  <span class="rates-pkg-videos">videos</span>
-                </div>
-                <div class="rates-pkg-price">
-                  <span class="rates-pkg-dollar">$</span>
-                  <input class="form-input" id="rate-pkg4-price" type="number" placeholder="6000" />
-                </div>
-              </div>
+
+            <div style="display:grid;grid-template-columns:64px 1fr 120px;gap:8px;align-items:center;">
+              <input class="form-input" id="rate-pkg2-qty" type="number" placeholder="10" style="text-align:center;" />
+              <input class="form-input" id="rate-pkg2-type" placeholder="e.g. TikTok videos, UGC videos, Reels..." />
+              <div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--text3);font-size:13px;">$</span><input class="form-input" id="rate-pkg2-price" type="number" placeholder="2500" /></div>
             </div>
+
+            <div style="display:grid;grid-template-columns:64px 1fr 120px;gap:8px;align-items:center;">
+              <input class="form-input" id="rate-pkg3-qty" type="number" placeholder="15" style="text-align:center;" />
+              <input class="form-input" id="rate-pkg3-type" placeholder="e.g. TikTok videos, UGC videos, Reels..." />
+              <div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--text3);font-size:13px;">$</span><input class="form-input" id="rate-pkg3-price" type="number" placeholder="3500" /></div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:64px 1fr 120px;gap:8px;align-items:center;">
+              <input class="form-input" id="rate-pkg4-qty" type="number" placeholder="30" style="text-align:center;" />
+              <input class="form-input" id="rate-pkg4-type" placeholder="e.g. TikTok videos, UGC videos, Reels..." />
+              <div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--text3);font-size:13px;">$</span><input class="form-input" id="rate-pkg4-price" type="number" placeholder="6000" /></div>
+            </div>
+
+            <div style="display:flex;gap:8px;font-size:10px;color:var(--text3);padding:0 2px;font-weight:600;letter-spacing:.5px;">
+              <span style="width:64px;text-align:center;">QTY</span>
+              <span style="flex:1;">CONTENT TYPE</span>
+              <span style="width:120px;">PRICE / MO</span>
+            </div>
+
           </div>
         </div>
       </div>
@@ -2860,9 +2832,9 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="#00E5A0" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         </div>
         <div>
-          <div style="font-size:13px;font-weight:800;color:#F0F4FF;margin-bottom:5px;">Brands will see this media kit when considering you for a deal</div>
+          <div style="font-size:13px;font-weight:800;color:#F0F4FF;margin-bottom:5px;">Your media kit — ready to share with any brand</div>
           <div style="font-size:12px;color:#8896B3;line-height:1.65;">
-            Make it count. Add your <strong style="color:#F0F4FF;">best-performing videos</strong> so brands can see what you're capable of. Use the <strong style="color:#F0F4FF;">bio section</strong> to tell them anything you want them to know — your niche, your audience, what makes your content convert. Everything here is taken into consideration when a brand decides to reach out.
+            Keep this updated. Add your <strong style="color:#F0F4FF;">best content</strong> so brands can see what you're capable of. Use the <strong style="color:#F0F4FF;">bio section</strong> to tell them who you are, what you create, and what makes you stand out. When a brand reaches out, this is what you send them.
           </div>
         </div>
       </div>
@@ -2881,42 +2853,44 @@
             <div style="font-size:11px;color:var(--text3);margin-top:7px;">Click to upload profile photo</div>
           </div>
           <div class="form-group">
-            <label class="form-label">TikTok Handle</label>
+            <label class="form-label">Handle / Username</label>
             <input class="form-input" id="kit-handle" placeholder="@yourhandle" />
           </div>
           <div class="form-group">
+            <label class="form-label">Platforms</label>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;">
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="plat-tiktok" style="accent-color:var(--accent);" /> TikTok</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="plat-instagram" style="accent-color:var(--accent);" /> Instagram</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="plat-youtube" style="accent-color:var(--accent);" /> YouTube</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="plat-facebook" style="accent-color:var(--accent);" /> Facebook</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer;"><input type="checkbox" id="plat-ugc" style="accent-color:var(--accent);" /> UGC</label>
+            </div>
+          </div>
+          <div class="form-group">
             <label class="form-label">Niche</label>
-            <input class="form-input" id="kit-niche" placeholder="e.g. Beauty, Skincare, Lifestyle" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Followers</label>
-            <input class="form-input" id="kit-followers" type="number" placeholder="50000" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Lifetime GMV Generated ($)</label>
-            <input class="form-input" id="kit-gmv" type="number" placeholder="150000" />
+            <input class="form-input" id="kit-niche" placeholder="e.g. Beauty, Skincare, Lifestyle, Fitness" />
           </div>
           <div class="form-group">
             <label class="form-label">Bio / Pitch</label>
-            <textarea class="form-textarea" id="kit-bio" rows="4" placeholder="I'm a TikTok Shop affiliate specializing in K-Beauty and skincare. I create authentic content that drives real conversions..."></textarea>
+            <textarea class="form-textarea" id="kit-bio" rows="4" placeholder="Tell brands who you are, what you create, and what makes your content stand out..."></textarea>
           </div>
 
-          <!-- Top Videos -->
+          <!-- Top Content -->
           <div class="form-group" style="margin-top:8px;">
-            <label class="form-label">Top Videos (3–5 links)</label>
-            <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Paste your best TikTok video links. Brands will see these on your profile.</div>
+            <label class="form-label">Top Content (3–5 links)</label>
+            <div style="font-size:11px;color:var(--text3);margin-bottom:10px;">Paste links to your best content. Any platform works.</div>
             <div style="display:flex;flex-direction:column;gap:8px;">
               <div style="display:flex;align-items:center;gap:8px;">
                 <span style="font-size:11px;font-weight:700;color:var(--text3);min-width:20px;">#1</span>
-                <input class="form-input" id="vurl-0" placeholder="https://www.tiktok.com/@you/video/..." oninput="updateKitPreview()" />
+                <input class="form-input" id="vurl-0" placeholder="https://..." oninput="updateKitPreview()" />
               </div>
               <div style="display:flex;align-items:center;gap:8px;">
                 <span style="font-size:11px;font-weight:700;color:var(--text3);min-width:20px;">#2</span>
-                <input class="form-input" id="vurl-1" placeholder="https://www.tiktok.com/@you/video/..." oninput="updateKitPreview()" />
+                <input class="form-input" id="vurl-1" placeholder="https://..." oninput="updateKitPreview()" />
               </div>
               <div style="display:flex;align-items:center;gap:8px;">
                 <span style="font-size:11px;font-weight:700;color:var(--text3);min-width:20px;">#3</span>
-                <input class="form-input" id="vurl-2" placeholder="https://www.tiktok.com/@you/video/..." oninput="updateKitPreview()" />
+                <input class="form-input" id="vurl-2" placeholder="https://..." oninput="updateKitPreview()" />
               </div>
               <div style="display:flex;align-items:center;gap:8px;">
                 <span style="font-size:11px;font-weight:700;color:var(--text3);min-width:20px;">#4</span>
@@ -2942,14 +2916,11 @@
               </div>
 
               <div class="kit-bio" id="kit-prev-bio">Your bio will appear here...</div>
-              <div class="kit-stats">
-                <div class="kit-stat"><div class="kit-stat-val" id="kit-prev-followers">—</div><div class="kit-stat-lbl">Followers</div></div>
-                <div class="kit-stat"><div class="kit-stat-val" id="kit-prev-gmv">—</div><div class="kit-stat-lbl">Lifetime GMV</div></div>
-              </div>
               <div><span class="kit-niche-badge" id="kit-prev-niche">Niche</span></div>
+              <div id="kit-prev-platforms" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;"></div>
               <!-- Top Videos preview -->
               <div id="kit-prev-videos" style="display:none;margin-top:14px;">
-                <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;">Top Videos</div>
+                <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;">Top Content</div>
                 <div id="kit-tv-links" style="display:flex;flex-direction:column;gap:6px;"></div>
               </div>
             </div>
@@ -3387,16 +3358,16 @@ select.pay-input option{background:#0d1828;}
     <div class="ob-step active" id="ob-s0">
       <div class="ob-step-label">Step 1 of 4</div>
       <div class="ob-title" id="ob-welcome-title">Welcome to RetainerHQ 👋</div>
-      <div class="ob-sub">Let's personalize your experience. This takes less than 2 minutes.</div>
-      <div class="ob-field">
-        <label class="ob-label">Your TikTok Handle *</label>
-        <input class="ob-input" id="ob-handle" type="text" placeholder="@yourhandle" autocomplete="off" />
-        <div class="ob-error-hint" id="ob-handle-err">TikTok handle is required</div>
-      </div>
+      <div class="ob-sub">Let's get you set up. This takes less than 2 minutes.</div>
       <div class="ob-field">
         <label class="ob-label">Your Name *</label>
         <input class="ob-input" id="ob-name" type="text" placeholder="e.g. Isaac Spears" autocomplete="off" />
         <div class="ob-error-hint" id="ob-name-err">Please enter your name</div>
+      </div>
+      <div class="ob-field">
+        <label class="ob-label">Handle / Username *</label>
+        <input class="ob-input" id="ob-handle" type="text" placeholder="@yourhandle" autocomplete="off" />
+        <div class="ob-error-hint" id="ob-handle-err">Handle is required</div>
       </div>
       <button class="ob-btn" onclick="obNext(0)">Continue →</button>
     </div>
@@ -3405,7 +3376,7 @@ select.pay-input option{background:#0d1828;}
     <div class="ob-step" id="ob-s1">
       <div class="ob-step-label">Step 2 of 4</div>
       <div class="ob-title">What's your niche?</div>
-      <div class="ob-sub">Pick the category that best describes your TikTok content.</div>
+      <div class="ob-sub">Pick the category that best describes your content.</div>
       <div class="ob-chips" id="ob-niche-chips">
         <div class="ob-chip" onclick="obChip(this,'niche')">💄 Beauty & Skincare</div>
         <div class="ob-chip" onclick="obChip(this,'niche')">🌿 Health & Wellness</div>
@@ -3422,27 +3393,20 @@ select.pay-input option{background:#0d1828;}
       <button class="ob-btn" onclick="obNext(1)" style="margin-top:24px;">Continue →</button>
     </div>
 
-    <!-- Step 2: Numbers -->
+    <!-- Step 2: Platforms -->
     <div class="ob-step" id="ob-s2">
       <div class="ob-step-label">Step 3 of 4</div>
-      <div class="ob-title">Your numbers</div>
-      <div class="ob-sub">This personalizes your pitch emails and helps brands find you.</div>
-      <div class="ob-field">
-        <label class="ob-label">TikTok Followers *</label>
-        <input class="ob-input" id="ob-followers" type="text" placeholder="e.g. 22000" autocomplete="off" />
-        <div class="ob-error-hint" id="ob-followers-err">Please enter your follower count</div>
+      <div class="ob-title">Where do you create?</div>
+      <div class="ob-sub">Select all the platforms you post on.</div>
+      <div class="ob-chips" id="ob-platform-chips" style="margin-top:16px;">
+        <div class="ob-chip" onclick="obChip(this,'platform')">🎵 TikTok</div>
+        <div class="ob-chip" onclick="obChip(this,'platform')">📸 Instagram</div>
+        <div class="ob-chip" onclick="obChip(this,'platform')">▶️ YouTube</div>
+        <div class="ob-chip" onclick="obChip(this,'platform')">👥 Facebook</div>
+        <div class="ob-chip" onclick="obChip(this,'platform')">🎬 UGC</div>
       </div>
-      <div class="ob-field">
-        <label class="ob-label">Last 30-Day GMV *</label>
-        <input class="ob-input" id="ob-gmv30" type="text" placeholder="e.g. 4200" autocomplete="off" />
-        <div class="ob-error-hint" id="ob-gmv30-err">Please enter your last 30-day GMV</div>
-      </div>
-      <div class="ob-field">
-        <label class="ob-label">All-Time GMV *</label>
-        <input class="ob-input" id="ob-gmv-lifetime" type="text" placeholder="e.g. 4000000" autocomplete="off" />
-        <div class="ob-error-hint" id="ob-gmv-lifetime-err">Please enter your all-time GMV</div>
-      </div>
-      <button class="ob-btn" onclick="obNext(2)">Continue →</button>
+      <div class="ob-error-hint" id="ob-platform-err">Please select at least one platform</div>
+      <button class="ob-btn" onclick="obNext(2)" style="margin-top:24px;">Continue →</button>
     </div>
 
     <!-- Step 3: Bio -->
@@ -3452,7 +3416,7 @@ select.pay-input option{background:#0d1828;}
       <div class="ob-sub">Write a quick intro. Brands will see this on your profile.</div>
       <div class="ob-field">
         <label class="ob-label">Short Bio *</label>
-        <textarea class="ob-input" id="ob-bio" rows="4" placeholder="e.g. TikTok Shop affiliate with $4M+ in GMV. I specialize in K-beauty and skincare content that actually converts. Based in LA, open to monthly retainer deals." style="resize:none;line-height:1.6;"></textarea>
+        <textarea class="ob-input" id="ob-bio" rows="4" placeholder="e.g. I create skincare and beauty content across TikTok and Instagram. I work with brands on monthly retainers — consistent content, clear deliverables, no back and forth. Based in LA." style="resize:none;line-height:1.6;"></textarea>
         <div class="ob-error-hint" id="ob-bio-err">Please write a short bio</div>
         <div style="font-size:11px;color:var(--text3);margin-top:6px;">2–4 sentences. Keep it real — what makes you worth hiring?</div>
       </div>
@@ -6444,35 +6408,37 @@ function _togglePreview(id) {
 function _buildReply(snippet, senderName, brandName) {
   const me        = (mediaKitProfile?.name || currentUser?.email?.split('@')[0] || 'there');
   const firstName = me.split(' ')[0];
-  const gmv       = mediaKitProfile?.total_gmv || mediaKitProfile?.gmv;
-  const gmvLine   = gmv ? `With $${Number(gmv).toLocaleString()}+ in attributed GMV` : 'With a strong track record in TikTok Shop affiliate content';
+  const niche     = mediaKitProfile?.niche || '';
+  const nicheLineBase = niche ? `I specialize in ${niche} content` : 'I create content';
+  const nicheLine = `${nicheLineBase} and work with brands on monthly retainer agreements — consistent content, set deliverables, no back and forth.`;
 
   const rates = mediaKitProfile?.rates_data || JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
   const pkgs  = [
-    { qty: rates.pkg1qty, price: rates.pkg1price },
-    { qty: rates.pkg2qty, price: rates.pkg2price },
-    { qty: rates.pkg3qty, price: rates.pkg3price },
-    { qty: rates.pkg4qty, price: rates.pkg4price },
+    { qty: rates.pkg1qty, price: rates.pkg1price, type: rates.pkg1type },
+    { qty: rates.pkg2qty, price: rates.pkg2price, type: rates.pkg2type },
+    { qty: rates.pkg3qty, price: rates.pkg3price, type: rates.pkg3type },
+    { qty: rates.pkg4qty, price: rates.pkg4price, type: rates.pkg4type },
   ].filter(p => p.qty && p.price);
 
   let rateBlock = '';
   if (pkgs.length > 0) {
-    rateBlock = '\n\nHere\'s a look at my current monthly retainer packages:\n';
-    pkgs.forEach(p => { rateBlock += `• ${p.qty} video${p.qty > 1 ? 's' : ''}/month — $${Number(p.price).toLocaleString()}/mo\n`; });
-    rateBlock += '\nAll packages include full TikTok Shop affiliate video production, posting, and analytics.';
+    rateBlock = '\n\nHere are my current packages:\n';
+    pkgs.forEach(p => {
+      const label = p.type ? p.type : 'pieces of content';
+      rateBlock += `• ${p.qty} ${label}/month — $${Number(p.price).toLocaleString()}/mo\n`;
+    });
   } else {
-    rateBlock = '\n\nI\'d love to share my rate card — what\'s the best way to send that over?';
+    rateBlock = '\n\nI\'d love to share my full rate card — happy to send that over if helpful.';
   }
 
   return `Hi ${senderName.split(' ')[0]},
 
-Thank you for reaching out — I'm excited to hear more about a potential collaboration with ${brandName}!
+Thanks for reaching out — really glad to hear from ${brandName}!
 
-${gmvLine}, I specialize in creating authentic, high-converting TikTok Shop content that drives real results.${rateBlock}
+${nicheLine}${rateBlock}
 
-I'd love to get on a quick call or continue chatting over email — whatever works best for your team!
+Let me know if you'd like to chat more or if there's anything else you need from me.
 
-Looking forward to connecting,
 ${firstName}`;
 }
 
