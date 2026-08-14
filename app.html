@@ -6318,12 +6318,18 @@ async function fetchBrandEmails() {
       return;
     }
 
-    // Fetch metadata for up to 40 messages in parallel
-    const details = await Promise.all(
-      msgs.slice(0, 40).map(m =>
-        _gFetch('/messages/' + m.id + '?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date')
-      )
-    );
+    // Fetch metadata in small batches to avoid Gmail API rate limits (429)
+    const BATCH = 5;
+    const msgSlice = msgs.slice(0, 30);
+    const details = [];
+    for (let i = 0; i < msgSlice.length; i += BATCH) {
+      const batch = msgSlice.slice(i, i + BATCH);
+      const results = await Promise.all(
+        batch.map(m => _gFetch('/messages/' + m.id + '?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date'))
+      );
+      details.push(...results);
+      if (i + BATCH < msgSlice.length) await new Promise(r => setTimeout(r, 300));
+    }
 
     const brandEmails = details.filter(d => d && _isBrandEmail(
       d.payload?.headers?.find(h => h.name === 'Subject')?.value || '',
