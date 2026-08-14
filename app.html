@@ -6238,7 +6238,7 @@ function _initGmailOAuth() {
   }
   _gmailClient = google.accounts.oauth2.initTokenClient({
     client_id: GMAIL_CLIENT_ID,
-    scope: 'https://www.googleapis.com/auth/gmail.modify',
+    scope: 'https://www.googleapis.com/auth/gmail.readonly',
     callback: (resp) => {
       if (resp.error) {
         console.error('Gmail OAuth error:', resp.error);
