@@ -6291,7 +6291,18 @@ async function _gFetch(path, opts = {}) {
 }
 
 // ── Brand deal keyword detection ──
-const _BRAND_KW = ['collaboration','partnership','sponsorship','retainer','brand deal','content creator','ugc','affiliate','sponsored','campaign','rate card','rates','pricing','paid partnership','influencer','tiktok shop','tik tok'];
+const _BRAND_KW = [
+  'collaboration','collab','partnership','sponsorship','retainer','brand deal','brand partnership',
+  'content creator','ugc','user generated','affiliate','sponsored','sponsoring','campaign',
+  'rate card','rates','pricing','your rates','rate sheet','packages','your package',
+  'paid partnership','paid collab','paid opportunity','paid post',
+  'influencer','creator','tiktok shop','tik tok','instagram','youtube',
+  'work together','working together','opportunity','interested in working',
+  'would love to work','we would like','we are reaching out','reaching out to you',
+  'gifted','free product','product exchange','product seeding','send you',
+  'monthly retainer','monthly deal','long term','ongoing partnership',
+  'compensation','budget','fee','payment','invoice','deliverables'
+];
 
 function _isBrandEmail(subject, snippet) {
   const t = ((subject || '') + ' ' + (snippet || '')).toLowerCase();
