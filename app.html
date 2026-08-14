@@ -6292,16 +6292,17 @@ async function _gFetch(path, opts = {}) {
 
 // ── Brand deal keyword detection ──
 const _BRAND_KW = [
-  'collaboration','collab','partnership','sponsorship','retainer','brand deal','brand partnership',
-  'content creator','ugc','user generated','affiliate','sponsored','sponsoring','campaign',
-  'rate card','rates','pricing','your rates','rate sheet','packages','your package',
-  'paid partnership','paid collab','paid opportunity','paid post',
-  'influencer','creator','tiktok shop','tik tok','instagram','youtube',
-  'work together','working together','opportunity','interested in working',
-  'would love to work','we would like','we are reaching out','reaching out to you',
-  'gifted','free product','product exchange','product seeding','send you',
-  'monthly retainer','monthly deal','long term','ongoing partnership',
-  'compensation','budget','fee','payment','invoice','deliverables'
+  'collaboration','collab','brand partnership','brand deal','sponsorship','retainer',
+  'ugc','user generated content','content creator partnership',
+  'rate card','your rates','rate sheet','your packages',
+  'paid partnership','paid collab','paid opportunity','paid collaboration',
+  'tiktok shop','tik tok shop','influencer partnership','creator partnership',
+  'gifted collaboration','product seeding','product exchange',
+  'monthly retainer','ongoing partnership','long-term partnership',
+  'we would love to work with you','interested in working with you',
+  'would love to collaborate','looking to collaborate',
+  'brand ambassador','sponsored content','sponsored post',
+  'deliverables','content deliverables'
 ];
 
 function _isBrandEmail(subject, snippet) {
@@ -6363,6 +6364,9 @@ async function fetchBrandEmails() {
   }
 }
 
+// ── Email data store (avoids quoting issues in onclick attrs) ──
+const _inboxData = {};
+
 // ── Render email cards ──
 function _renderInboxEmails(emails, listEl) {
   listEl.innerHTML = emails.map(email => {
@@ -6375,14 +6379,14 @@ function _renderInboxEmails(emails, listEl) {
     const senderName = nameMatch ? nameMatch[1].trim() : from.split('@')[0];
     const brandName  = _extractBrand(from);
 
-    const reply     = _buildReply(snippet, senderName, brandName);
-    const safeId    = email.id;
-    const safeFrom  = from.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    const safeSub   = subject.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    const safeThr   = email.threadId;
+    const reply  = _buildReply(snippet, senderName, brandName);
+    const id     = email.id;
+
+    // Store data by ID — avoids any quoting/escaping issues in HTML attributes
+    _inboxData[id] = { from, subject, threadId: email.threadId, reply };
 
     return `
-    <div class="inbox-card" id="icard-${safeId}">
+    <div class="inbox-card" id="icard-${id}">
       <div class="inbox-card-header">
         <div class="inbox-sender-avatar">${_esc(brandName.charAt(0).toUpperCase())}</div>
         <div class="inbox-card-meta">
@@ -6392,22 +6396,22 @@ function _renderInboxEmails(emails, listEl) {
         <div class="inbox-brand-tag">${_esc(brandName)}</div>
       </div>
       <div class="inbox-snippet">${_esc(snippet)}</div>
-      <div class="inbox-reply-wrap" id="ireply-${safeId}" style="display:none;">
+      <div class="inbox-reply-wrap" id="ireply-${id}" style="display:none;">
         <div class="inbox-reply-label">✦ AI-Generated Reply</div>
-        <textarea class="inbox-reply-ta" id="irta-${safeId}">${_esc(reply)}</textarea>
+        <textarea class="inbox-reply-ta" id="irta-${id}">${_esc(reply)}</textarea>
       </div>
       <div class="inbox-actions">
-        <button class="inbox-btn inbox-btn-preview" onclick="_togglePreview('${safeId}')">
+        <button class="inbox-btn inbox-btn-preview" onclick="_togglePreview('${id}')">
           ⚡ Preview Reply
         </button>
-        <button class="inbox-btn inbox-btn-send" onclick="_sendReply('${safeId}','${safeFrom}','${safeSub}','${safeThr}')">
+        <button class="inbox-btn inbox-btn-send" onclick="_sendReply('${id}')">
           ↗ Send Reply
         </button>
-        <button class="inbox-btn inbox-btn-draft" onclick="_draftReply('${safeId}','${safeFrom}','${safeSub}','${safeThr}')">
+        <button class="inbox-btn inbox-btn-draft" onclick="_draftReply('${id}')">
           📋 Save Draft
         </button>
       </div>
-      <div class="inbox-card-feedback" id="ifb-${safeId}" style="display:none;"></div>
+      <div class="inbox-card-feedback" id="ifb-${id}" style="display:none;"></div>
     </div>`;
   }).join('');
 }
@@ -6494,20 +6498,20 @@ function _encodeEmail(to, subject, body, threadId, inReplyTo) {
 }
 
 // ── Send reply ──
-async function _sendReply(msgId, toRaw, subjectRaw, threadId) {
+async function _sendReply(msgId) {
+  const d       = _inboxData[msgId] || {};
   const ta      = document.getElementById('irta-' + msgId);
   const body    = ta ? ta.value : _buildReply('','','');
-  const subject = subjectRaw.toLowerCase().startsWith('re:') ? subjectRaw : 'Re: ' + subjectRaw;
+  const subject = (d.subject||'').toLowerCase().startsWith('re:') ? d.subject : 'Re: ' + (d.subject||'');
   const fbEl    = document.getElementById('ifb-' + msgId);
 
-  // Make sure reply is visible before sending
   document.getElementById('ireply-' + msgId).style.display = 'block';
 
   try {
-    const encoded = _encodeEmail(toRaw, subject, body, threadId, msgId);
+    const encoded = _encodeEmail(d.from||'', subject, body, d.threadId||'', msgId);
     const result  = await _gFetch('/messages/send', {
       method: 'POST',
-      body: JSON.stringify({ raw: encoded, threadId })
+      body: JSON.stringify({ raw: encoded, threadId: d.threadId })
     });
     if (result) {
       _showFeedback(fbEl, '✓ Reply sent successfully!', 'ok');
@@ -6523,19 +6527,20 @@ async function _sendReply(msgId, toRaw, subjectRaw, threadId) {
 }
 
 // ── Save as draft ──
-async function _draftReply(msgId, toRaw, subjectRaw, threadId) {
+async function _draftReply(msgId) {
+  const d       = _inboxData[msgId] || {};
   const ta      = document.getElementById('irta-' + msgId);
   const body    = ta ? ta.value : _buildReply('','','');
-  const subject = subjectRaw.toLowerCase().startsWith('re:') ? subjectRaw : 'Re: ' + subjectRaw;
+  const subject = (d.subject||'').toLowerCase().startsWith('re:') ? d.subject : 'Re: ' + (d.subject||'');
   const fbEl    = document.getElementById('ifb-' + msgId);
 
   document.getElementById('ireply-' + msgId).style.display = 'block';
 
   try {
-    const encoded = _encodeEmail(toRaw, subject, body, threadId, msgId);
+    const encoded = _encodeEmail(d.from||'', subject, body, d.threadId||'', msgId);
     const result  = await _gFetch('/drafts', {
       method: 'POST',
-      body: JSON.stringify({ message: { raw: encoded, threadId } })
+      body: JSON.stringify({ message: { raw: encoded, threadId: d.threadId } })
     });
     if (result) _showFeedback(fbEl, '✓ Draft saved to Gmail!', 'ok');
   } catch(e) {
