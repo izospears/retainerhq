@@ -3608,9 +3608,11 @@ let mediaKitProfile = {};
 
 // Check auth — redirect to login if not signed in
 async function initAuth() {
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) { window.location.href = '/auth.html'; return; }
-  currentUser = session.user;
+  // getUser() validates the JWT server-side (unlike getSession which reads cache)
+  // This ensures RLS accepts the token on the very first DB query
+  const { data: { user } } = await sb.auth.getUser();
+  if (!user) { window.location.href = '/auth.html'; return; }
+  currentUser = user;
 
   // Load profile
   const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
