@@ -3608,9 +3608,7 @@ let mediaKitProfile = {};
 
 // Check auth — redirect to login if not signed in
 async function initAuth() {
-  // refreshSession forces a new JWT, ensuring RLS works on the first DB query
-  const { data: refreshData } = await sb.auth.refreshSession();
-  const session = refreshData?.session;
+  const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = '/auth.html'; return; }
   currentUser = session.user;
 
@@ -5498,8 +5496,8 @@ function loadTopVideos(videos) {
 function loadMediaKitForm(profile) {
   if (profile.tiktok_handle) document.getElementById('kit-handle').value = profile.tiktok_handle;
   if (profile.niche) document.getElementById('kit-niche').value = profile.niche;
-  if (profile.followers) document.getElementById('kit-followers').value = profile.followers;
-  if (profile.total_gmv) document.getElementById('kit-gmv').value = profile.total_gmv;
+  if (profile.followers && document.getElementById('kit-followers')) document.getElementById('kit-followers').value = profile.followers;
+  if (profile.total_gmv && document.getElementById('kit-gmv')) document.getElementById('kit-gmv').value = profile.total_gmv;
   if (profile.bio) document.getElementById('kit-bio').value = profile.bio;
   if (profile.top_videos) loadTopVideos(profile.top_videos);
   // Set avatar if already uploaded
@@ -5511,8 +5509,8 @@ function updateKitPreview() {
   const name = document.querySelector('.user-name').textContent;
   const handle = document.getElementById('kit-handle').value || '@handle';
   const niche = document.getElementById('kit-niche').value || 'Niche';
-  const followers = document.getElementById('kit-followers').value;
-  const gmv = document.getElementById('kit-gmv').value;
+  const followers = document.getElementById('kit-followers')?.value || '';
+  const gmv = document.getElementById('kit-gmv')?.value || '';
   const bio = document.getElementById('kit-bio').value || 'Your bio will appear here...';
   const avatarUrl = mediaKitProfile?.avatar_url;
   const prevAv = document.getElementById('kit-prev-avatar');
@@ -5649,8 +5647,8 @@ async function saveMediaKit() {
   const updates = {
     tiktok_handle: document.getElementById('kit-handle').value.trim(),
     niche:     document.getElementById('kit-niche').value.trim(),
-    followers: parseInt(document.getElementById('kit-followers').value) || null,
-    total_gmv: parseFloat(document.getElementById('kit-gmv').value) || null,
+    followers: parseInt(document.getElementById('kit-followers')?.value) || null,
+    total_gmv: parseFloat(document.getElementById('kit-gmv')?.value) || null,
     bio:       document.getElementById('kit-bio').value.trim(),
     top_videos: topVideos,
   };
@@ -5778,8 +5776,8 @@ function downloadMediaKitPDF() {
   // ── Gather data ──────────────────────────────────────────────
   const handle    = document.getElementById('kit-handle').value.trim() || '@handle';
   const niche     = document.getElementById('kit-niche').value.trim() || '';
-  const followers = document.getElementById('kit-followers').value || '';
-  const gmv       = document.getElementById('kit-gmv').value || '';
+  const followers = document.getElementById('kit-followers')?.value || '';
+  const gmv       = document.getElementById('kit-gmv')?.value || '';
   const bio       = document.getElementById('kit-bio').value.trim() || '';
   const fullName  = mediaKitProfile.name || 'Creator';
   const initials  = fullName.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase() || 'CR';
