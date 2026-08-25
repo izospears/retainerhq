@@ -3608,15 +3608,7 @@ let mediaKitProfile = {};
 
 // Check auth — redirect to login if not signed in
 async function initAuth() {
-  // Use onAuthStateChange to guarantee auth token is ready before any DB queries
-  const session = await new Promise(resolve => {
-    const { data: { subscription } } = sb.auth.onAuthStateChange((event, session) => {
-      subscription.unsubscribe();
-      resolve(session);
-    });
-    // Trigger session check
-    sb.auth.getSession();
-  });
+  const { data: { session } } = await sb.auth.getSession();
   if (!session) { window.location.href = '/auth.html'; return; }
   currentUser = session.user;
 
@@ -3668,7 +3660,9 @@ async function initAuth() {
 
 async function loadContracts() {
   const { data, error } = await sb.from('contracts').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
-  if (!error && data) {
+  console.log('[RHQ] loadContracts →', { count: data?.length, error, uid: currentUser?.id });
+  if (error) { console.error('[RHQ] contracts error:', error); return; }
+  if (data) {
     contracts = data.map(c => ({
       id: c.id,
       brand: c.brand,
@@ -3683,6 +3677,7 @@ async function loadContracts() {
       video_stages: c.video_stages || null,
       requires_drafts: c.requires_drafts || false
     }));
+    console.log('[RHQ] contracts loaded:', contracts.length);
   }
 }
 
