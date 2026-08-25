@@ -3656,6 +3656,17 @@ async function initAuth() {
   await loadPayments();
   renderDashboard();
   checkPendingOffers();
+
+  // Retry once after 800ms — Supabase auth token sometimes isn't propagated on first query
+  setTimeout(async () => {
+    const prev = contracts.length;
+    await loadContracts();
+    await loadPayments();
+    if (contracts.length !== prev) {
+      renderDashboard();
+      if (document.getElementById('page-contracts')?.classList.contains('active')) renderContracts();
+    }
+  }, 800);
 }
 
 async function loadContracts() {
