@@ -4961,10 +4961,10 @@ async function selectPlan(priceId, planName) {
   if (activeBtn) { activeBtn.textContent = 'Loading...'; activeBtn.disabled = true; }
   try {
     const { data: { session } } = await sb.auth.getSession();
-    const res = await fetch('https://tbfcwqcqpfbqaknktkyp.supabase.co/functions/v1/stripe-checkout', {
+    const res = await fetch('https://tbfcwqcqpfbqaknktkyp.supabase.co/functions/v1/create-checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
-      body: JSON.stringify({ priceId, userId: currentUser.id, userEmail: currentUser.email })
+      body: JSON.stringify({ priceId, user_id: currentUser.id, email: currentUser.email })
     });
     const { url, error } = await res.json();
     if (url) window.location.href = url;
