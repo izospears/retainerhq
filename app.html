@@ -2166,10 +2166,6 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
       Income Tracker
     </div>
-    <div class="nav-item" onclick="navigate('mediakit')" id="snav-mediakit">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-      Media Kit
-    </div>
     <div class="nav-item" onclick="navigateRates()" id="snav-rates">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       My Rates
@@ -2819,13 +2815,7 @@
       </div>
     </div>
 
-    <div class="page" id="page-mediakit">
-      <div class="section-header">
-        <div class="section-title">My Media Kit</div>
-        <div style="display:flex;gap:10px;align-items:center;">
-          <button class="btn btn-primary" onclick="saveMediaKit()">Save Kit</button>
-        </div>
-      </div>
+    <div class="page" id="page-mediakit" style="display:none!important;">
       <!-- Brand visibility notice -->
       <div style="background:linear-gradient(135deg,rgba(0,229,160,.08),rgba(0,184,255,.05));border:1.5px solid rgba(0,229,160,.25);border-radius:14px;padding:18px 22px;margin-bottom:24px;display:flex;gap:16px;align-items:flex-start;">
         <div style="width:36px;height:36px;background:rgba(0,229,160,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">
@@ -3484,39 +3474,60 @@ select.pay-input option{background:#0d1828;}
 
 <!-- PRICING MODAL -->
 <div class="motiv-flash" id="pricing-modal" onclick="event.target===this&&closePricingModal()">
-  <div class="motiv-card" style="max-width:540px;" onclick="event.stopPropagation()">
-    <div style="font-size:22px;font-weight:900;letter-spacing:-.4px;margin-bottom:6px;text-align:center;">Choose Your Plan</div>
-    <div style="font-size:14px;color:var(--text2);text-align:center;margin-bottom:24px;">7-day free trial · Cancel anytime</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
+  <div class="motiv-card" style="max-width:580px;" onclick="event.stopPropagation()">
+    <!-- Urgency bar -->
+    <div style="text-align:center;margin-bottom:14px;">
+      <span style="background:rgba(249,115,22,.15);color:#f97316;font-size:11px;font-weight:800;padding:5px 14px;border-radius:99px;letter-spacing:.4px;">🔥 Founders Pricing — Rates increase as we grow</span>
+    </div>
+    <div style="font-size:23px;font-weight:900;letter-spacing:-.5px;margin-bottom:4px;text-align:center;">Stop missing brand deals. Start getting paid.</div>
+    <div style="font-size:13px;color:var(--text2);text-align:center;margin-bottom:22px;">One brand deal pays for a full year. Try free for 7 days.</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1.08fr 1fr;gap:10px;margin-bottom:16px;align-items:start;">
       <!-- Weekly -->
-      <div style="background:var(--card2);border:1px solid var(--border2);border-radius:14px;padding:18px;text-align:center;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;">Flexible</div>
-        <div style="font-size:26px;font-weight:900;letter-spacing:-.5px;">$4.99</div>
-        <div style="font-size:12px;color:var(--text3);margin-bottom:16px;">per week</div>
-        <button id="plan-btn-weekly" onclick="selectPlan('price_1U8uktRq48NkoyfjyfoiUYUu','Weekly')" style="width:100%;background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:10px;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;transition:all .15s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text)'">Start Free Trial</button>
+      <div style="background:var(--card2);border:1px solid var(--border2);border-radius:14px;padding:16px;text-align:center;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;">Flexible</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:2px;">≈ $21.62/mo</div>
+        <div style="font-size:25px;font-weight:900;letter-spacing:-.5px;">$4.99</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:12px;">per week</div>
+        <button id="plan-btn-weekly" onclick="selectPlan('price_1U8uktRq48NkoyfjyfoiUYUu','Weekly')" style="width:100%;background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:9px;font-size:12px;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;transition:all .15s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text)'">Start Free Trial</button>
+        <div style="font-size:10px;color:var(--text3);margin-top:7px;">No commitment</div>
       </div>
-      <!-- Monthly -->
-      <div style="background:linear-gradient(135deg,rgba(0,229,160,.08),rgba(91,155,255,.08));border:1.5px solid var(--accent);border-radius:14px;padding:18px;text-align:center;position:relative;">
-        <div style="position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;font-size:9px;font-weight:900;padding:3px 10px;border-radius:99px;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap;">Most Popular</div>
-        <div style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;">Monthly</div>
-        <div style="font-size:26px;font-weight:900;letter-spacing:-.5px;">$14.99</div>
-        <div style="font-size:12px;color:var(--text3);margin-bottom:16px;">per month</div>
-        <button id="plan-btn-monthly" onclick="selectPlan('price_1U8ulHRq48NkoyfjCHp9nCUD','Monthly')" style="width:100%;background:var(--accent);color:#000;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;" onmouseover="this.style.background='#00f0a8'" onmouseout="this.style.background='var(--accent)'">Start Free Trial</button>
+
+      <!-- Monthly - Most Popular -->
+      <div style="background:linear-gradient(135deg,rgba(0,229,160,.1),rgba(91,155,255,.1));border:2px solid var(--accent);border-radius:14px;padding:18px;text-align:center;position:relative;">
+        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;font-size:9px;font-weight:900;padding:4px 12px;border-radius:99px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;">⭐ Most Popular</div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;">Monthly</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:2px;">Cancel anytime</div>
+        <div style="font-size:27px;font-weight:900;letter-spacing:-.5px;color:var(--accent);">$14.99</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:12px;">per month</div>
+        <button id="plan-btn-monthly" onclick="selectPlan('price_1U8ulHRq48NkoyfjCHp9nCUD','Monthly')" style="width:100%;background:var(--accent);color:#000;border:none;border-radius:8px;padding:11px;font-size:13px;font-weight:900;cursor:pointer;font-family:inherit;transition:all .15s;" onmouseover="this.style.background='#00f0a8';this.style.boxShadow='0 0 20px rgba(0,229,160,.35)'" onmouseout="this.style.background='var(--accent)';this.style.boxShadow='none'">Start Free Trial →</button>
+        <div style="font-size:10px;color:var(--text3);margin-top:7px;">7-day free trial</div>
       </div>
+
       <!-- Yearly -->
-      <div style="background:var(--card2);border:1px solid var(--border2);border-radius:14px;padding:18px;text-align:center;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;">Best Value</div>
-        <div style="font-size:26px;font-weight:900;letter-spacing:-.5px;">$99</div>
-        <div style="font-size:12px;color:var(--text3);margin-bottom:16px;">per year</div>
-        <button id="plan-btn-yearly" onclick="selectPlan('price_1U8uldRq48NkoyfjJGMEXR9e','Yearly')" style="width:100%;background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:10px;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;transition:all .15s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text)'">Start Free Trial</button>
+      <div style="background:var(--card2);border:1px solid rgba(245,158,11,.4);border-radius:14px;padding:16px;text-align:center;position:relative;">
+        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#f59e0b,#f97316);color:#000;font-size:9px;font-weight:900;padding:4px 12px;border-radius:99px;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap;">Save $81</div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;">Yearly</div>
+        <div style="font-size:11px;color:var(--text3);text-decoration:line-through;margin-bottom:2px;">$179.88</div>
+        <div style="font-size:25px;font-weight:900;letter-spacing:-.5px;">$99</div>
+        <div style="font-size:11px;color:#f59e0b;font-weight:700;margin-bottom:12px;">= $8.25/mo · 45% off</div>
+        <button id="plan-btn-yearly" onclick="selectPlan('price_1U8uldRq48NkoyfjJGMEXR9e','Yearly')" style="width:100%;background:var(--card);border:1px solid rgba(245,158,11,.5);border-radius:8px;padding:9px;font-size:12px;font-weight:700;color:#f59e0b;cursor:pointer;font-family:inherit;transition:all .15s;" onmouseover="this.style.background='rgba(245,158,11,.15)';this.style.borderColor='#f59e0b'" onmouseout="this.style.background='var(--card)';this.style.borderColor='rgba(245,158,11,.5)'">Start Free Trial</button>
+        <div style="font-size:10px;color:var(--text3);margin-top:7px;">Billed once · best deal</div>
       </div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:20px;padding:16px;background:var(--card2);border:1px solid var(--border2);border-radius:12px;">
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);"><span style="color:var(--accent);font-size:15px;">✓</span> Unlimited contracts & AI inbox scanning</div>
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);"><span style="color:var(--accent);font-size:15px;">✓</span> AI email generator (unlimited)</div>
-      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);"><span style="color:var(--accent);font-size:15px;">✓</span> Income tracker & media kit</div>
+
+    <!-- Feature grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:14px;background:var(--card2);border:1px solid var(--border2);border-radius:12px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> AI inbox — catch every deal</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> Unlimited contracts</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> AI email generator</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> Income tracker</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> Media kit builder</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> My Rates & packages</div>
     </div>
-    <div style="font-size:12px;color:var(--text3);text-align:center;cursor:pointer;" onclick="closePricingModal()">Maybe later</div>
+
+    <div style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:10px;">🔒 Secure checkout via Stripe · No charge during 7-day trial</div>
+    <div style="font-size:12px;color:var(--text3);text-align:center;cursor:pointer;padding:4px;" onclick="closePricingModal()">Maybe later</div>
   </div>
 </div>
 
@@ -3729,14 +3740,14 @@ function initials(str) {
 
 function navigate(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  ['dashboard','contracts','email','income','mediakit','rates','roster','opps','offers'].forEach(id => {
+  ['dashboard','contracts','email','income','rates','roster','opps','offers'].forEach(id => {
     const s = document.getElementById('snav-' + id);
     const m = document.getElementById('mnav-' + id);
     if (s) s.classList.remove('active');
     if (m) m.classList.remove('active');
   });
   document.getElementById('page-' + page).classList.add('active');
-  const titles = { dashboard:'Dashboard', contracts:'Contracts', email:'Email Generator', detail:'Contract Detail', income:'Income Tracker', mediakit:'Media Kit', rates:'My Rates', roster:'Creator Roster', opps:'Opportunities', offers:'Brand Offers' };
+  const titles = { dashboard:'Dashboard', contracts:'Contracts', email:'Email Generator', detail:'Contract Detail', income:'Income Tracker', rates:'My Rates', roster:'Creator Roster', opps:'Opportunities', offers:'Brand Offers' };
   document.getElementById('topbar-title').textContent = titles[page] || '';
   const navKey = page === 'detail' ? null : page;
   if (navKey) {
@@ -4344,7 +4355,6 @@ const _TOUR_STEPS = [
   { page: 'contracts', navId: 'snav-contracts', emoji: '📋', title: 'Track Every Deal', desc: 'Add brand deals, mark videos as posted, and stay on top of every deadline. Never lose track of a retainer again.' },
   { page: 'email',     navId: 'snav-email',     emoji: '✉️', title: 'Pitch Like a Pro', desc: 'AI writes professional retainer pitches, counter offers, and negotiation emails using your actual stats.' },
   { page: 'income',    navId: 'snav-income',     emoji: '💰', title: 'Get Paid on Time', desc: 'Log payments, see what\'s owed, and track your monthly income so you always know where your money stands.' },
-  { page: 'mediakit',  navId: 'snav-mediakit',   emoji: '🪪', title: 'Your Media Kit', desc: 'Build a shareable media kit with your stats, niche, and packages — ready to send to any brand.' },
 ];
 let _tourStep = 0;
 
@@ -5564,54 +5574,11 @@ function loadTopVideos(videos) {
 }
 
 function loadMediaKitForm(profile) {
-  if (profile.tiktok_handle) document.getElementById('kit-handle').value = profile.tiktok_handle;
-  if (profile.niche) document.getElementById('kit-niche').value = profile.niche;
-  if (profile.followers && document.getElementById('kit-followers')) document.getElementById('kit-followers').value = profile.followers;
-  if (profile.total_gmv && document.getElementById('kit-gmv')) document.getElementById('kit-gmv').value = profile.total_gmv;
-  if (profile.bio) document.getElementById('kit-bio').value = profile.bio;
-  if (profile.top_videos) loadTopVideos(profile.top_videos);
-  // Set avatar if already uploaded
+  // Media Kit removed — just store profile data for other features (email generator, rates)
   if (profile.avatar_url) setAvatarEverywhere(profile.avatar_url);
-  updateKitPreview();
 }
 
-function updateKitPreview() {
-  const name = document.querySelector('.user-name').textContent;
-  const handle = document.getElementById('kit-handle').value || '@handle';
-  const niche = document.getElementById('kit-niche').value || 'Niche';
-  const followers = document.getElementById('kit-followers')?.value || '';
-  const gmv = document.getElementById('kit-gmv')?.value || '';
-  const bio = document.getElementById('kit-bio').value || 'Your bio will appear here...';
-  const avatarUrl = mediaKitProfile?.avatar_url;
-  const prevAv = document.getElementById('kit-prev-avatar');
-  if (avatarUrl) {
-    prevAv.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:12px;" />`;
-  } else {
-    prevAv.textContent = name.slice(0,2).toUpperCase();
-  }
-  document.getElementById('kit-prev-name').textContent = name;
-  document.getElementById('kit-prev-handle').textContent = handle.startsWith('@') ? handle : '@'+handle;
-  document.getElementById('kit-prev-bio').textContent = bio;
-  if (document.getElementById('kit-prev-followers')) document.getElementById('kit-prev-followers').textContent = fmtNum(followers);
-  if (document.getElementById('kit-prev-gmv')) document.getElementById('kit-prev-gmv').textContent = gmv ? '$'+fmtNum(gmv) : '—';
-  document.getElementById('kit-prev-niche').textContent = niche;
-
-  // Top videos preview — show links as clickable badges
-  const tvSection = document.getElementById('kit-prev-videos');
-  const tvLinks   = document.getElementById('kit-tv-links');
-  const urls = [0,1,2,3,4].map(i => document.getElementById('vurl-'+i)?.value.trim()).filter(Boolean);
-  tvSection.style.display = urls.length ? 'block' : 'none';
-  if (urls.length) {
-    tvLinks.innerHTML = urls.map((url, i) => {
-      const label = url.length > 45 ? url.slice(0,45)+'…' : url;
-      return `<a href="${url}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 11px;text-decoration:none;color:var(--accent);font-size:11px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:12px;height:12px;flex-shrink:0;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Video #${i+1}
-        <span style="color:var(--text3);font-weight:400;margin-left:2px;">${label}</span>
-      </a>`;
-    }).join('');
-  }
-}
+function updateKitPreview() { /* Media Kit removed */ }
 
 // ── AVATAR UPLOAD WITH CROP ────────────────────────────────
 let _cropper = null;
