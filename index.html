@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RetainerHQ — The TikTok Shop Affiliate Marketplace</title>
-  <meta name="description" content="The marketplace where TikTok Shop brands meet top affiliates. Creators land monthly retainer deals. Brands find vetted creators who convert." />
+  <title>RetainerHQ — Your AI Brand Deal Manager for TikTok Shop &amp; UGC Creators</title>
+  <meta name="description" content="RetainerHQ finds the brand offers in your inbox, writes the reply with your real rates, tracks every deliverable, and chases the invoice. Everything a manager does for $39/mo — none of the cut." />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
@@ -256,7 +256,7 @@
   </a>
   <div class="nav-right">
     <a href="/auth.html" class="btn btn-ghost">Sign In</a>
-    <a href="/auth.html" class="btn btn-primary">Get Started Free</a>
+    <a href="/auth.html" class="btn btn-primary">Start Free Trial</a>
   </div>
 </nav>
 
@@ -264,83 +264,87 @@
 <section class="hero">
   <div class="hero-badge">
     <div class="hero-badge-dot"></div>
-    <span id="waitlist-count">340</span> creators & brands on the platform
+    <span id="waitlist-count">340</span>+ TikTok Shop &amp; UGC creators
   </div>
-  <h1>The Marketplace Where<br><span class="highlight">Brands Meet Affiliates</span></h1>
-  <p class="hero-sub">Brands post monthly retainer deals. TikTok Shop affiliates apply, manage contracts, and get paid — all in one place.</p>
+  <h1>Your AI brand deal manager.<br><span class="highlight">None of the cut.</span></h1>
+  <p class="hero-sub">RetainerHQ finds the brand offers sitting in your inbox, prices them, writes the reply with your real rates, and chases the invoice until you're paid. A manager takes 15–20%. This takes $39.</p>
 
-  <div class="split-cards">
+  <div class="cta-buttons" style="margin-bottom:16px;">
+    <button class="btn btn-primary btn-lg" onclick="window.location.href='/auth.html'">Start 7-Day Free Trial →</button>
+    <button class="btn btn-outline btn-lg" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See how it works</button>
+  </div>
+  <p style="font-size:12px;color:var(--text3);">$0 today · Cancel in one click · Built by a $4M+ GMV affiliate</p>
+
+  <div class="split-cards" style="margin-top:44px;">
     <div class="split-card" onclick="window.location.href='/auth.html'">
       <div class="split-card-icon creator">
         <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
       </div>
-      <div class="split-card-title">I'm a Creator</div>
-      <div class="split-card-desc">TikTok Shop affiliate looking for monthly retainer deals with brands that pay consistently.</div>
-      <div class="split-card-cta">Join free <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      <div class="split-card-title">TikTok Shop Affiliates</div>
+      <div class="split-card-desc">Turn one-off videos into monthly retainers. Pitch with your GMV, not your follower count.</div>
+      <div class="split-card-cta">Start free trial <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
     </div>
-    <div class="split-card brand-card" onclick="window.location.href='/brand-signup'">
-      <div class="split-card-icon brand">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#60A5FA" stroke-width="2.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <div class="split-card" onclick="window.location.href='/auth.html'">
+      <div class="split-card-icon creator">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
       </div>
-      <div class="split-card-title">I'm a Brand</div>
-      <div class="split-card-desc">Looking to find and work with vetted TikTok Shop affiliates on monthly retainer agreements.</div>
-      <div class="split-card-cta" style="color:#60A5FA;">Get brand access <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      <div class="split-card-title">UGC Creators</div>
+      <div class="split-card-desc">Price per asset, lock in usage rights, and stop chasing brands for money you already earned.</div>
+      <div class="split-card-cta">Start free trial <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
     </div>
   </div>
-
-  <p style="font-size:12px;color:var(--text3);">Free during beta · No credit card required · Built by a $4M+ GMV affiliate</p>
 </section>
 
 <!-- PROOF BAR -->
 <div class="proof-bar">
   <div class="proof-item"><div class="proof-num">$4M+</div><div class="proof-label">GMV by our founder</div></div>
   <div class="proof-divider"></div>
-  <div class="proof-item"><div class="proof-num">340+</div><div class="proof-label">Creators & brands</div></div>
+  <div class="proof-item"><div class="proof-num">15–20%</div><div class="proof-label">What a manager takes</div></div>
   <div class="proof-divider"></div>
-  <div class="proof-item"><div class="proof-num">$0</div><div class="proof-label">Cost during beta</div></div>
+  <div class="proof-item"><div class="proof-num">$39</div><div class="proof-label">What RetainerHQ takes</div></div>
   <div class="proof-divider"></div>
-  <div class="proof-item"><div class="proof-num">1 place</div><div class="proof-label">For all your deals</div></div>
+  <div class="proof-item"><div class="proof-num">1 deal</div><div class="proof-label">Pays for the whole year</div></div>
 </div>
 
 <!-- HOW IT WORKS -->
-<section class="section" style="background:var(--bg);">
+<section class="section" id="how" style="background:var(--bg);">
   <div style="max-width:1100px;margin:0 auto;">
     <div style="text-align:center;margin-bottom:52px;">
       <div class="section-badge">How It Works</div>
-      <div class="section-title">Simple for both sides</div>
+      <div class="section-title">Everything a manager does, on autopilot</div>
     </div>
     <div class="hiw-grid">
       <div>
-        <div class="hiw-col-label">For Creators</div>
+        <div class="hiw-col-label">Find &amp; close</div>
         <div class="hiw-steps">
           <div class="hiw-step">
             <div class="step-num">1</div>
-            <div><div class="step-title">Create your profile & media kit</div><div class="step-desc">Add your TikTok handle, niche, follower count, and lifetime GMV. Your media kit is auto-generated and ready to share.</div></div>
+            <div><div class="step-title">Connect Gmail. We find the offers.</div><div class="step-desc">Deal Flow scans your inbox, throws out the newsletters, and surfaces every real brand email — scored Hot, Warm, or Gifted with a dollar estimate on each.</div></div>
           </div>
           <div class="hiw-step">
             <div class="step-num">2</div>
-            <div><div class="step-title">Brands find you and send offers</div><div class="step-desc">Brands browse the creator marketplace and send you monthly retainer offers directly — no cold pitching required.</div></div>
+            <div><div class="step-title">Reply in one click, with your real rates.</div><div class="step-desc">Set your packages once. Every reply, pitch, and counter-offer is written around your actual numbers — and pushes the brand toward a monthly retainer instead of a one-off.</div></div>
           </div>
           <div class="hiw-step">
             <div class="step-num">3</div>
-            <div><div class="step-title">Manage everything in one place</div><div class="step-desc">Track contracts, deadlines, videos posted, and payments. Use the AI email generator to respond to any brand deal in seconds.</div></div>
+            <div><div class="step-title">Negotiate up. Decline gracefully. Never guess.</div><div class="step-desc">Counter-offer, upsell to a bigger package, or pass while keeping the door open — the right email for every situation, in seconds.</div></div>
           </div>
         </div>
       </div>
       <div>
-        <div class="hiw-col-label brand">For Brands</div>
+        <div class="hiw-col-label">Deliver &amp; get paid</div>
         <div class="hiw-steps">
           <div class="hiw-step">
-            <div class="step-num brand">1</div>
-            <div><div class="step-title">Create your brand account</div><div class="step-desc">Tell us your niche, budget, and what you're looking for. Takes less than 2 minutes.</div></div>
+            <div class="step-num">4</div>
+            <div><div class="step-title">Track every deliverable and deadline.</div><div class="step-desc">Each contract shows videos owed, videos posted, and days left. Expiring deals prompt a renewal pitch before the brand forgets you exist.</div></div>
           </div>
           <div class="hiw-step">
-            <div class="step-num brand">2</div>
-            <div><div class="step-title">Browse vetted TikTok Shop creators</div><div class="step-desc">Filter by niche, follower count, and GMV. See exactly who's converted before and send retainer offers directly.</div></div>
+            <div class="step-num">5</div>
+            <div><div class="step-title">Know exactly who owes you what.</div><div class="step-desc">Paid, pending, and overdue — across every brand, in one view. No more digging through bank statements to find out if a brand actually paid.</div></div>
           </div>
           <div class="hiw-step">
-            <div class="step-num brand">3</div>
-            <div><div class="step-title">Run monthly retainer campaigns</div><div class="step-desc">Track all your active creator deals, videos delivered, and campaign performance — without spreadsheets or DMs.</div></div>
+            <div class="step-num">6</div>
+            <div><div class="step-title">Chase invoices without the awkwardness.</div><div class="step-desc">Overdue payment? One click sends a firm, professional follow-up. You get paid; the relationship stays warm.</div></div>
           </div>
         </div>
       </div>
@@ -352,38 +356,38 @@
 <section class="features-section">
   <div class="features-header">
     <div class="section-badge">Platform Features</div>
-    <div class="section-title">Everything you need to run deals professionally</div>
+    <div class="section-title">Built for creators who treat this like a business</div>
   </div>
   <div class="features-grid">
     <div class="feature-card">
-      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
-      <div class="feature-title">Contract Dashboard</div>
-      <div class="feature-desc">Every retainer deal in one place. Track value, videos posted, videos remaining, and deadlines at a glance.</div>
+      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+      <div class="feature-title">Deal Flow Inbox</div>
+      <div class="feature-desc">Every brand offer in your Gmail, found, scored, and priced. See "3 open offers · $6,500 on the table" the moment you log in.</div>
     </div>
     <div class="feature-card">
       <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
       <div class="feature-title">AI Email Generator</div>
-      <div class="feature-desc">Paste a brand's email and get the perfect response in seconds — pitch, counter-offer, or package push.</div>
+      <div class="feature-desc">Pitch, counter, negotiate up, or decline — written around your rates and results. Send straight from the app.</div>
     </div>
     <div class="feature-card">
-      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg></div>
-      <div class="feature-title">Media Kit Builder</div>
-      <div class="feature-desc">Build a professional media kit with your stats, niche, top videos, and packages. Download as PDF in one click.</div>
+      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+      <div class="feature-title">Contract Dashboard</div>
+      <div class="feature-desc">Every retainer in one place. Value, videos owed, videos posted, deadlines, and renewal prompts before a deal expires.</div>
     </div>
     <div class="feature-card">
       <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
       <div class="feature-title">Income Tracker</div>
-      <div class="feature-desc">Log payments, track what's paid and what's pending, and see your total income across all brand deals.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
-      <div class="feature-title">Creator Marketplace</div>
-      <div class="feature-desc">Brands browse creators filtered by niche, follower count, and GMV. Creators get discovered without cold outreach.</div>
+      <div class="feature-desc">Paid, pending, overdue — by brand, by month. Know your real numbers at tax time and at negotiation time.</div>
     </div>
     <div class="feature-card">
       <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-      <div class="feature-title">My Rates</div>
-      <div class="feature-desc">Set your retainer packages and rates. Every pitch email automatically uses your real numbers — no more guessing.</div>
+      <div class="feature-title">Rate Card &amp; Packages</div>
+      <div class="feature-desc">Set your retainer tiers once. Every email uses them automatically. No more making up a number on the spot.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
+      <div class="feature-title">The Retainer System</div>
+      <div class="feature-desc">The same playbook our founder used to $4M+ GMV, baked into every pitch: one-offs become monthly, monthly becomes predictable income.</div>
     </div>
   </div>
 </section>
@@ -392,54 +396,79 @@
 <section class="compare-section">
   <div class="compare-header">
     <div class="section-badge">Why RetainerHQ</div>
-    <div class="section-title">Stop managing deals in your notes app</div>
+    <div class="section-title">Cheaper than a manager. Faster than doing it yourself.</div>
   </div>
   <div class="compare-table">
     <div class="compare-row header">
       <div class="compare-cell"></div>
       <div class="compare-cell" style="color:var(--accent);">RetainerHQ</div>
-      <div class="compare-cell">Doing it yourself</div>
+      <div class="compare-cell">A manager</div>
     </div>
     <div class="compare-row">
-      <div class="compare-cell feature">Professional media kit</div>
-      <div class="compare-cell yes">✓ Built in</div>
-      <div class="compare-cell no">Canva + manual update</div>
+      <div class="compare-cell feature">Finds brand offers in your inbox</div>
+      <div class="compare-cell yes">✓ Automatic, scored &amp; priced</div>
+      <div class="compare-cell no">Forwards you the email</div>
     </div>
     <div class="compare-row">
-      <div class="compare-cell feature">Brand email responses</div>
-      <div class="compare-cell yes">✓ AI-generated</div>
-      <div class="compare-cell no">30 mins per email</div>
+      <div class="compare-cell feature">Replies &amp; negotiates</div>
+      <div class="compare-cell yes">✓ In seconds, with your rates</div>
+      <div class="compare-cell no">When they get to it</div>
     </div>
     <div class="compare-row">
-      <div class="compare-cell feature">Contract tracking</div>
-      <div class="compare-cell yes">✓ Dashboard</div>
-      <div class="compare-cell no">Notes app / spreadsheet</div>
+      <div class="compare-cell feature">Tracks deliverables &amp; deadlines</div>
+      <div class="compare-cell yes">✓ Live dashboard</div>
+      <div class="compare-cell no">Maybe a spreadsheet</div>
     </div>
     <div class="compare-row">
-      <div class="compare-cell feature">Brand discovery</div>
-      <div class="compare-cell yes">✓ Marketplace</div>
-      <div class="compare-cell no">Cold DMs, 80% ghosted</div>
+      <div class="compare-cell feature">Chases overdue payments</div>
+      <div class="compare-cell yes">✓ One click</div>
+      <div class="compare-cell no">Only if you ask</div>
     </div>
     <div class="compare-row">
-      <div class="compare-cell feature">Payment tracking</div>
-      <div class="compare-cell yes">✓ Income tracker</div>
-      <div class="compare-cell no">Bank statements</div>
+      <div class="compare-cell feature">Pushes retainers over one-offs</div>
+      <div class="compare-cell yes">✓ Every single email</div>
+      <div class="compare-cell no">Depends on the manager</div>
     </div>
     <div class="compare-row" style="border-bottom:none;">
-      <div class="compare-cell feature">Cost</div>
-      <div class="compare-cell yes">Free during beta</div>
-      <div class="compare-cell no">Your time</div>
+      <div class="compare-cell feature">Cost on $3,000/mo in deals</div>
+      <div class="compare-cell yes">$39</div>
+      <div class="compare-cell no">$450–600</div>
     </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="pricing" style="background:var(--bg);">
+  <div style="max-width:760px;margin:0 auto;text-align:center;">
+    <div class="section-badge">Pricing</div>
+    <div class="section-title">One plan. Everything included.</div>
+    <p style="font-size:14px;color:var(--text2);margin:10px auto 36px;max-width:480px;line-height:1.6;">Founders pricing is locked in for life when you join now. It goes up as we grow — early creators never pay more.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;text-align:center;" class="split-cards">
+      <div class="split-card" style="cursor:default;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:12px;">Monthly</div>
+        <div style="font-size:44px;font-weight:900;letter-spacing:-1.5px;line-height:1;">$39</div>
+        <div style="font-size:12px;color:var(--text3);margin:8px 0 20px;">per month · cancel anytime</div>
+        <a href="/auth.html" class="btn btn-outline" style="width:100%;justify-content:center;">Start 7-Day Free Trial</a>
+      </div>
+      <div class="split-card" style="cursor:default;border-color:var(--accent);position:relative;">
+        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;font-size:10px;font-weight:900;padding:4px 14px;border-radius:99px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;">Best value · Save $119</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:12px;">Yearly</div>
+        <div style="display:flex;align-items:baseline;justify-content:center;gap:10px;"><span style="font-size:15px;color:var(--text3);text-decoration:line-through;">$468</span><span style="font-size:44px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--accent);">$349</span></div>
+        <div style="font-size:12px;color:var(--accent);font-weight:700;margin:8px 0 20px;">= $29/mo · 3 months free</div>
+        <a href="/auth.html" class="btn btn-primary" style="width:100%;justify-content:center;">Start 7-Day Free Trial →</a>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:20px;">🔒 Secure checkout via Stripe · $0 charged during trial · cancel in one click</p>
   </div>
 </section>
 
 <!-- FINAL CTA -->
 <section class="cta-section" style="background:var(--bg2);border-top:1px solid var(--border);">
-  <div class="cta-title">Ready to run your brand deals<br>like a business?</div>
-  <p class="cta-sub">Free during beta. No credit card required.</p>
+  <div class="cta-title">Stop leaving brand deals<br>in your inbox.</div>
+  <p class="cta-sub">7-day free trial. $0 today. One deal pays for the year.</p>
   <div class="cta-buttons">
-    <button class="btn btn-primary btn-lg" onclick="window.location.href='/auth.html'">Join as a Creator →</button>
-    <button class="btn btn-outline btn-lg" onclick="window.location.href='/brand-signup'">Join as a Brand</button>
+    <button class="btn btn-primary btn-lg" onclick="window.location.href='/auth.html'">Start Free Trial →</button>
+    <button class="btn btn-outline btn-lg" onclick="window.location.href='/brand-signup'">I'm a Brand</button>
   </div>
 </section>
 
@@ -483,12 +512,12 @@ function openWaitlist(role) {
   const content = document.getElementById('modal-content');
   content.innerHTML = `
     <div class="modal-title">Join RetainerHQ</div>
-    <div class="modal-sub">Free during beta. Get early access and be first to receive brand deals.</div>
+    <div class="modal-sub">7-day free trial. Your AI brand deal manager, $0 today.</div>
     <div class="role-selector">
       <div class="role-option ${role === 'creator' ? 'selected' : ''}" onclick="selectRole('creator')" id="role-creator">
         <div class="role-option-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
         <div class="role-option-label">Creator</div>
-        <div class="role-option-sub">TikTok Shop affiliate</div>
+        <div class="role-option-sub">TikTok Shop or UGC</div>
       </div>
       <div class="role-option ${role === 'brand' ? 'selected' : ''}" onclick="selectRole('brand')" id="role-brand">
         <div class="role-option-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
@@ -503,9 +532,9 @@ function openWaitlist(role) {
       <input type="text" class="form-input" id="waitlist-name" placeholder="Your name (optional)" />
     </div>
     <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;font-size:14px;" onclick="submitWaitlist()">
-      Get Started Free →
+      Start Free Trial →
     </button>
-    <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:12px;">No spam. No credit card required.</p>
+    <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:12px;">No spam. Cancel anytime.</p>
   `;
   modal.classList.add('open');
 }
