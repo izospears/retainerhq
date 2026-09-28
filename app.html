@@ -2216,7 +2216,7 @@
       <div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:2px;">Unlock Pro</div>
       <div style="font-size:10px;color:var(--text2);margin-bottom:8px;">Unlimited contracts & all features</div>
       <button onclick="openPricingModal()" style="width:100%;background:var(--accent);color:#000;border:none;border-radius:7px;padding:7px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;transition:all .15s;" onmouseover="this.style.background='#00f0a8'" onmouseout="this.style.background='var(--accent)'">
-        Upgrade — From $4.99/wk
+        Upgrade to Pro — $39/mo
       </button>
     </div>
     <button onclick="localStorage.removeItem('rhq_creator_tour_v1');startCreatorTour()" style="width:100%;background:transparent;border:1px solid rgba(0,229,160,.2);border-radius:8px;padding:7px;color:rgba(0,229,160,.6);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:6px;transition:all .15s;" onmouseover="this.style.color='#00E5A0';this.style.borderColor='rgba(0,229,160,.5)'" onmouseout="this.style.color='rgba(0,229,160,.6)';this.style.borderColor='rgba(0,229,160,.2)'">
@@ -3442,19 +3442,19 @@ select.pay-input option{background:#0d1828;}
       </svg>
     </div>
     <div class="motiv-quote" style="font-size:22px;font-weight:900;letter-spacing:-.4px;margin-bottom:8px;">You've used your 3 free emails 🚀</div>
-    <div class="motiv-ref" style="font-size:15px;color:var(--text2);line-height:1.6;margin-bottom:24px;font-style:normal;">Upgrade to <strong style="color:var(--accent)">Pro</strong> for unlimited AI email generation, income tracking, and everything you need to scale your brand deals.</div>
+    <div class="motiv-ref" style="font-size:15px;color:var(--text2);line-height:1.6;margin-bottom:24px;font-style:normal;">Upgrade to <strong style="color:var(--accent)">Pro</strong> and let RetainerHQ find your brand deals, write the replies, and chase the invoices — for less than a manager's cut on a single video.</div>
     <div style="background:var(--card2);border:1px solid var(--border2);border-radius:14px;padding:16px;margin-bottom:24px;text-align:left;">
       <div style="font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:12px;">Everything in Pro</div>
       <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;"><span style="color:var(--accent);font-size:16px;">✓</span> Deal Flow inbox — never miss an offer</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;"><span style="color:var(--accent);font-size:16px;">✓</span> Unlimited AI replies &amp; pitches</div>
         <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;"><span style="color:var(--accent);font-size:16px;">✓</span> Unlimited contracts</div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;"><span style="color:var(--accent);font-size:16px;">✓</span> AI Email Generator</div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;"><span style="color:var(--accent);font-size:16px;">✓</span> Income Tracker & payments</div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;"><span style="color:var(--accent);font-size:16px;">✓</span> Media Kit Generator</div>
-        <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;"><span style="color:var(--accent);font-size:16px;">✓</span> My Rates & brand insights</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;"><span style="color:var(--accent);font-size:16px;">✓</span> Income Tracker &amp; overdue alerts</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;"><span style="color:var(--accent);font-size:16px;">✓</span> Rate card &amp; retainer packages</div>
       </div>
     </div>
     <button onclick="closeUpgradePopup();openPricingModal()" style="width:100%;background:var(--accent);color:#000;font-weight:900;font-size:16px;font-family:inherit;border:none;border-radius:12px;padding:15px;cursor:pointer;transition:all .15s;letter-spacing:-.2px;" onmouseover="this.style.background='#00f0a8';this.style.boxShadow='0 0 28px rgba(0,229,160,.4)'" onmouseout="this.style.background='var(--accent)';this.style.boxShadow='none'">
-      See Plans — From $4.99/wk →
+      Start Free Trial — $39/mo →
     </button>
     <div style="font-size:12px;color:var(--text3);margin-top:12px;cursor:pointer;" onclick="closeUpgradePopup()">Maybe later</div>
   </div>
@@ -3462,59 +3462,50 @@ select.pay-input option{background:#0d1828;}
 
 <!-- PRICING MODAL -->
 <div class="motiv-flash" id="pricing-modal" onclick="event.target===this&&closePricingModal()">
-  <div class="motiv-card" style="max-width:580px;" onclick="event.stopPropagation()">
-    <!-- Urgency bar -->
+  <div class="motiv-card" style="max-width:600px;" onclick="event.stopPropagation()">
     <div style="text-align:center;margin-bottom:14px;">
-      <span style="background:rgba(249,115,22,.15);color:#f97316;font-size:11px;font-weight:800;padding:5px 14px;border-radius:99px;letter-spacing:.4px;">🔥 Founders Pricing — Rates increase as we grow</span>
+      <span style="background:rgba(249,115,22,.15);color:#f97316;font-size:11px;font-weight:800;padding:5px 14px;border-radius:99px;letter-spacing:.4px;">🔥 Founders Pricing — locked in for life when you join now</span>
     </div>
-    <div style="font-size:23px;font-weight:900;letter-spacing:-.5px;margin-bottom:4px;text-align:center;">Stop missing brand deals. Start getting paid.</div>
-    <div style="font-size:13px;color:var(--text2);text-align:center;margin-bottom:22px;">One brand deal pays for a full year. Try free for 7 days.</div>
+    <div style="font-size:24px;font-weight:900;letter-spacing:-.5px;margin-bottom:6px;text-align:center;line-height:1.15;">Everything a manager does.<br><span style="color:var(--accent);">None of the cut.</span></div>
+    <div style="font-size:13px;color:var(--text2);text-align:center;margin-bottom:20px;line-height:1.6;">A manager takes 15–20% of every deal. On $3,000/mo that's <span style="color:#FF6B6B;font-weight:700;">$450–600</span>.<br>RetainerHQ finds the deals, writes the replies, and chases the invoices for <span style="color:var(--accent);font-weight:800;">$39</span>.</div>
 
-    <div style="display:grid;grid-template-columns:1fr 1.08fr 1fr;gap:10px;margin-bottom:16px;align-items:start;">
-      <!-- Weekly -->
-      <div style="background:var(--card2);border:1px solid var(--border2);border-radius:14px;padding:16px;text-align:center;">
-        <div style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;">Flexible</div>
-        <div style="font-size:11px;color:var(--text3);margin-bottom:2px;">≈ $21.62/mo</div>
-        <div style="font-size:25px;font-weight:900;letter-spacing:-.5px;">$4.99</div>
-        <div style="font-size:11px;color:var(--text3);margin-bottom:12px;">per week</div>
-        <button id="plan-btn-weekly" onclick="selectPlan('price_1U8uktRq48NkoyfjyfoiUYUu','Weekly')" style="width:100%;background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:9px;font-size:12px;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;transition:all .15s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text)'">Start Free Trial</button>
-        <div style="font-size:10px;color:var(--text3);margin-top:7px;">No commitment</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;align-items:stretch;">
+      <!-- Monthly -->
+      <div style="background:var(--card2);border:1px solid var(--border2);border-radius:14px;padding:20px 18px;text-align:center;display:flex;flex-direction:column;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;">Monthly</div>
+        <div style="font-size:34px;font-weight:900;letter-spacing:-1px;line-height:1;">$39</div>
+        <div style="font-size:11px;color:var(--text3);margin:6px 0 14px;">per month · cancel anytime</div>
+        <div style="flex:1;"></div>
+        <button id="plan-btn-monthly" onclick="selectPlan(PRICE_MONTHLY,'Monthly')" style="width:100%;background:var(--card);border:1px solid var(--border2);border-radius:9px;padding:11px;font-size:13px;font-weight:800;color:var(--text);cursor:pointer;font-family:inherit;transition:all .15s;" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text)'">Start 7-Day Free Trial</button>
+        <div style="font-size:10px;color:var(--text3);margin-top:8px;">Less than one video, per month</div>
       </div>
 
-      <!-- Monthly - Most Popular -->
-      <div style="background:linear-gradient(135deg,rgba(0,229,160,.1),rgba(91,155,255,.1));border:2px solid var(--accent);border-radius:14px;padding:18px;text-align:center;position:relative;">
-        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;font-size:9px;font-weight:900;padding:4px 12px;border-radius:99px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;">⭐ Most Popular</div>
-        <div style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;">Monthly</div>
-        <div style="font-size:11px;color:var(--text3);margin-bottom:2px;">Cancel anytime</div>
-        <div style="font-size:27px;font-weight:900;letter-spacing:-.5px;color:var(--accent);">$14.99</div>
-        <div style="font-size:11px;color:var(--text3);margin-bottom:12px;">per month</div>
-        <button id="plan-btn-monthly" onclick="selectPlan('price_1U8ulHRq48NkoyfjCHp9nCUD','Monthly')" style="width:100%;background:var(--accent);color:#000;border:none;border-radius:8px;padding:11px;font-size:13px;font-weight:900;cursor:pointer;font-family:inherit;transition:all .15s;" onmouseover="this.style.background='#00f0a8';this.style.boxShadow='0 0 20px rgba(0,229,160,.35)'" onmouseout="this.style.background='var(--accent)';this.style.boxShadow='none'">Start Free Trial →</button>
-        <div style="font-size:10px;color:var(--text3);margin-top:7px;">7-day free trial</div>
-      </div>
-
-      <!-- Yearly -->
-      <div style="background:var(--card2);border:1px solid rgba(245,158,11,.4);border-radius:14px;padding:16px;text-align:center;position:relative;">
-        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#f59e0b,#f97316);color:#000;font-size:9px;font-weight:900;padding:4px 12px;border-radius:99px;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap;">Save $81</div>
-        <div style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;">Yearly</div>
-        <div style="font-size:11px;color:var(--text3);text-decoration:line-through;margin-bottom:2px;">$179.88</div>
-        <div style="font-size:25px;font-weight:900;letter-spacing:-.5px;">$99</div>
-        <div style="font-size:11px;color:#f59e0b;font-weight:700;margin-bottom:12px;">= $8.25/mo · 45% off</div>
-        <button id="plan-btn-yearly" onclick="selectPlan('price_1U8uldRq48NkoyfjJGMEXR9e','Yearly')" style="width:100%;background:var(--card);border:1px solid rgba(245,158,11,.5);border-radius:8px;padding:9px;font-size:12px;font-weight:700;color:#f59e0b;cursor:pointer;font-family:inherit;transition:all .15s;" onmouseover="this.style.background='rgba(245,158,11,.15)';this.style.borderColor='#f59e0b'" onmouseout="this.style.background='var(--card)';this.style.borderColor='rgba(245,158,11,.5)'">Start Free Trial</button>
-        <div style="font-size:10px;color:var(--text3);margin-top:7px;">Billed once · best deal</div>
+      <!-- Yearly - Best Value -->
+      <div style="background:linear-gradient(135deg,rgba(0,229,160,.1),rgba(91,155,255,.08));border:2px solid var(--accent);border-radius:14px;padding:20px 18px;text-align:center;position:relative;display:flex;flex-direction:column;">
+        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;font-size:9px;font-weight:900;padding:4px 12px;border-radius:99px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;">⭐ Best Value · Save $119</div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;">Yearly</div>
+        <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;">
+          <span style="font-size:13px;color:var(--text3);text-decoration:line-through;">$468</span>
+          <span style="font-size:34px;font-weight:900;letter-spacing:-1px;line-height:1;color:var(--accent);">$349</span>
+        </div>
+        <div style="font-size:11px;color:var(--accent);font-weight:700;margin:6px 0 14px;">= $29/mo · 3 months free</div>
+        <div style="flex:1;"></div>
+        <button id="plan-btn-yearly" onclick="selectPlan(PRICE_YEARLY,'Yearly')" style="width:100%;background:var(--accent);color:#000;border:none;border-radius:9px;padding:12px;font-size:13px;font-weight:900;cursor:pointer;font-family:inherit;transition:all .15s;" onmouseover="this.style.background='#00f0a8';this.style.boxShadow='0 0 20px rgba(0,229,160,.35)'" onmouseout="this.style.background='var(--accent)';this.style.boxShadow='none'">Start 7-Day Free Trial →</button>
+        <div style="font-size:10px;color:var(--text3);margin-top:8px;">One brand deal pays for the whole year</div>
       </div>
     </div>
 
     <!-- Feature grid -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:14px;background:var(--card2);border:1px solid var(--border2);border-radius:12px;margin-bottom:14px;">
-      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> AI inbox — catch every deal</div>
-      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> Unlimited contracts</div>
-      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> AI email generator</div>
-      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> Income tracker</div>
-      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> Media kit builder</div>
-      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> My Rates & packages</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:14px 16px;background:var(--card2);border:1px solid var(--border2);border-radius:12px;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> Deal Flow inbox — finds &amp; scores offers</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> Unlimited AI replies &amp; pitches</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> Unlimited contracts &amp; deliverables</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> Income tracker &amp; overdue alerts</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> Rate card &amp; retainer packages</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text2);"><span style="color:var(--accent);">✓</span> Founders price locked forever</div>
     </div>
 
-    <div style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:10px;">🔒 Secure checkout via Stripe · No charge during 7-day trial</div>
+    <div style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:10px;">🔒 Secure checkout via Stripe · $0 today · cancel in one click</div>
     <div style="font-size:12px;color:var(--text3);text-align:center;cursor:pointer;padding:4px;" onclick="closePricingModal()">Maybe later</div>
   </div>
 </div>
@@ -4848,11 +4839,16 @@ function closeUpgradePopup() {
 
 function startCheckout() { openPricingModal(); }
 
+// ── STRIPE PRICE IDS ── paste the two IDs from Stripe → Product catalog here
+const PRICE_MONTHLY = 'REPLACE_WITH_MONTHLY_PRICE_ID';  // $39 / month
+const PRICE_YEARLY  = 'REPLACE_WITH_YEARLY_PRICE_ID';   // $349 / year
+
 function openPricingModal() {
   // reset buttons
-  ['weekly','monthly','yearly'].forEach(p => {
+  const labels = { monthly: 'Start 7-Day Free Trial', yearly: 'Start 7-Day Free Trial →' };
+  ['monthly','yearly'].forEach(p => {
     const b = document.getElementById('plan-btn-' + p);
-    if (b) { b.textContent = 'Start Free Trial'; b.disabled = false; }
+    if (b) { b.textContent = labels[p]; b.disabled = false; }
   });
   const el = document.getElementById('pricing-modal');
   el.classList.remove('hide');
@@ -4865,8 +4861,9 @@ function closePricingModal() {
 }
 
 async function selectPlan(priceId, planName) {
-  const btnMap = { 'price_1U8uktRq48NkoyfjyfoiUYUu': 'weekly', 'price_1U8ulHRq48NkoyfjCHp9nCUD': 'monthly', 'price_1U8uldRq48NkoyfjJGMEXR9e': 'yearly' };
-  const activeBtn = document.getElementById('plan-btn-' + btnMap[priceId]);
+  if (!priceId || priceId.startsWith('REPLACE_')) { alert('Checkout is not configured yet — Stripe price ID missing.'); return; }
+  const activeBtn = document.getElementById('plan-btn-' + planName.toLowerCase());
+  const origLabel = activeBtn ? activeBtn.textContent : '';
   if (activeBtn) { activeBtn.textContent = 'Loading...'; activeBtn.disabled = true; }
   try {
     const { data: { session } } = await sb.auth.getSession();
@@ -4879,11 +4876,11 @@ async function selectPlan(priceId, planName) {
     if (url) window.location.href = url;
     else {
       alert('Could not start checkout: ' + (error || 'Unknown error'));
-      if (activeBtn) { activeBtn.textContent = 'Start Free Trial'; activeBtn.disabled = false; }
+      if (activeBtn) { activeBtn.textContent = origLabel; activeBtn.disabled = false; }
     }
   } catch(e) {
     alert('Error: ' + e.message);
-    if (activeBtn) { activeBtn.textContent = 'Start Free Trial'; activeBtn.disabled = false; }
+    if (activeBtn) { activeBtn.textContent = origLabel; activeBtn.disabled = false; }
   }
 }
 
