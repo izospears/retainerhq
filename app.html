@@ -2131,6 +2131,33 @@
     .inbox-empty-icon { font-size:36px;margin-bottom:12px; }
     .inbox-empty-title { font-size:14px;font-weight:700;margin-bottom:6px; }
     .inbox-empty-sub { font-size:12px;color:var(--text3); }
+
+    /* ── Deal Flow panel (dashboard) ── */
+    .dealflow { position:relative;background:linear-gradient(135deg,rgba(0,229,160,.06),rgba(0,184,255,.03) 60%,transparent);border:1px solid rgba(0,229,160,.18);border-radius:16px;padding:22px 24px 18px;margin-bottom:22px;overflow:hidden; }
+    .dealflow::before { content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,229,160,.5),transparent); }
+    .dealflow-head { display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:18px; }
+    .dealflow-eyebrow { font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px; }
+    .dealflow-headline { font-size:20px;font-weight:900;letter-spacing:-.4px;line-height:1.2;color:#fff; }
+    .dealflow-headline span { color:var(--accent); }
+    .dealflow-sub { font-size:12px;color:var(--text2);margin-top:5px; }
+    .dealflow-value { text-align:right;flex-shrink:0; }
+    .dealflow-value-num { font-size:28px;font-weight:900;letter-spacing:-.8px;color:var(--accent);line-height:1; }
+    .dealflow-value-label { font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-top:5px; }
+    .dealflow .inbox-connect-state { padding:26px 20px 12px; }
+    .dealflow .inbox-connect-icon { width:52px;height:52px;margin-bottom:14px; }
+    .dealflow .inbox-connect-title { font-size:16px; }
+    .dealflow .inbox-feature-pills { margin-bottom:20px; }
+    .dealflow .inbox-card { background:rgba(8,13,24,.55); }
+    .inbox-score { display:inline-flex;align-items:center;gap:4px;border-radius:5px;padding:2px 8px;font-size:10px;font-weight:800;letter-spacing:.3px;flex-shrink:0;text-transform:uppercase; }
+    .inbox-score-hot  { background:rgba(255,107,107,.12);color:#FF6B6B;border:1px solid rgba(255,107,107,.3); }
+    .inbox-score-warm { background:rgba(255,209,102,.12);color:#FFD166;border:1px solid rgba(255,209,102,.3); }
+    .inbox-score-gift { background:rgba(255,255,255,.06);color:var(--text2);border:1px solid var(--border2); }
+    .inbox-est { font-size:12px;font-weight:800;color:var(--accent);white-space:nowrap;flex-shrink:0; }
+    .inbox-est small { font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;display:block;text-align:right; }
+    .inbox-card-right { display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0; }
+    .inbox-btn-dismiss { background:transparent;color:var(--text3);border:1px solid transparent;margin-left:auto; }
+    .inbox-btn-dismiss:hover { color:var(--text2);border-color:var(--border2); }
+    @media (max-width:700px) { .dealflow-head { flex-direction:column; } .dealflow-value { text-align:left; } .dealflow-value-num { font-size:24px; } }
   </style>
 </head>
 <body>
@@ -2270,6 +2297,64 @@
 
         <button class="welcome-cta" onclick="openAddModal()">+ Add Your First Contract</button>
 
+      </div>
+
+      <!-- ═══ DEAL FLOW (AI Inbox) ═══ -->
+      <div class="dealflow" id="dealflow">
+        <div class="dealflow-head">
+          <div>
+            <div class="dealflow-eyebrow">⚡ Deal Flow</div>
+            <div class="dealflow-headline" id="dealflow-headline">Brand offers sitting in your inbox</div>
+            <div class="dealflow-sub" id="dealflow-sub">Connect Gmail and RetainerHQ finds them, prices them, and drafts the reply.</div>
+          </div>
+          <div class="dealflow-value" id="dealflow-value" style="display:none;">
+            <div class="dealflow-value-num" id="dealflow-value-num">$0</div>
+            <div class="dealflow-value-label">potential on the table</div>
+          </div>
+        </div>
+
+        <!-- Not-connected state -->
+        <div id="inbox-connect" class="inbox-connect-state">
+          <div class="inbox-connect-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="inbox-connect-title">Never miss a brand deal again</div>
+          <div class="inbox-connect-sub">RetainerHQ scans your inbox for brand partnership emails, estimates what each one is worth, and writes the reply using your real rates. You approve, it sends.</div>
+          <div class="inbox-feature-pills">
+            <span class="inbox-feature-pill">✦ Finds buried offers</span>
+            <span class="inbox-feature-pill">✦ Scores every lead</span>
+            <span class="inbox-feature-pill">✦ Replies with your rates</span>
+            <span class="inbox-feature-pill">✦ Filters out newsletters</span>
+          </div>
+          <button class="inbox-google-btn" onclick="connectGmail()">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Connect Gmail
+          </button>
+          <div class="inbox-connect-note">We only read brand emails and send replies you approve. Nothing is stored.</div>
+        </div>
+
+        <!-- Connected / active state -->
+        <div id="inbox-active" style="display:none;">
+          <div class="inbox-toolbar">
+            <div class="inbox-status-text">
+              <span class="inbox-status-dot"></span>
+              <span id="inbox-status-label">Scanning your inbox...</span>
+            </div>
+            <div class="inbox-toolbar-right">
+              <select class="inbox-period-select" id="inbox-period" onchange="fetchBrandEmails()">
+                <option value="7">Last 7 days</option>
+                <option value="30" selected>Last 30 days</option>
+                <option value="60">Last 60 days</option>
+                <option value="90">Last 90 days</option>
+              </select>
+              <button class="inbox-refresh-btn" onclick="fetchBrandEmails()">↻ Refresh</button>
+              <button class="inbox-disconnect-btn" onclick="disconnectGmail()">Disconnect</button>
+            </div>
+          </div>
+          <div id="inbox-email-list">
+            <div class="inbox-empty"><div class="inbox-empty-icon">📡</div><div class="inbox-empty-title">Scanning...</div></div>
+          </div>
+        </div>
       </div>
 
       <div class="deadline-alerts" id="deadline-alerts"></div>
@@ -2461,7 +2546,6 @@
       <div class="tabs">
         <div class="tab active" onclick="switchTab('manual')">Manual Entry</div>
         <div class="tab" onclick="switchTab('paste')">Paste Their Email</div>
-        <div class="tab" onclick="switchTab('inbox')">⚡ AI Inbox</div>
       </div>
 
       <div class="tab-panel active" id="tab-manual">
@@ -2594,57 +2678,6 @@
       </div>
 
       <!-- AI INBOX TAB -->
-      <div class="tab-panel" id="tab-inbox">
-        <!-- Not-connected state -->
-        <div id="inbox-connect" class="inbox-connect-state">
-          <div class="inbox-connect-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          </div>
-          <div class="inbox-connect-title">AI Inbox</div>
-          <div class="inbox-connect-sub">Connect your Gmail and RetainerHQ will automatically scan for brand deal emails — then generate a personalized reply using your real rates. Ready to send in one click.</div>
-          <div class="inbox-feature-pills">
-            <span class="inbox-feature-pill">✦ Detects brand emails</span>
-            <span class="inbox-feature-pill">✦ Pulls your rates</span>
-            <span class="inbox-feature-pill">✦ Send or draft in 1 click</span>
-            <span class="inbox-feature-pill">✦ Editable before sending</span>
-          </div>
-          <button class="inbox-google-btn" onclick="connectGmail()">
-            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-            Connect Gmail
-          </button>
-          <div class="inbox-connect-note">Your emails stay private — we only read brand deal emails, never store them.</div>
-          <div class="inbox-setup-hint">
-            <div class="inbox-setup-hint-title">One-time setup required</div>
-            <div class="inbox-setup-hint-body">
-              This feature needs a Google OAuth Client ID. Isaac: go to <strong>console.cloud.google.com</strong> → Create Project → Enable Gmail API → Credentials → Create OAuth 2.0 Client ID (Web App) → add <code>https://retainerhq.io</code> as an authorized origin → paste the Client ID into <code>GMAIL_CLIENT_ID</code> in app.html.
-            </div>
-          </div>
-        </div>
-
-        <!-- Connected / active state -->
-        <div id="inbox-active" style="display:none;">
-          <div class="inbox-toolbar">
-            <div class="inbox-status-text">
-              <span class="inbox-status-dot"></span>
-              <span id="inbox-status-label">Scanning your inbox...</span>
-            </div>
-            <div class="inbox-toolbar-right">
-              <select class="inbox-period-select" id="inbox-period" onchange="fetchBrandEmails()">
-                <option value="7">Last 7 days</option>
-                <option value="30" selected>Last 30 days</option>
-                <option value="60">Last 60 days</option>
-                <option value="90">Last 90 days</option>
-              </select>
-              <button class="inbox-refresh-btn" onclick="fetchBrandEmails()">↻ Refresh</button>
-              <button class="inbox-disconnect-btn" onclick="disconnectGmail()">Disconnect</button>
-            </div>
-          </div>
-          <div id="inbox-email-list">
-            <div class="inbox-empty"><div class="inbox-empty-icon">📡</div><div class="inbox-empty-title">Scanning...</div></div>
-          </div>
-        </div>
-      </div>
-
       <div class="email-output" id="email-output" style="display:none;">
         <div class="email-output-header">
           <div class="email-output-label"><div class="output-dot" id="output-dot"></div><span id="output-header-label">Generated Email</span></div>
@@ -4461,6 +4494,7 @@ function filterByPeriod(list) {
 
 function renderDashboard() {
   checkOnboarding();
+  if (typeof initDealFlow === 'function') initDealFlow();
   const periodContracts = filterByPeriod(contracts);
   const active = periodContracts.filter(c => c.status === 'active');
   const completed = periodContracts.filter(c => c.status === 'completed');
@@ -5003,15 +5037,10 @@ async function signOut() {
 }
 
 function switchTab(tab) {
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='manual')||(i===1&&tab==='paste')||(i===2&&tab==='inbox')));
+  document.querySelectorAll('#page-email .tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='manual')||(i===1&&tab==='paste')));
   document.getElementById('tab-manual').classList.toggle('active', tab==='manual');
   document.getElementById('tab-paste').classList.toggle('active', tab==='paste');
-  document.getElementById('tab-inbox').classList.toggle('active', tab==='inbox');
   document.getElementById('email-output').style.display = 'none';
-  if (tab === 'inbox' && _gmailToken && Date.now() < _gmailExpiry) {
-    showInboxConnected();
-    fetchBrandEmails();
-  }
 }
 
 // Type chip selection — replaces old <select> dropdowns
@@ -6132,6 +6161,46 @@ let _gmailToken    = null;
 let _gmailExpiry   = 0;
 let _gmailClient   = null;
 
+// ── Session persistence: keep the Gmail token for this browser session ──
+// (Google access tokens live ~1h; sessionStorage clears when the tab closes)
+(function _restoreGmailSession() {
+  try {
+    const t = sessionStorage.getItem('rhq_gmail_token');
+    const e = parseInt(sessionStorage.getItem('rhq_gmail_expiry') || '0');
+    if (t && e > Date.now()) { _gmailToken = t; _gmailExpiry = e; }
+  } catch(_) {}
+})();
+function _saveGmailSession() {
+  try {
+    sessionStorage.setItem('rhq_gmail_token', _gmailToken || '');
+    sessionStorage.setItem('rhq_gmail_expiry', String(_gmailExpiry || 0));
+  } catch(_) {}
+}
+function _gmailIsConnected() { return !!_gmailToken && Date.now() < _gmailExpiry; }
+
+// Called from renderDashboard(): show live inbox if connected, connect card if not
+let _dealflowLoadedOnce = false;
+function initDealFlow() {
+  if (_gmailIsConnected()) {
+    showInboxConnected();
+    if (!_dealflowLoadedOnce) { _dealflowLoadedOnce = true; fetchBrandEmails(); }
+  } else {
+    document.getElementById('inbox-connect').style.display = 'block';
+    document.getElementById('inbox-active').style.display  = 'none';
+  }
+}
+
+// ── Dismissed leads (remembered per browser) ──
+const _dismissedLeads = new Set(JSON.parse(localStorage.getItem('rhq_inbox_dismissed') || '[]'));
+function _dismissLead(id) {
+  _dismissedLeads.add(id);
+  localStorage.setItem('rhq_inbox_dismissed', JSON.stringify([..._dismissedLeads].slice(-500)));
+  const card = document.getElementById('icard-' + id);
+  if (card) { card.style.transition = 'opacity .25s, transform .25s'; card.style.opacity = '0'; card.style.transform = 'translateX(12px)'; setTimeout(() => card.remove(), 260); }
+  delete _inboxData[id];
+  setTimeout(_updateDealflowHeadline, 280);
+}
+
 // ── Init Google OAuth client (called lazily on first connect) ──
 function _initGmailOAuth() {
   if (_gmailClient) return;
@@ -6142,7 +6211,8 @@ function _initGmailOAuth() {
   }
   _gmailClient = google.accounts.oauth2.initTokenClient({
     client_id: GMAIL_CLIENT_ID,
-    scope: 'https://www.googleapis.com/auth/gmail.readonly',
+    // readonly = scan inbox · send = "Send Reply" · compose = "Save Draft"
+    scope: 'https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.compose',
     callback: (resp) => {
       if (resp.error) {
         console.error('Gmail OAuth error:', resp.error);
@@ -6151,6 +6221,8 @@ function _initGmailOAuth() {
       }
       _gmailToken  = resp.access_token;
       _gmailExpiry = Date.now() + (parseInt(resp.expires_in) * 1000) - 60000;
+      _saveGmailSession();
+      _dealflowLoadedOnce = true;
       showInboxConnected();
       fetchBrandEmails();
     }
@@ -6166,8 +6238,11 @@ function connectGmail() {
 function disconnectGmail() {
   _gmailToken  = null;
   _gmailExpiry = 0;
+  _dealflowLoadedOnce = false;
+  try { sessionStorage.removeItem('rhq_gmail_token'); sessionStorage.removeItem('rhq_gmail_expiry'); } catch(_) {}
   document.getElementById('inbox-connect').style.display = 'block';
   document.getElementById('inbox-active').style.display  = 'none';
+  _updateDealflowHeadline(true);
 }
 
 function showInboxConnected() {
@@ -6214,6 +6289,91 @@ function _isBrandEmail(subject, snippet) {
   return _BRAND_KW.some(k => t.includes(k));
 }
 
+// ── Newsletter / automated-mail filter ──
+// Real brand outreach comes from a person. Bulk mail has an unsubscribe header,
+// a no-reply sender, or a bulk-precedence flag. Drop those before scoring.
+const _NOREPLY_RX = /no-?reply|donotreply|do-not-reply|newsletter|notifications?@|mailer|marketing@|updates@|news@|promo|alerts?@|billing@|receipts?@/i;
+function _isAutomated(hdrs, from) {
+  const h = n => (hdrs.find(x => x.name.toLowerCase() === n.toLowerCase()) || {}).value || '';
+  if (h('List-Unsubscribe') || h('List-Id')) return true;
+  const prec = h('Precedence').toLowerCase();
+  if (prec === 'bulk' || prec === 'list' || prec === 'junk') return true;
+  if (h('X-Mailer').match(/mailchimp|sendgrid|klaviyo|hubspot|constantcontact|campaign/i)) return true;
+  if (_NOREPLY_RX.test(from)) return true;
+  return false;
+}
+
+// ── Lead scoring ──
+// Returns { tier:'hot'|'warm'|'gift', label, est (number|null), estSource }
+function _scoreLead(subject, snippet, from) {
+  const t = ((subject || '') + ' ' + (snippet || '')).toLowerCase();
+  let pts = 0;
+
+  // Explicit money on the table
+  const money = t.match(/\$\s?(\d{1,3}(?:,\d{3})+|\d+)(?:\s?(k)\b)?/i);
+  let est = null, estSource = '';
+  if (money) {
+    est = parseInt(money[1].replace(/,/g, ''), 10);
+    if (money[2]) est *= 1000;
+    if (est >= 100) { pts += 3; estSource = 'quoted'; } else { est = null; }
+  }
+
+  // Intent signals
+  if (/\b(retainer|monthly|ongoing|long[- ]term|ambassador)\b/.test(t)) pts += 3;
+  if (/\b(paid|budget|rate|rates|rate card|compensation|fee|invoice)\b/.test(t)) pts += 2;
+  if (/\b(tiktok shop|affiliate|commission|gmv)\b/.test(t)) pts += 1;
+  if (/\b(deliverables|videos?|content pieces|ugc)\b/.test(t)) pts += 1;
+
+  // Negative signals
+  const gifted = /\b(gifted|gifting|free product|product exchange|in exchange for|seeding|complimentary)\b/.test(t) && !/\bpaid\b/.test(t);
+  if (gifted) pts -= 3;
+
+  // Corporate domain > free mailbox
+  const dom = (from.match(/@([^>\s]+)/) || [,''])[1].toLowerCase();
+  if (dom && !/gmail|yahoo|outlook|hotmail|icloud|aol|proton/.test(dom)) pts += 1;
+
+  // Fallback estimate from the creator's own rate card if no $ was quoted
+  if (est === null && !gifted) {
+    const rates = mediaKitProfile?.rates_data || JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
+    const p = Number(rates.pkg1price || 0);
+    if (p > 0) { est = p; estSource = 'your rate'; }
+  }
+
+  let tier = 'warm', label = 'Warm';
+  if (gifted)        { tier = 'gift'; label = 'Gifted'; }
+  else if (pts >= 5) { tier = 'hot';  label = 'Hot'; }
+  return { tier, label, est, estSource };
+}
+
+// ── Headline: "N open brand offers · $X on the table" ──
+function _updateDealflowHeadline(reset) {
+  const hl  = document.getElementById('dealflow-headline');
+  const sub = document.getElementById('dealflow-sub');
+  const val = document.getElementById('dealflow-value');
+  const num = document.getElementById('dealflow-value-num');
+  if (!hl) return;
+  if (reset) {
+    hl.innerHTML = 'Brand offers sitting in your inbox';
+    sub.textContent = 'Connect Gmail and RetainerHQ finds them, prices them, and drafts the reply.';
+    val.style.display = 'none';
+    return;
+  }
+  const leads = Object.values(_inboxData);
+  const n     = leads.length;
+  const hot   = leads.filter(l => l.score?.tier === 'hot').length;
+  const total = leads.reduce((s, l) => s + (l.score?.est || 0), 0);
+  if (n === 0) {
+    hl.innerHTML = 'Inbox is clear';
+    sub.textContent = 'No open brand offers right now. We\'ll keep looking.';
+    val.style.display = 'none';
+    return;
+  }
+  hl.innerHTML = `<span>${n}</span> open brand offer${n === 1 ? '' : 's'}${hot ? ` · <span>${hot} hot</span>` : ''}`;
+  sub.textContent = total > 0 ? 'Estimated from quoted budgets and your rate card. Reply before they go cold.' : 'Reply before they go cold.';
+  if (total > 0) { num.textContent = '$' + Math.round(total).toLocaleString(); val.style.display = 'block'; }
+  else val.style.display = 'none';
+}
+
 // ── Fetch and render brand deal emails ──
 async function fetchBrandEmails() {
   _setInboxStatus('Scanning inbox for brand deals...');
@@ -6223,43 +6383,55 @@ async function fetchBrandEmails() {
   try {
     const period = document.getElementById('inbox-period')?.value || '30';
     const dateFilter = period === '0' ? '' : ` newer_than:${period}d`;
-    const query = encodeURIComponent(`in:inbox${dateFilter} -from:me`);
-    const data  = await _gFetch('/messages?q=' + query + '&maxResults=50');
+    // Let Gmail do the first pass: skip promos/social/updates tabs and our own mail
+    const query = encodeURIComponent(`in:inbox${dateFilter} -from:me -category:promotions -category:social -category:updates -category:forums`);
+    const data  = await _gFetch('/messages?q=' + query + '&maxResults=60');
     if (!data) return;
 
-    const msgs = data.messages || [];
+    const msgs = (data.messages || []).filter(m => !_dismissedLeads.has(m.id));
     if (msgs.length === 0) {
-      _setInboxStatus('No emails in the last 30 days');
-      if (listEl) listEl.innerHTML = '<div class="inbox-empty"><div class="inbox-empty-icon">🎉</div><div class="inbox-empty-title">All clear!</div><div class="inbox-empty-sub">No unreviewed emails from the last 30 days.</div></div>';
+      _setInboxStatus('Last checked: just now · inbox clear');
+      if (listEl) listEl.innerHTML = '<div class="inbox-empty"><div class="inbox-empty-icon">🎉</div><div class="inbox-empty-title">All clear!</div><div class="inbox-empty-sub">No new brand emails in the last ' + period + ' days.</div></div>';
+      Object.keys(_inboxData).forEach(k => delete _inboxData[k]);
+      _updateDealflowHeadline();
       return;
     }
 
     // Fetch metadata in small batches to avoid Gmail API rate limits (429)
     const BATCH = 5;
-    const msgSlice = msgs.slice(0, 30);
+    const msgSlice = msgs.slice(0, 40);
     const details = [];
+    const HDRS = ['From','Subject','Date','List-Unsubscribe','List-Id','Precedence','X-Mailer'].map(h => 'metadataHeaders=' + h).join('&');
     for (let i = 0; i < msgSlice.length; i += BATCH) {
       const batch = msgSlice.slice(i, i + BATCH);
       const results = await Promise.all(
-        batch.map(m => _gFetch('/messages/' + m.id + '?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date'))
+        batch.map(m => _gFetch('/messages/' + m.id + '?format=metadata&' + HDRS))
       );
       details.push(...results);
       if (i + BATCH < msgSlice.length) await new Promise(r => setTimeout(r, 300));
     }
 
-    const brandEmails = details.filter(d => d && _isBrandEmail(
-      d.payload?.headers?.find(h => h.name === 'Subject')?.value || '',
-      d.snippet || ''
-    ));
+    const brandEmails = details.filter(d => {
+      if (!d) return false;
+      const hdrs = d.payload?.headers || [];
+      const from = hdrs.find(h => h.name === 'From')?.value || '';
+      const subj = hdrs.find(h => h.name === 'Subject')?.value || '';
+      if (_isAutomated(hdrs, from)) return false;
+      return _isBrandEmail(subj, d.snippet || '');
+    });
+
+    Object.keys(_inboxData).forEach(k => delete _inboxData[k]);
 
     if (brandEmails.length === 0) {
       _setInboxStatus('Last checked: just now · 0 brand leads');
-      if (listEl) listEl.innerHTML = '<div class="inbox-empty"><div class="inbox-empty-icon">📭</div><div class="inbox-empty-title">No brand deal emails found</div><div class="inbox-empty-sub">We scanned the last 30 days and didn\'t find any brand partnership inquiries. Try Refresh in a bit.</div></div>';
+      if (listEl) listEl.innerHTML = '<div class="inbox-empty"><div class="inbox-empty-icon">📭</div><div class="inbox-empty-title">No brand deal emails found</div><div class="inbox-empty-sub">We scanned the last ' + period + ' days and didn\'t find any brand partnership inquiries. Try a wider window or Refresh later.</div></div>';
+      _updateDealflowHeadline();
       return;
     }
 
     _setInboxStatus('Last checked: just now · ' + brandEmails.length + ' lead' + (brandEmails.length > 1 ? 's' : '') + ' found');
     _renderInboxEmails(brandEmails, listEl);
+    _updateDealflowHeadline();
 
   } catch(e) {
     console.error('AI Inbox error:', e);
@@ -6273,31 +6445,48 @@ const _inboxData = {};
 
 // ── Render email cards ──
 function _renderInboxEmails(emails, listEl) {
-  listEl.innerHTML = emails.map(email => {
+  const TIER_ORDER = { hot: 0, warm: 1, gift: 2 };
+  const rows = emails.map(email => {
     const hdrs    = email.payload?.headers || [];
     const subject = hdrs.find(h => h.name === 'Subject')?.value || '(No Subject)';
     const from    = hdrs.find(h => h.name === 'From')?.value    || 'Unknown';
+    const dateStr = hdrs.find(h => h.name === 'Date')?.value    || '';
     const snippet = email.snippet || '';
 
     const nameMatch  = from.match(/^"?([^"<]+)"?\s*</);
     const senderName = nameMatch ? nameMatch[1].trim() : from.split('@')[0];
     const brandName  = _extractBrand(from);
-
-    const reply  = _buildReply(snippet, senderName, brandName);
-    const id     = email.id;
+    const score      = _scoreLead(subject, snippet, from);
+    const reply      = _buildReply(snippet, senderName, brandName);
+    const id         = email.id;
 
     // Store data by ID — avoids any quoting/escaping issues in HTML attributes
-    _inboxData[id] = { from, subject, threadId: email.threadId, reply };
+    _inboxData[id] = { from, subject, threadId: email.threadId, reply, score, snippet, brandName };
 
+    return { id, subject, from, senderName, brandName, snippet, score, reply, ts: Date.parse(dateStr) || 0 };
+  });
+
+  rows.sort((a, b) => (TIER_ORDER[a.score.tier] - TIER_ORDER[b.score.tier]) || (b.ts - a.ts));
+
+  listEl.innerHTML = rows.map(r => {
+    const { id, subject, senderName, brandName, snippet, score, reply, ts } = r;
+    const ago = ts ? _timeAgo(ts) : '';
+    const scoreIcon = score.tier === 'hot' ? '🔥' : score.tier === 'warm' ? '◆' : '🎁';
+    const estHtml = score.est
+      ? `<div class="inbox-est">$${Math.round(score.est).toLocaleString()}<small>${score.estSource === 'quoted' ? 'quoted' : 'est. at your rate'}</small></div>`
+      : '';
     return `
     <div class="inbox-card" id="icard-${id}">
       <div class="inbox-card-header">
         <div class="inbox-sender-avatar">${_esc(brandName.charAt(0).toUpperCase())}</div>
         <div class="inbox-card-meta">
-          <div class="inbox-from">${_esc(senderName)}</div>
+          <div class="inbox-from">${_esc(senderName)} <span style="font-weight:500;color:var(--text3);font-size:11px;">· ${_esc(brandName)}${ago ? ' · ' + ago : ''}</span></div>
           <div class="inbox-subject">${_esc(subject)}</div>
         </div>
-        <div class="inbox-brand-tag">${_esc(brandName)}</div>
+        <div class="inbox-card-right">
+          <span class="inbox-score inbox-score-${score.tier}">${scoreIcon} ${score.label}</span>
+          ${estHtml}
+        </div>
       </div>
       <div class="inbox-snippet">${_esc(snippet)}</div>
       <div class="inbox-reply-wrap" id="ireply-${id}" style="display:none;">
@@ -6305,19 +6494,40 @@ function _renderInboxEmails(emails, listEl) {
         <textarea class="inbox-reply-ta" id="irta-${id}">${_esc(reply)}</textarea>
       </div>
       <div class="inbox-actions">
-        <button class="inbox-btn inbox-btn-preview" onclick="_togglePreview('${id}')">
-          ⚡ Preview Reply
-        </button>
-        <button class="inbox-btn inbox-btn-send" onclick="_sendReply('${id}')">
-          ↗ Send Reply
-        </button>
-        <button class="inbox-btn inbox-btn-draft" onclick="_draftReply('${id}')">
-          📋 Save Draft
-        </button>
+        <button class="inbox-btn inbox-btn-preview" onclick="_togglePreview('${id}')">⚡ Preview Reply</button>
+        <button class="inbox-btn inbox-btn-send" onclick="_sendReply('${id}')">↗ Send Reply</button>
+        <button class="inbox-btn inbox-btn-draft" onclick="_draftReply('${id}')">📋 Save Draft</button>
+        <button class="inbox-btn inbox-btn-draft" onclick="_counterInGenerator('${id}')" title="Open in Email Generator to counter or negotiate">✎ Counter</button>
+        <button class="inbox-btn inbox-btn-dismiss" onclick="_dismissLead('${id}')" title="Not a brand deal / already handled">Dismiss</button>
       </div>
       <div class="inbox-card-feedback" id="ifb-${id}" style="display:none;"></div>
     </div>`;
   }).join('');
+}
+
+function _timeAgo(ts) {
+  const d = Math.floor((Date.now() - ts) / 86400000);
+  if (d <= 0) return 'today';
+  if (d === 1) return 'yesterday';
+  if (d < 7)  return d + 'd ago';
+  if (d < 30) return Math.floor(d / 7) + 'w ago';
+  return Math.floor(d / 30) + 'mo ago';
+}
+
+// ── Hand a lead to the Email Generator (Paste tab) to counter / negotiate ──
+function _counterInGenerator(id) {
+  const d = _inboxData[id];
+  if (!d) return;
+  navigate('email');
+  switchTab('paste');
+  const ta = document.getElementById('p-email');
+  if (ta) ta.value = `From ${d.brandName}.\nSubject: ${d.subject}\n\n${d.snippet}`;
+  const chips = document.querySelectorAll('#p-type-chips .type-chip');
+  chips.forEach(c => c.classList.toggle('selected', c.getAttribute('data-val') === 'counter'));
+  window._emailType['p'] = 'counter';
+  const grp = document.getElementById('p-counter-group');
+  if (grp) grp.style.display = 'block';
+  setTimeout(() => ta && ta.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
 }
 
 function _togglePreview(id) {
@@ -6422,6 +6632,11 @@ async function _sendReply(msgId) {
       setTimeout(() => {
         const card = document.getElementById('icard-' + msgId);
         if (card) { card.style.opacity = '0.45'; card.style.pointerEvents = 'none'; }
+        // Replied → no longer an open offer; drop from headline count
+        _dismissedLeads.add(msgId);
+        localStorage.setItem('rhq_inbox_dismissed', JSON.stringify([..._dismissedLeads].slice(-500)));
+        delete _inboxData[msgId];
+        _updateDealflowHeadline();
       }, 1200);
     }
   } catch(e) {
