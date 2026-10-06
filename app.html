@@ -3377,11 +3377,11 @@ select.pay-input option{background:#0d1828;}
       <div class="ob-title">Where do you create?</div>
       <div class="ob-sub">Select all the platforms you post on.</div>
       <div class="ob-chips" id="ob-platform-chips" style="margin-top:16px;">
-        <div class="ob-chip" onclick="obChip(this,'platform')">🎵 TikTok</div>
-        <div class="ob-chip" onclick="obChip(this,'platform')">📸 Instagram</div>
-        <div class="ob-chip" onclick="obChip(this,'platform')">▶️ YouTube</div>
-        <div class="ob-chip" onclick="obChip(this,'platform')">👥 Facebook</div>
-        <div class="ob-chip" onclick="obChip(this,'platform')">🎬 UGC</div>
+        <div class="ob-chip" onclick="obChipMulti(this,'platforms')">🎵 TikTok</div>
+        <div class="ob-chip" onclick="obChipMulti(this,'platforms')">📸 Instagram</div>
+        <div class="ob-chip" onclick="obChipMulti(this,'platforms')">▶️ YouTube</div>
+        <div class="ob-chip" onclick="obChipMulti(this,'platforms')">👥 Facebook</div>
+        <div class="ob-chip" onclick="obChipMulti(this,'platforms')">🎬 UGC</div>
       </div>
       <div class="ob-error-hint" id="ob-platform-err">Please select at least one platform</div>
       <button class="ob-btn" onclick="obNext(2)" style="margin-top:24px;">Continue →</button>
@@ -3391,7 +3391,7 @@ select.pay-input option{background:#0d1828;}
     <div class="ob-step" id="ob-s3">
       <div class="ob-step-label">Step 4 of 4</div>
       <div class="ob-title">Almost there 🔥</div>
-      <div class="ob-sub">Write a quick intro. Brands will see this on your profile.</div>
+      <div class="ob-sub">A quick intro. The AI uses this to sound like you in every pitch and reply.</div>
       <div class="ob-field">
         <label class="ob-label">Short Bio *</label>
         <textarea class="ob-input" id="ob-bio" rows="4" placeholder="e.g. I create skincare and beauty content across TikTok and Instagram. I work with brands on monthly retainers — consistent content, clear deliverables, no back and forth. Based in LA." style="resize:none;line-height:1.6;"></textarea>
@@ -3408,7 +3408,7 @@ select.pay-input option{background:#0d1828;}
           <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
         <div class="ob-title" style="text-align:center;">You're all set! 🚀</div>
-        <div class="ob-sub" style="text-align:center;margin-top:8px;">Your profile is live. Brands can now find you and send retainer offers.</div>
+        <div class="ob-sub" style="text-align:center;margin-top:8px;">Next: set your rates, connect Gmail, and let Deal Flow find the offers already sitting in your inbox.</div>
         <button class="ob-btn" onclick="closOb()" style="margin-top:28px;">Let's get to work →</button>
       </div>
     </div>
@@ -4115,6 +4115,15 @@ function obChip(el, group) {
   _obData[group] = el.textContent.trim().replace(/^[^\w]+/, '').trim();
 }
 
+// Multi-select chips (platforms): toggle, store as array
+function obChipMulti(el, group) {
+  el.classList.toggle('sel');
+  const sel = [...el.closest('.ob-chips').querySelectorAll('.ob-chip.sel')]
+    .map(c => c.textContent.trim().replace(/^[^\w]+/, '').trim());
+  _obData[group] = sel;
+  if (sel.length) obShowErr('ob-platform-err', false);
+}
+
 function obTile(el, group) {
   el.closest('.ob-tiles').querySelectorAll('.ob-tile').forEach(t => t.classList.remove('sel'));
   el.classList.add('sel');
@@ -4154,17 +4163,8 @@ function obNext(fromStep) {
     obShowErr('ob-niche-err', false);
   }
   if (fromStep === 2) {
-    const followers   = document.getElementById('ob-followers').value.trim();
-    const gmv30       = document.getElementById('ob-gmv30').value.trim();
-    const gmvLifetime = document.getElementById('ob-gmv-lifetime').value.trim();
-    let valid = true;
-    if (!followers)   { obShowErr('ob-followers-err', true);    obShake('ob-followers');    valid = false; } else obShowErr('ob-followers-err', false);
-    if (!gmv30)       { obShowErr('ob-gmv30-err', true);        obShake('ob-gmv30');        valid = false; } else obShowErr('ob-gmv30-err', false);
-    if (!gmvLifetime) { obShowErr('ob-gmv-lifetime-err', true); obShake('ob-gmv-lifetime'); valid = false; } else obShowErr('ob-gmv-lifetime-err', false);
-    if (!valid) return;
-    _obData.followers   = followers.replace(/[^0-9]/g, '');
-    _obData.gmv30       = gmv30;
-    _obData.gmvLifetime = gmvLifetime;
+    if (!_obData.platforms || _obData.platforms.length === 0) { obShowErr('ob-platform-err', true); return; }
+    obShowErr('ob-platform-err', false);
   }
 
   const cur = document.getElementById('ob-s' + fromStep);
@@ -4193,9 +4193,6 @@ async function obFinish() {
     name:          _obData.name,
     tiktok_handle: _obData.handle,
     niche:         _obData.niche,
-    followers:     _obData.followers,
-    last_30d_gmv:  _obData.gmv30,
-    total_gmv:     _obData.gmvLifetime ? parseFloat(_obData.gmvLifetime.replace(/[^0-9.]/g,'')) || null : null,
     bio:           _obData.bio,
   };
 
