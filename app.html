@@ -5874,12 +5874,13 @@ ${hasVidCards ? `<!-- PAGE 2 -->
 //  CREATOR TOUR v2
 // ═══════════════════════════════════════════════
 const CT_STEPS = [
-  { type:'modal', title:'You\'re In.', sub:'RetainerHQ gives you everything to manage brand deals, track videos, and grow your income — all in one place. Let\'s take 60 seconds to show you around.', cta:'Let\'s Go →' },
-  { type:'spot', page:'dashboard', target:'.stats-row', title:'Your Mission Control', body:'Active contracts, total earnings, video progress, and upcoming deadlines — updated in real time every time you log in.' },
-  { type:'spot', page:'contracts', target:'#page-contracts', title:'Every Brand Deal', body:'Add retainer deals, track videos posted, and stay ahead of every deadline. Your entire brand portfolio in one view.' },
-  { type:'spot', page:'email',     target:'#page-email',     title:'Pitch With AI', body:'Generate professional retainer pitches and counter offers using your actual GMV stats. Brands will take you seriously.' },
-  { type:'spot', page:'income',    target:'#page-income',    title:'Know Your Money', body:'Log payments, see what\'s owed, and track monthly income. Never wonder where your money stands again.' },
-  { type:'spot', page:'mediakit',  target:'#page-mediakit',  title:'Your Media Kit', body:'A shareable brand profile with your stats, niche, rates, and top videos. Send it to any brand in one link.' },
+  { type:'modal', title:'You\'re In.', sub:'RetainerHQ is your AI brand deal manager — it finds the offers, writes the replies, tracks the deliverables, and chases the money. Let\'s take 60 seconds to show you around.', cta:'Let\'s Go →' },
+  { type:'spot', page:'dashboard', target:'#dealflow',       title:'Deal Flow', body:'Connect Gmail and every brand offer in your inbox shows up here — scored Hot, Warm, or Gifted, with a dollar estimate on each. Reply in one click with your real rates.' },
+  { type:'spot', page:'dashboard', target:'.stats-grid',     title:'Your Mission Control', body:'Active contracts, total value, videos due, and deadline alerts — updated every time you log in.' },
+  { type:'spot', page:'contracts', target:'#page-contracts', title:'Every Brand Deal', body:'Add retainer deals, track videos posted, and stay ahead of every deadline. Expiring deals prompt a renewal pitch before the brand forgets you.' },
+  { type:'spot', page:'email',     target:'#page-email',     title:'Pitch, Counter, Negotiate', body:'Paste a brand\'s email or fill in the offer. AI writes the pitch, counter, or negotiation using your actual GMV and packages — and always pushes for a retainer.' },
+  { type:'spot', page:'income',    target:'#page-income',    title:'Know Your Money', body:'Paid, pending, overdue — by brand. Never dig through bank statements to find out if a brand actually paid you.' },
+  { type:'spot', page:'rates',     target:'#page-rates',     title:'Your Rate Card', body:'Set your GMV and retainer packages once. Every email, reply, and estimate uses these numbers automatically — no more making up a price on the spot.' },
   { type:'modal-verse' }
 ];
 let ctStep = 0;
