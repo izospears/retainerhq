@@ -5274,6 +5274,7 @@ async function generateEmail(mode) {
     myName  = document.getElementById('m-name').value.trim() || (mediaKitProfile.name || 'me');
     if (type === 'chase') {
       chase = {
+        contact:  (window._chaseContact || ''),
         amount:   document.getElementById('m-chase-amount')?.value || '',
         due_date: document.getElementById('m-chase-due')?.value || '',
         days_late: document.getElementById('m-chase-late')?.value || '',
@@ -5359,6 +5360,7 @@ async function generateEmail(mode) {
         ugc_rates:    ugcRateBlock(storedRates),
         portfolio:    storedRates.portfolioUrl || '',
         amount:    chase.amount || '',
+        contact_name: chase.contact || '',
         due_date:  chase.due_date || '',
         days_late: chase.days_late || '',
         name:      myName,
@@ -5485,6 +5487,9 @@ function chasePayment(paymentId) {
     set('m-chase-amount', p.amount);
     set('m-chase-due', p.due_date || '');
     set('m-chase-late', daysLate(p));
+    // Contact: a name if we have one, else derive from the email address (kim@brand.com → Kim)
+    const ct = (contract && contract.contact) || '';
+    window._chaseContact = ct.includes('@') ? ct.split('@')[0].replace(/[._-]+/g,' ').replace(/\b\w/g, m => m.toUpperCase()) : ct;
     const chip = document.querySelector('#m-type-chips .type-chip[data-val="chase"]');
     if (chip) selectEmailType('m', 'chase', chip);
     document.getElementById('m-brand')?.scrollIntoView({ behavior:'smooth', block:'center' });
