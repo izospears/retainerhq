@@ -1433,6 +1433,16 @@
       padding: 24px;
       flex: 1;
     }
+    .ctype-row { display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px; }
+    .ctype-opt { display:flex;align-items:center;gap:10px;background:var(--card2);border:1.5px solid var(--border2);border-radius:10px;padding:10px 12px;cursor:pointer;transition:all .15s; }
+    .ctype-opt:hover { border-color:var(--border); }
+    .ctype-opt.sel { border-color:var(--accent);background:rgba(0,229,160,.06); }
+    .ctype-ico { font-size:18px;flex-shrink:0; }
+    .ctype-lbl { font-size:12px;font-weight:800;color:var(--text);line-height:1.2; }
+    .ctype-sub { font-size:10px;color:var(--text3);margin-top:2px;line-height:1.3; }
+    body[data-ctype="affiliate"] .rates-ugc { display:none; }
+    body[data-ctype="ugc"] .rates-aff { display:none; }
+    @media (max-width:640px) { .ctype-row { grid-template-columns:1fr; } }
     .rates-card-title {
       font-size: 12px;
       font-weight: 700;
@@ -2779,12 +2789,63 @@
         <button class="btn btn-primary" onclick="saveRatesData()">Save Rates</button>
       </div>
       <div style="max-width:560px;">
-        <div class="rates-card">
+
+        <!-- CREATOR TYPE -->
+        <div class="rates-card" style="margin-bottom:16px;">
+          <div class="rates-card-title">I work as a…</div>
+          <div class="ctype-row" id="ctype-row">
+            <div class="ctype-opt" data-val="affiliate" onclick="setCreatorType('affiliate')"><div class="ctype-ico">🛒</div><div><div class="ctype-lbl">TikTok Shop Affiliate</div><div class="ctype-sub">Paid on GMV · monthly retainers</div></div></div>
+            <div class="ctype-opt" data-val="ugc" onclick="setCreatorType('ugc')"><div class="ctype-ico">🎬</div><div><div class="ctype-lbl">UGC Creator</div><div class="ctype-sub">Paid per asset · usage rights</div></div></div>
+            <div class="ctype-opt" data-val="both" onclick="setCreatorType('both')"><div class="ctype-ico">⚡</div><div><div class="ctype-lbl">Both</div><div class="ctype-sub">Pitch whichever fits the brand</div></div></div>
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-top:12px;">This changes how the AI pitches you and which rate card it quotes from.</div>
+        </div>
+
+        <!-- AFFILIATE: GMV -->
+        <div class="rates-card rates-aff" style="margin-bottom:16px;">
+          <div class="rates-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" style="width:15px;height:15px;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            Your Numbers
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:14px;">GMV is your leverage. Every pitch and counter-offer quotes these.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="form-group" style="margin:0;"><label class="form-label">Last 30-day GMV ($)</label><input class="form-input" id="rate-gmv-30d" type="number" placeholder="e.g. 42000" /></div>
+            <div class="form-group" style="margin:0;"><label class="form-label">Lifetime GMV ($)</label><input class="form-input" id="rate-gmv-lifetime" type="number" placeholder="e.g. 850000" /></div>
+          </div>
+        </div>
+
+        <!-- UGC: per-asset rate card -->
+        <div class="rates-card rates-ugc" style="margin-bottom:16px;">
+          <div class="rates-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" style="width:15px;height:15px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            UGC Rate Card
+          </div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:14px;">Per-asset pricing. Usage rights are a separate line item — never bundle them for free.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div class="form-group" style="margin:0;"><label class="form-label">Base video (15–60s)</label><div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--text3);font-size:13px;">$</span><input class="form-input" id="rate-ugc-base" type="number" placeholder="250" /></div></div>
+            <div class="form-group" style="margin:0;"><label class="form-label">Extra hook / variation</label><div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--text3);font-size:13px;">$</span><input class="form-input" id="rate-ugc-hook" type="number" placeholder="75" /></div></div>
+            <div class="form-group" style="margin:0;"><label class="form-label">Raw footage add-on</label><div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--text3);font-size:13px;">$</span><input class="form-input" id="rate-ugc-raw" type="number" placeholder="100" /></div></div>
+            <div class="form-group" style="margin:0;"><label class="form-label">Rush (48h) add-on</label><div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--text3);font-size:13px;">$</span><input class="form-input" id="rate-ugc-rush" type="number" placeholder="100" /></div></div>
+          </div>
+          <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.6px;text-transform:uppercase;margin:4px 0 8px;">Usage rights (added to base, per video)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div class="form-group" style="margin:0;"><label class="form-label">30 days organic</label><div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--text3);font-size:13px;">$</span><input class="form-input" id="rate-ugc-use30" type="number" placeholder="0" /></div></div>
+            <div class="form-group" style="margin:0;"><label class="form-label">90 days organic</label><div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--text3);font-size:13px;">$</span><input class="form-input" id="rate-ugc-use90" type="number" placeholder="100" /></div></div>
+            <div class="form-group" style="margin:0;"><label class="form-label">12 months organic</label><div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--text3);font-size:13px;">$</span><input class="form-input" id="rate-ugc-use365" type="number" placeholder="250" /></div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div class="form-group" style="margin:0;"><label class="form-label">Paid ads / whitelisting (per 30d)</label><div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--text3);font-size:13px;">$</span><input class="form-input" id="rate-ugc-ads" type="number" placeholder="200" /></div></div>
+            <div class="form-group" style="margin:0;"><label class="form-label">Revisions included</label><input class="form-input" id="rate-ugc-rev" type="number" placeholder="1" /></div>
+          </div>
+          <div class="form-group" style="margin:0;"><label class="form-label">Portfolio link</label><input class="form-input" id="rate-portfolio" placeholder="https://… (Drive, Notion, your site)" /><div style="font-size:11px;color:var(--text3);margin-top:6px;">UGC pitches lead with your portfolio, not follower counts. This link goes in every pitch.</div></div>
+        </div>
+
+        <div class="rates-card rates-aff">
           <div class="rates-card-title">
             <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            My Rate Packages
+            Retainer Packages
           </div>
-          <div style="font-size:11px;color:var(--text3);margin-bottom:16px;">Set your packages below. The AI email generator uses these to reply to brand inquiries automatically.</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:16px;">Monthly packages. The AI pushes brands toward these instead of one-off posts.</div>
           <div style="display:flex;flex-direction:column;gap:12px;">
 
             <div style="display:grid;grid-template-columns:64px 1fr 120px;gap:8px;align-items:center;">
@@ -3339,6 +3400,14 @@ select.pay-input option{background:#0d1828;}
     <div style="font-size:13px;color:var(--text2);margin-bottom:20px;" id="edit-contract-brand-label">Update your deal terms</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
       <div class="form-group">
+        <label class="form-label">Brand</label>
+        <input class="form-input" id="ec-brand" placeholder="Brand name" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Niche</label>
+        <input class="form-input" id="ec-niche" placeholder="e.g. skincare" />
+      </div>
+      <div class="form-group">
         <label class="form-label">Contract Value ($)</label>
         <input class="form-input" id="ec-value" type="number" placeholder="e.g. 2000" />
       </div>
@@ -3569,7 +3638,7 @@ select.pay-input option{background:#0d1828;}
     </div>
     <div class="rates-popup-title">Welcome to <span>My Rates</span> 💰</div>
     <div class="rates-popup-body">
-      This is your personal rates hub. Input your <strong>last 30-day GMV</strong>, your <strong>lifetime GMV</strong> if you have it, and your <strong>video package rates</strong> to use when pitching brands.<br><br>
+      This is your personal rates hub. Pick whether you're a <strong>TikTok Shop affiliate</strong>, a <strong>UGC creator</strong>, or both — then set the rates the AI should quote when pitching brands.<br><br>
       Your rates help power smarter email pitches and keep everything in one place.
     </div>
     <button class="rates-popup-btn" onclick="showRatesPopup2()">Got it, show me more →</button>
@@ -3710,6 +3779,7 @@ async function initAuth() {
       localStorage.setItem('rhq_rates_data', JSON.stringify(profile.rates_data));
       loadRatesData();
     }
+    setCreatorType(getCreatorType(), true);
 
     // Show onboarding for new users
     if (!profile.onboarded) {
@@ -4054,9 +4124,43 @@ function closeRatesPopup2() {
   }, 500);
 }
 
+// ── Creator type: 'affiliate' | 'ugc' | 'both' (stored inside rates_data) ──
+function getCreatorType() {
+  const d = mediaKitProfile?.rates_data || JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
+  return d.creatorType || 'affiliate';
+}
+function setCreatorType(t, silent) {
+  document.body.setAttribute('data-ctype', t);
+  document.querySelectorAll('.ctype-opt').forEach(o => o.classList.toggle('sel', o.getAttribute('data-val') === t));
+  if (silent) return;
+  const d = JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
+  d.creatorType = t;
+  localStorage.setItem('rhq_rates_data', JSON.stringify(d));
+  mediaKitProfile = { ...mediaKitProfile, rates_data: d };
+  sb.from('profiles').update({ rates_data: d }).eq('id', currentUser.id);
+}
+// UGC rate line for prompts + inline replies
+function ugcRateBlock(d) {
+  d = d || mediaKitProfile?.rates_data || JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
+  const L = [];
+  const $ = v => '$' + Number(v).toLocaleString();
+  if (d.ugcBase)   L.push(`• Base UGC video (15–60s): ${$(d.ugcBase)}`);
+  if (d.ugcHook)   L.push(`• Additional hook / variation: +${$(d.ugcHook)}`);
+  if (d.ugcRaw)    L.push(`• Raw footage: +${$(d.ugcRaw)}`);
+  if (d.ugcUse90)  L.push(`• 90-day organic usage: +${$(d.ugcUse90)} per video`);
+  if (d.ugcUse365) L.push(`• 12-month organic usage: +${$(d.ugcUse365)} per video`);
+  if (d.ugcAds)    L.push(`• Paid ads / whitelisting: +${$(d.ugcAds)} per 30 days`);
+  if (d.ugcRush)   L.push(`• Rush delivery (48h): +${$(d.ugcRush)}`);
+  if (d.ugcRev)    L.push(`• ${d.ugcRev} round${Number(d.ugcRev)===1?'':'s'} of revisions included`);
+  return L.join('\n');
+}
+
 function loadRatesData() {
   const d = JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
   const setVal = function(id, val) { const el = document.getElementById(id); if (el && val) el.value = val; };
+  setCreatorType(d.creatorType || 'affiliate', true);
+  ['base','hook','raw','rush','use30','use90','use365','ads','rev'].forEach(k => setVal('rate-ugc-' + k, d['ugc' + k.charAt(0).toUpperCase() + k.slice(1)]));
+  setVal('rate-portfolio', d.portfolioUrl);
   setVal('rate-gmv-30d',       d.gmv30d);
   setVal('rate-gmv-lifetime',  d.gmvLifetime);
   setVal('rate-pkg1-qty',      d.pkg1qty);
@@ -4084,9 +4188,15 @@ async function saveRatesData() {
     if (!el) return '';
     return (el.value && el.value.trim()) ? el.value.trim() : (el.placeholder || '');
   };
+  const gv = function(id) { const el = document.getElementById(id); return el ? (el.value || '').trim() : ''; };
+  const prev = JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
   const d = {
-    gmv30d:      document.getElementById('rate-gmv-30d').value.trim(),
-    gmvLifetime: document.getElementById('rate-gmv-lifetime').value.trim(),
+    creatorType: document.body.getAttribute('data-ctype') || prev.creatorType || 'affiliate',
+    gmv30d:      gv('rate-gmv-30d'),
+    gmvLifetime: gv('rate-gmv-lifetime'),
+    ugcBase: gv('rate-ugc-base'), ugcHook: gv('rate-ugc-hook'), ugcRaw: gv('rate-ugc-raw'), ugcRush: gv('rate-ugc-rush'),
+    ugcUse30: gv('rate-ugc-use30'), ugcUse90: gv('rate-ugc-use90'), ugcUse365: gv('rate-ugc-use365'), ugcAds: gv('rate-ugc-ads'), ugcRev: gv('rate-ugc-rev'),
+    portfolioUrl: gv('rate-portfolio'),
     pkg1qty:     rv('rate-pkg1-qty'),
     pkg1price:   rv('rate-pkg1-price'),
     pkg2qty:     rv('rate-pkg2-qty'),
@@ -4112,7 +4222,8 @@ async function saveRatesData() {
   if (d.gmv30d) mediaKitProfile = { ...mediaKitProfile, last_30d_gmv: d.gmv30d, rates_data: d };
   else mediaKitProfile = { ...mediaKitProfile, rates_data: d };
   const pkgCount = [d.pkg1qty, d.pkg2qty, d.pkg3qty, d.pkg4qty].filter(function(v){ return v && v !== ''; }).length;
-  showToast('Saved! ' + pkgCount + ' package(s) stored');
+  const ugcSet = !!d.ugcBase;
+  showToast(d.creatorType === 'ugc' ? (ugcSet ? 'Saved! UGC rate card stored' : 'Saved — add a base video rate so the AI can quote you') : 'Saved! ' + pkgCount + ' package(s) stored');
 }
 
 function daysLeft(expiry) {
@@ -4247,16 +4358,24 @@ async function obFinish() {
   const btn = document.getElementById('ob-finish-btn');
   btn.textContent = 'Saving...'; btn.disabled = true;
 
+  const plats = (_obData.platforms || []).map(p => p.toLowerCase());
+  const hasUgc = plats.some(p => p.includes('ugc'));
+  const ctype  = hasUgc ? (plats.length === 1 ? 'ugc' : 'both') : 'affiliate';
+  const prevRates = mediaKitProfile?.rates_data || JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
+  const ratesMerged = { ...prevRates, creatorType: ctype };
+  localStorage.setItem('rhq_rates_data', JSON.stringify(ratesMerged));
   const updates = {
     role: 'creator', onboarded: true,
     name:          _obData.name,
     tiktok_handle: _obData.handle,
     niche:         _obData.niche,
     bio:           _obData.bio,
+    rates_data:    ratesMerged,
   };
 
   await sb.from('profiles').update(updates).eq('id', currentUser.id);
   Object.assign(mediaKitProfile, updates);
+  setCreatorType(ctype, true);
 
   // Update sidebar name
   document.querySelector('.user-name').textContent = _obData.name;
@@ -4833,12 +4952,18 @@ async function editField(field) {
   document.getElementById('fep-save').addEventListener('click', save);
   input.addEventListener('keydown', e => { if (e.key === 'Enter') save(); if (e.key === 'Escape') closeEditPanel(); });
 
-  // close if clicking outside
-  setTimeout(() => {
-    document.addEventListener('click', function handler(e) {
-      if (!panel.contains(e.target)) { closeEditPanel(); document.removeEventListener('click', handler); }
-    });
-  }, 100);
+  // Close if clicking outside — EXCEPT for date fields: Safari/Chrome render the calendar
+  // picker outside the panel, so an outside-click handler would kill the editor mid-pick.
+  if (cfg.type !== 'date') {
+    setTimeout(() => {
+      document.addEventListener('mousedown', function handler(e) {
+        if (!panel.contains(e.target)) { closeEditPanel(); document.removeEventListener('mousedown', handler); }
+      });
+    }, 100);
+  } else {
+    // For dates, save immediately when the picker commits a value
+    input.addEventListener('change', () => { if (input.value) save(); });
+  }
 }
 
 // openAddModal and closeAddModal defined in wizard section above
@@ -4847,6 +4972,8 @@ function openEditContractModal() {
   const c = contracts.find(x => String(x.id) === String(currentDetailId));
   if (!c) return;
   document.getElementById('edit-contract-brand-label').textContent = 'Editing deal with ' + c.brand;
+  document.getElementById('ec-brand').value   = c.brand || '';
+  document.getElementById('ec-niche').value   = c.niche || '';
   document.getElementById('ec-value').value   = c.value || '';
   document.getElementById('ec-videos').value  = c.videos || '';
   document.getElementById('ec-start').value   = c.start || '';
@@ -4867,6 +4994,8 @@ async function saveEditContract() {
   btn.textContent = 'Saving...'; btn.disabled = true;
 
   const updates = {
+    brand:       document.getElementById('ec-brand').value.trim() || c.brand,
+    niche:       document.getElementById('ec-niche').value.trim(),
     value:       parseFloat(document.getElementById('ec-value').value) || c.value,
     videos:      parseInt(document.getElementById('ec-videos').value)  || c.videos,
     start_date:  document.getElementById('ec-start').value  || null,
@@ -4881,6 +5010,8 @@ async function saveEditContract() {
   if (error) { showToast('❌ Failed to save'); return; }
 
   // Update local copy
+  c.brand   = updates.brand;
+  c.niche   = updates.niche;
   c.value   = updates.value;
   c.videos  = updates.videos;
   c.start   = updates.start_date;
@@ -5171,7 +5302,9 @@ async function generateEmail(mode) {
     if (saved) return String(saved);
     return (el && el.placeholder) || '';
   }
-  const ratesGmv = getRate('rate-gmv-30d', storedRates.gmv30d);
+  // GMV: typed or saved only — never the placeholder (that would invent a number)
+  const gmvEl = document.getElementById('rate-gmv-30d');
+  const ratesGmv = (gmvEl && gmvEl.value.trim()) || (storedRates.gmv30d ? String(storedRates.gmv30d) : '');
   const pkgLines = [];
   const pkgDefs = [
     { qty: getRate('rate-pkg1-qty', storedRates.pkg1qty), price: getRate('rate-pkg1-price', storedRates.pkg1price) },
@@ -5182,9 +5315,14 @@ async function generateEmail(mode) {
   pkgDefs.forEach(function(p) {
     if (p.qty && p.price) pkgLines.push('• ' + p.qty + ' videos – $' + Number(p.price).toLocaleString());
   });
-  const packages = pkgLines.length
-    ? pkgLines.join('\n')
-    : '• 5 videos – $1,500\n• 10 videos – $2,000\n• 15 videos – $3,000';
+  const ctypeNow = getCreatorType();
+  // UGC-only creators never send affiliate packages; 'both' sends real packages only (no demo fallback)
+  const packages = ctypeNow === 'ugc' ? ''
+    : pkgLines.length ? pkgLines.join('\n')
+    : (ctypeNow === 'both' ? '' : '• 5 videos – $1,500\n• 10 videos – $2,000\n• 15 videos – $3,000');
+  // Hint for 'both': did the brand ask for UGC specifically?
+  const rawPaste = mode === 'paste' ? (document.getElementById('p-email').value || '') : (brand + ' ' + (document.getElementById('m-videos')?.value || ''));
+  const ugcHint = /\bugc\b/i.test(rawPaste);
 
   // Pull GMV: rates page first, then media kit profile
   const gmvOverride = ratesGmv || mediaKitProfile.total_gmv || mediaKitProfile.last_30d_gmv || '';
@@ -5216,6 +5354,10 @@ async function generateEmail(mode) {
         offer,
         videos,
         counter,
+        creator_type: ctypeNow,
+        ugc_hint:     ugcHint,
+        ugc_rates:    ugcRateBlock(storedRates),
+        portfolio:    storedRates.portfolioUrl || '',
         amount:    chase.amount || '',
         due_date:  chase.due_date || '',
         days_late: chase.days_late || '',
@@ -6082,9 +6224,9 @@ const CT_STEPS = [
   { type:'spot', page:'dashboard', target:'#dealflow',       title:'Deal Flow', body:'Connect Gmail and every brand offer in your inbox shows up here — scored Hot, Warm, or Gifted, with a dollar estimate on each. Reply in one click with your real rates.' },
   { type:'spot', page:'dashboard', target:'.stats-grid',     title:'Your Mission Control', body:'Active contracts, total value, videos due, and deadline alerts — updated every time you log in.' },
   { type:'spot', page:'contracts', target:'#page-contracts', title:'Every Brand Deal', body:'Add retainer deals, track videos posted, and stay ahead of every deadline. Expiring deals prompt a renewal pitch before the brand forgets you.' },
-  { type:'spot', page:'email',     target:'#page-email',     title:'Pitch, Counter, Negotiate', body:'Paste a brand\'s email or fill in the offer. AI writes the pitch, counter, or negotiation using your actual GMV and packages — and always pushes for a retainer.' },
+  { type:'spot', page:'email',     target:'#page-email',     title:'Pitch, Counter, Negotiate', body:'Paste a brand\'s email or fill in the offer. AI writes the pitch, counter, or negotiation from your real rate card — retainers for affiliates, per-asset pricing with usage rights for UGC.' },
   { type:'spot', page:'income',    target:'#page-income',    title:'Know Your Money', body:'Paid, pending, overdue — by brand. Never dig through bank statements to find out if a brand actually paid you.' },
-  { type:'spot', page:'rates',     target:'#page-rates',     title:'Your Rate Card', body:'Set your GMV and retainer packages once. Every email, reply, and estimate uses these numbers automatically — no more making up a price on the spot.' },
+  { type:'spot', page:'rates',     target:'#page-rates',     title:'Your Rate Card', body:'Pick affiliate, UGC, or both, then set your rates once. Every email, reply, and estimate uses these numbers automatically — no more making up a price on the spot.' },
   { type:'modal-verse' }
 ];
 let ctStep = 0;
@@ -6525,6 +6667,9 @@ function _scoreLead(subject, snippet, from) {
   if (/\b(paid|budget|rate|rates|rate card|compensation|fee|invoice)\b/.test(t)) pts += 2;
   if (/\b(tiktok shop|affiliate|commission|gmv)\b/.test(t)) pts += 1;
   if (/\b(deliverables|videos?|content pieces|ugc)\b/.test(t)) pts += 1;
+  // UGC request → prime lead for a UGC creator
+  const _ct = (mediaKitProfile?.rates_data || {}).creatorType || 'affiliate';
+  if (/\bugc\b/.test(t) && (_ct === 'ugc' || _ct === 'both')) pts += 2;
 
   // Negative signals
   const gifted = /\b(gifted|gifting|free product|product exchange|in exchange for|seeding|complimentary)\b/.test(t) && !/\bpaid\b/.test(t);
@@ -6537,8 +6682,15 @@ function _scoreLead(subject, snippet, from) {
   // Fallback estimate from the creator's own rate card if no $ was quoted
   if (est === null && !gifted) {
     const rates = mediaKitProfile?.rates_data || JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
-    const p = Number(rates.pkg1price || 0);
-    if (p > 0) { est = p; estSource = 'your rate'; }
+    const ctype = rates.creatorType || 'affiliate';
+    const mentionsUgc = /\bugc\b/.test(t);
+    if ((ctype === 'ugc' || (ctype === 'both' && mentionsUgc)) && Number(rates.ugcBase) > 0) {
+      const n = parseInt((t.match(/(\d+)\s*(?:ugc\s*)?(?:videos?|assets?|pieces?|clips?)/) || [])[1] || '1', 10);
+      est = Number(rates.ugcBase) * Math.min(Math.max(n, 1), 20); estSource = 'your rate';
+    } else {
+      const p = Number(rates.pkg1price || 0);
+      if (p > 0) { est = p; estSource = 'your rate'; }
+    }
   }
 
   let tier = 'warm', label = 'Warm';
@@ -6747,7 +6899,9 @@ function _buildReply(snippet, senderName, brandName) {
   const firstName = me.split(' ')[0];
   const niche     = mediaKitProfile?.niche || '';
   const nicheLineBase = niche ? `I specialize in ${niche} content` : 'I create content';
-  const nicheLine = `${nicheLineBase} and work with brands on monthly retainer agreements — consistent content, set deliverables, no back and forth.`;
+  const nicheLine = getCreatorType() === 'ugc'
+    ? `${nicheLineBase} and produce UGC for brands — scroll-stopping, conversion-focused videos you own the rights to use.`
+    : `${nicheLineBase} and work with brands on monthly retainer agreements — consistent content, set deliverables, no back and forth.`;
 
   const rates = mediaKitProfile?.rates_data || JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
   const pkgs  = [
@@ -6757,8 +6911,13 @@ function _buildReply(snippet, senderName, brandName) {
     { qty: rates.pkg4qty, price: rates.pkg4price, type: rates.pkg4type },
   ].filter(p => p.qty && p.price);
 
+  const ctype = getCreatorType();
   let rateBlock = '';
-  if (pkgs.length > 0) {
+  if (ctype === 'ugc' || (ctype === 'both' && rates.ugcBase && pkgs.length === 0)) {
+    const ub = ugcRateBlock(rates);
+    rateBlock = ub ? '\n\nHere\'s my UGC rate card:\n' + ub : '\n\nHappy to send over my UGC rate card and portfolio.';
+    if (rates.portfolioUrl) rateBlock += '\n\nPortfolio: ' + rates.portfolioUrl;
+  } else if (pkgs.length > 0) {
     rateBlock = '\n\nHere are my current packages:\n';
     pkgs.forEach(p => {
       const label = p.type ? p.type : 'pieces of content';
