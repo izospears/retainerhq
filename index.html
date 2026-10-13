@@ -262,9 +262,9 @@
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-badge">
+  <div class="hero-badge" id="hero-badge">
     <div class="hero-badge-dot"></div>
-    <span id="waitlist-count">340</span>+ TikTok Shop &amp; UGC creators
+    <span id="hero-badge-text">Built by a $4M+ GMV TikTok Shop affiliate</span>
   </div>
   <h1>Your AI brand deal manager.<br><span class="highlight">None of the cut.</span></h1>
   <p class="hero-sub">RetainerHQ finds the brand offers sitting in your inbox, prices them, writes the reply with your real rates, and chases the invoice until you're paid. A manager takes 15–20%. This takes $39.</p>
@@ -497,13 +497,15 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let selectedRole = 'creator';
 
+// Show the real creator count once it's big enough to be a selling point; otherwise lead with founder proof.
 async function loadCount() {
   try {
-    const { count } = await sb.from('waitlist').select('*', { count: 'exact', head: true });
-    document.getElementById('waitlist-count').textContent = Math.max(count || 0, 340);
-  } catch(e) {
-    document.getElementById('waitlist-count').textContent = 340;
-  }
+    const { count } = await sb.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'creator');
+    if ((count || 0) >= 250) {
+      const rounded = Math.floor(count / 50) * 50;
+      document.getElementById('hero-badge-text').textContent = rounded.toLocaleString() + '+ TikTok Shop & UGC creators';
+    }
+  } catch(e) {}
 }
 
 function openWaitlist(role) {
