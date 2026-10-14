@@ -5,35 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RetainerHQ — Your AI Brand Deal Manager for TikTok Shop &amp; UGC Creators</title>
   <meta name="description" content="RetainerHQ finds the brand offers in your inbox, writes the reply with your real rates, tracks every deliverable, and chases the invoice. Everything a manager does for $39/mo — none of the cut." />
+  <meta property="og:title" content="RetainerHQ — Your AI brand deal manager. None of the cut." />
+  <meta property="og:description" content="Finds brand offers, writes the reply with your rates, tracks deliverables, chases invoices. A manager takes 15–20%. This takes $39." />
+  <meta name="theme-color" content="#080C14" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --bg: #080C14; --bg2: #0D1220; --card: #111827; --card2: #161F30;
       --accent: #00E5A0; --accent2: #00C88A; --accent-dim: rgba(0,229,160,0.08);
       --text: #F0F4FF; --text2: #8896B3; --text3: #4A5878;
       --border: #1E2D45; --border2: #253450;
+      --red: #FF6B6B; --yellow: #FFD166; --blue: #60A5FA;
+      --mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
     }
     html { scroll-behavior: smooth; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg2); }
-    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg2); } ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+    a { color: inherit; }
 
     /* ── NAV ── */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(8,12,20,0.9); backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 48px; height: 64px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(8,12,20,.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 0 48px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
     .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .nav-logo-mark { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), #00B8FF); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
     .nav-logo-mark svg { width: 15px; height: 15px; }
     .nav-logo-name { font-size: 16px; font-weight: 800; letter-spacing: -.5px; color: var(--text); }
     .nav-logo-beta { font-size: 9px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: var(--accent); background: var(--accent-dim); border: 1px solid rgba(0,229,160,.2); border-radius: 4px; padding: 2px 6px; }
+    .nav-links { display: flex; gap: 26px; }
+    .nav-links a { font-size: 13px; font-weight: 600; color: var(--text2); text-decoration: none; transition: color .15s; }
+    .nav-links a:hover { color: var(--text); }
     .nav-right { display: flex; align-items: center; gap: 10px; }
     .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; font-family: inherit; transition: all .15s; text-decoration: none; }
     .btn-primary { background: var(--accent); color: #000; }
@@ -42,553 +43,548 @@
     .btn-ghost:hover { background: rgba(255,255,255,.04); color: var(--text); }
     .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border2); }
     .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-lg { padding: 14px 26px; font-size: 15px; border-radius: 10px; }
+
+    .eyebrow { font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
+    .section-title { font-size: 40px; font-weight: 900; letter-spacing: -1.2px; line-height: 1.08; }
+    .section-title .dim { color: var(--text3); }
 
     /* ── HERO ── */
-    .hero {
-      padding: 100px 48px 80px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .hero::before {
-      content: '';
-      position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
-      width: 800px; height: 600px;
-      background: radial-gradient(ellipse at center, rgba(0,229,160,.07) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--accent-dim); border: 1px solid rgba(0,229,160,.2);
-      border-radius: 20px; padding: 6px 14px;
-      font-size: 12px; font-weight: 700; color: var(--accent);
-      margin-bottom: 28px;
-    }
-    .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
-    .hero h1 {
-      font-size: clamp(36px, 6vw, 68px);
-      font-weight: 900;
-      letter-spacing: -2px;
-      line-height: 1.05;
-      margin-bottom: 20px;
-      max-width: 900px;
-      margin-left: auto; margin-right: auto;
-    }
-    .hero h1 .highlight { color: var(--accent); }
-    .hero-sub {
-      font-size: clamp(15px, 2vw, 18px);
-      color: var(--text2);
-      line-height: 1.7;
-      max-width: 560px;
-      margin: 0 auto 48px;
-    }
+    .hero { position: relative; padding: 84px 48px 40px; max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; min-height: calc(100vh - 64px); }
+    .hero::before { content: ''; position: absolute; top: -100px; left: -200px; width: 900px; height: 700px; background: radial-gradient(ellipse at center, rgba(0,229,160,.07) 0%, transparent 65%); pointer-events: none; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-dim); border: 1px solid rgba(0,229,160,.25); border-radius: 99px; padding: 6px 14px; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: var(--accent); margin-bottom: 26px; }
+    .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+    .hero h1 { font-size: 66px; font-weight: 900; letter-spacing: -2.5px; line-height: 1.0; margin-bottom: 22px; }
+    .hero h1 .hl { color: var(--accent); }
+    .hero-sub { font-size: 18px; color: var(--text2); line-height: 1.65; max-width: 520px; margin-bottom: 30px; }
+    .hero-sub b { color: var(--text); font-weight: 700; }
+    .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .hero-fine { font-size: 12px; color: var(--text3); }
+    .hero-fine span { color: var(--text2); }
 
-    /* ── SPLIT CARDS ── */
-    .split-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      max-width: 760px;
-      margin: 0 auto 48px;
-    }
-    .split-card {
-      background: var(--card);
-      border: 2px solid var(--border);
-      border-radius: 18px;
-      padding: 28px 24px;
-      cursor: pointer;
-      transition: all .2s;
-      text-align: left;
-      position: relative;
-      overflow: hidden;
-    }
-    .split-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0,229,160,.1); }
-    .split-card-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
-    .split-card-icon.creator { background: var(--accent-dim); border: 1px solid rgba(0,229,160,.2); }
-    .split-card-icon.brand { background: rgba(96,165,250,.08); border: 1px solid rgba(96,165,250,.2); }
-    .split-card-icon svg { width: 20px; height: 20px; }
-    .split-card-title { font-size: 17px; font-weight: 800; letter-spacing: -.3px; margin-bottom: 6px; }
-    .split-card-desc { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 16px; }
-    .split-card-cta { font-size: 12px; font-weight: 700; color: var(--accent); display: flex; align-items: center; gap: 5px; }
-    .split-card.brand-card .split-card-cta { color: #60A5FA; }
+    /* Live product mockup */
+    .mock { position: relative; perspective: 1400px; }
+    .mock-card { position: relative; background: linear-gradient(160deg, rgba(0,229,160,.06), rgba(0,184,255,.02) 55%, transparent); border: 1px solid rgba(0,229,160,.22); border-radius: 18px; padding: 20px; box-shadow: 0 40px 100px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.02) inset; transform: rotateY(-6deg) rotateX(3deg); transform-style: preserve-3d; transition: transform .2s ease-out; overflow: hidden; }
+    .mock-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,229,160,.6), transparent); }
+    .mock-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+    .mock-eyebrow { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; color: var(--accent); font-weight: 700; margin-bottom: 5px; }
+    .mock-hl { font-size: 18px; font-weight: 900; letter-spacing: -.4px; }
+    .mock-hl span { color: var(--accent); }
+    .mock-sub { font-size: 11px; color: var(--text2); margin-top: 3px; }
+    .mock-val { text-align: right; }
+    .mock-val-num { font-size: 26px; font-weight: 900; letter-spacing: -.8px; color: var(--accent); line-height: 1; font-variant-numeric: tabular-nums; }
+    .mock-val-lbl { font-family: var(--mono); font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); margin-top: 4px; }
+    .mock-list { display: flex; flex-direction: column; gap: 8px; min-height: 236px; }
+    .lead { background: rgba(8,13,24,.7); border: 1px solid var(--border); border-radius: 11px; padding: 12px 13px; display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; opacity: 0; transform: translateY(14px); animation: leadIn .55s cubic-bezier(.16,1,.3,1) forwards; }
+    @keyframes leadIn { to { opacity: 1; transform: none; } }
+    .lead.out { animation: leadOut .4s ease forwards; }
+    @keyframes leadOut { to { opacity: 0; transform: translateX(18px); } }
+    .lead-av { width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), #00B8FF); color: #000; font-weight: 900; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+    .lead-from { font-size: 12px; font-weight: 700; }
+    .lead-from small { font-weight: 500; color: var(--text3); font-size: 10px; }
+    .lead-subj { font-size: 11px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
+    .lead-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .score { display: inline-flex; align-items: center; gap: 4px; border-radius: 5px; padding: 2px 7px; font-size: 9px; font-weight: 800; letter-spacing: .3px; text-transform: uppercase; opacity: 0; transform: scale(.8); animation: scoreIn .35s .45s cubic-bezier(.16,1,.3,1) forwards; }
+    @keyframes scoreIn { to { opacity: 1; transform: none; } }
+    .score-hot { background: rgba(255,107,107,.12); color: var(--red); border: 1px solid rgba(255,107,107,.3); }
+    .score-warm { background: rgba(255,209,102,.12); color: var(--yellow); border: 1px solid rgba(255,209,102,.3); }
+    .score-gift { background: rgba(255,255,255,.06); color: var(--text2); border: 1px solid var(--border2); }
+    .est { font-size: 12px; font-weight: 800; color: var(--accent); opacity: 0; animation: scoreIn .35s .7s forwards; font-variant-numeric: tabular-nums; }
+    .est small { display: block; font-family: var(--mono); font-size: 7px; letter-spacing: .6px; text-transform: uppercase; color: var(--text3); font-weight: 700; }
+    .mock-foot { display: flex; gap: 6px; margin-top: 12px; }
+    .mock-btn { font-size: 10px; font-weight: 700; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border2); color: var(--text2); background: transparent; }
+    .mock-btn.p { background: var(--accent); color: #000; border-color: var(--accent); }
+    .mock-glow { position: absolute; inset: -30px; background: radial-gradient(ellipse at 60% 40%, rgba(0,229,160,.12), transparent 60%); filter: blur(30px); z-index: -1; }
+    .mock-scan { position: absolute; left: 0; right: 0; height: 1px; top: 90px; background: linear-gradient(90deg, transparent, rgba(0,229,160,.7), transparent); opacity: 0; pointer-events: none; }
+    .mock-scan.run { animation: scan 1.1s ease-in-out; }
+    @keyframes scan { 0% { top: 90px; opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { top: 340px; opacity: 0; } }
 
-    /* ── PROOF BAR ── */
-    .proof-bar {
-      display: flex; align-items: center; justify-content: center; gap: 40px;
-      padding: 28px 48px;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      background: var(--bg2);
-      flex-wrap: wrap;
-    }
-    .proof-item { text-align: center; }
-    .proof-num { font-size: 28px; font-weight: 900; color: var(--accent); letter-spacing: -1px; line-height: 1; }
-    .proof-label { font-size: 11px; color: var(--text3); font-weight: 600; letter-spacing: .5px; text-transform: uppercase; margin-top: 4px; }
-    .proof-divider { width: 1px; height: 40px; background: var(--border); }
+    /* ── TICKER ── */
+    .ticker-wrap { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg2); overflow: hidden; position: relative; }
+    .ticker-wrap::before, .ticker-wrap::after { content: ''; position: absolute; top: 0; bottom: 0; width: 120px; z-index: 2; pointer-events: none; }
+    .ticker-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg2), transparent); }
+    .ticker-wrap::after { right: 0; background: linear-gradient(270deg, var(--bg2), transparent); }
+    .ticker { display: flex; width: max-content; animation: tick 60s linear infinite; }
+    .ticker:hover { animation-play-state: paused; }
+    @keyframes tick { to { transform: translateX(-50%); } }
+    .tk { display: flex; align-items: center; gap: 10px; padding: 12px 26px; border-right: 1px solid var(--border); font-family: var(--mono); font-size: 11px; color: var(--text2); white-space: nowrap; }
+    .tk b { color: var(--text); font-weight: 700; }
+    .tk .amt { color: var(--accent); font-weight: 700; }
+    .tk .tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; letter-spacing: .3px; }
+    .tk .tag.hot { background: rgba(255,107,107,.12); color: var(--red); } .tk .tag.warm { background: rgba(255,209,102,.12); color: var(--yellow); } .tk .tag.paid { background: var(--accent-dim); color: var(--accent); } .tk .tag.late { background: rgba(255,107,107,.12); color: var(--red); }
 
-    /* ── HOW IT WORKS ── */
-    .section { padding: 80px 48px; }
-    .section-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); background: var(--accent-dim); border: 1px solid rgba(0,229,160,.2); border-radius: 20px; padding: 4px 12px; margin-bottom: 14px; }
-    .section-title { font-size: clamp(26px, 4vw, 38px); font-weight: 900; letter-spacing: -1px; line-height: 1.1; margin-bottom: 12px; }
-    .section-sub { font-size: 15px; color: var(--text2); line-height: 1.7; max-width: 500px; }
-    .hiw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; max-width: 1100px; margin: 0 auto; }
-    .hiw-col-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin-bottom: 28px; display: flex; align-items: center; gap: 8px; }
-    .hiw-col-label.brand { color: #60A5FA; }
-    .hiw-col-label::before { content: ''; display: block; width: 20px; height: 2px; background: currentColor; border-radius: 2px; }
-    .hiw-steps { display: flex; flex-direction: column; gap: 24px; }
-    .hiw-step { display: flex; gap: 16px; }
-    .step-num { width: 32px; height: 32px; border-radius: 50%; background: var(--accent-dim); border: 1px solid rgba(0,229,160,.3); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
-    .step-num.brand { background: rgba(96,165,250,.08); border-color: rgba(96,165,250,.3); color: #60A5FA; }
-    .step-title { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
-    .step-desc { font-size: 13px; color: var(--text2); line-height: 1.6; }
+    /* ── STORY (pinned steps) ── */
+    .story { max-width: 1240px; margin: 0 auto; padding: 120px 48px 60px; }
+    .story-head { max-width: 640px; margin-bottom: 70px; }
+    .story-head p { font-size: 16px; color: var(--text2); line-height: 1.65; margin-top: 14px; }
+    .story-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 64px; align-items: start; }
+    .step { padding: 32px 0 32px 28px; border-left: 2px solid var(--border); position: relative; min-height: 60vh; display: flex; flex-direction: column; justify-content: center; transition: border-color .4s; }
+    .step::before { content: attr(data-n); position: absolute; left: -11px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; border-radius: 50%; background: var(--bg); border: 2px solid var(--border2); font-family: var(--mono); font-size: 9px; font-weight: 700; color: var(--text3); display: flex; align-items: center; justify-content: center; transition: all .4s; }
+    .step.active { border-color: var(--accent); }
+    .step.active::before { border-color: var(--accent); color: #000; background: var(--accent); box-shadow: 0 0 18px rgba(0,229,160,.5); }
+    .step h3 { font-size: 30px; font-weight: 900; letter-spacing: -.8px; line-height: 1.1; color: var(--text3); transition: color .4s; margin-bottom: 12px; }
+    .step.active h3 { color: var(--text); }
+    .step p { font-size: 15px; color: var(--text3); line-height: 1.65; max-width: 420px; transition: color .4s; }
+    .step.active p { color: var(--text2); }
+    .step .kicker { font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; transition: color .4s; }
+    .step.active .kicker { color: var(--accent); }
+    .stage-wrap { position: sticky; top: 100px; height: calc(100vh - 140px); min-height: 520px; display: flex; align-items: center; }
+    .stage { position: relative; width: 100%; aspect-ratio: 4/3; max-height: 100%; }
+    .scene { position: absolute; inset: 0; opacity: 0; transform: translateY(18px) scale(.98); transition: opacity .55s cubic-bezier(.16,1,.3,1), transform .55s cubic-bezier(.16,1,.3,1); pointer-events: none; }
+    .scene.on { opacity: 1; transform: none; pointer-events: auto; }
+    .panel { background: var(--card); border: 1px solid var(--border2); border-radius: 16px; padding: 22px; box-shadow: 0 30px 80px rgba(0,0,0,.5); }
+    .panel-title { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); margin-bottom: 14px; display: flex; justify-content: space-between; }
+    .panel-title b { color: var(--accent); }
+
+    /* scene 1: inbox */
+    .s1-list { display: flex; flex-direction: column; gap: 8px; }
+    .s1-list .lead { animation: none; opacity: 0; transform: translateY(14px); }
+    .scene.on .s1-list .lead { animation: leadIn .5s cubic-bezier(.16,1,.3,1) forwards; }
+    .scene.on .s1-list .lead:nth-child(1) { animation-delay: .1s; } .scene.on .s1-list .lead:nth-child(2) { animation-delay: .25s; } .scene.on .s1-list .lead:nth-child(3) { animation-delay: .4s; } .scene.on .s1-list .lead:nth-child(4) { animation-delay: .55s; }
+    .s1-list .score, .s1-list .est { animation: none; opacity: 0; }
+    .scene.on .s1-list .score { animation: scoreIn .35s .9s cubic-bezier(.16,1,.3,1) forwards; } .scene.on .s1-list .est { animation: scoreIn .35s 1.15s forwards; }
+    .s1-foot { margin-top: 14px; font-family: var(--mono); font-size: 10px; color: var(--text3); display: flex; justify-content: space-between; }
+    .s1-foot b { color: var(--text2); }
+
+    /* scene 2: reply */
+    .s2-top { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+    .chip { font-size: 10px; font-weight: 700; padding: 6px 10px; border-radius: 7px; border: 1px solid var(--border2); color: var(--text2); }
+    .chip.sel { background: var(--accent-dim); border-color: rgba(0,229,160,.4); color: var(--accent); }
+    .s2-rates { background: rgba(0,0,0,.3); border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; font-family: var(--mono); font-size: 10px; color: var(--text2); margin-bottom: 14px; line-height: 1.7; }
+    .s2-rates b { color: var(--accent); }
+    .s2-out { background: rgba(0,229,160,.04); border: 1px solid rgba(0,229,160,.18); border-radius: 10px; padding: 14px; font-size: 12px; line-height: 1.65; color: var(--text); min-height: 170px; }
+    .s2-out .cur { display: inline-block; width: 7px; height: 13px; background: var(--accent); vertical-align: -2px; margin-left: 1px; animation: blink 1s steps(2) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* scene 3: contracts */
+    .s3-row { display: grid; grid-template-columns: 1.2fr .7fr 1.4fr auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .s3-row:last-of-type { border-bottom: none; }
+    .s3-brand { font-weight: 700; } .s3-brand small { display: block; color: var(--text3); font-weight: 500; font-size: 10px; }
+    .s3-val { color: var(--accent); font-weight: 800; font-variant-numeric: tabular-nums; }
+    .bar { height: 6px; background: rgba(255,255,255,.06); border-radius: 3px; overflow: hidden; }
+    .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #00B8FF); border-radius: 3px; width: 0; transition: width 1.1s cubic-bezier(.16,1,.3,1); }
+    .scene.on .bar i { width: var(--w); }
+    .s3-prog { font-family: var(--mono); font-size: 10px; color: var(--text2); margin-top: 5px; }
+    .pill { font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 5px; letter-spacing: .3px; text-transform: uppercase; white-space: nowrap; }
+    .pill.ok { background: var(--accent-dim); color: var(--accent); } .pill.warn { background: rgba(255,209,102,.12); color: var(--yellow); }
+    .s3-alert { margin-top: 14px; background: rgba(255,209,102,.07); border: 1px solid rgba(255,209,102,.25); border-radius: 10px; padding: 11px 13px; font-size: 11px; color: var(--text2); display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .s3-alert b { color: var(--yellow); }
+
+    /* scene 4: get paid */
+    .s4-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+    .s4-stat { background: rgba(0,0,0,.3); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+    .s4-stat-l { font-family: var(--mono); font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); }
+    .s4-stat-v { font-size: 20px; font-weight: 900; letter-spacing: -.6px; margin-top: 4px; font-variant-numeric: tabular-nums; }
+    .s4-stat-v.g { color: var(--accent); } .s4-stat-v.y { color: var(--yellow); } .s4-stat-v.r { color: var(--red); }
+    .s4-row { display: grid; grid-template-columns: 1fr auto auto auto; gap: 12px; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .s4-row .amt { font-weight: 800; color: var(--accent); }
+    .s4-row .date { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+    .s4-row.late .date { color: var(--red); }
+    .pill.chase { background: rgba(255,107,107,.1); color: var(--red); border: 1px solid rgba(255,107,107,.4); }
+    .s4-flip { position: relative; }
+    .s4-flip .st { display: grid; grid-template-columns: 1fr auto auto auto; gap: 12px; align-items: center; }
+    .s4-flip .paid-state { position: absolute; inset: 0; opacity: 0; transition: opacity .5s 2.2s; }
+    .s4-flip .late-state { transition: opacity .5s 2.2s; }
+    .scene.on .s4-flip .paid-state { opacity: 1; }
+    .scene.on .s4-flip .late-state { opacity: 0; }
+    .s4-chase-note { margin-top: 14px; background: rgba(0,229,160,.05); border: 1px solid rgba(0,229,160,.2); border-radius: 10px; padding: 11px 13px; font-size: 11px; color: var(--text2); line-height: 1.6; opacity: 0; transform: translateY(6px); transition: all .5s 1s; }
+    .scene.on .s4-chase-note { opacity: 1; transform: none; }
+    .s4-chase-note b { color: var(--accent); }
+
+    /* ── NUMBERS ── */
+    .numbers { max-width: 1240px; margin: 0 auto; padding: 80px 48px; }
+    .num-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 44px; }
+    .num { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px 24px; position: relative; overflow: hidden; }
+    .num::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); transform: scaleX(0); transform-origin: left; transition: transform .8s .3s cubic-bezier(.16,1,.3,1); }
+    .num.seen::after { transform: scaleX(1); }
+    .num-v { font-size: 44px; font-weight: 900; letter-spacing: -1.6px; line-height: 1; font-variant-numeric: tabular-nums; }
+    .num-v.g { color: var(--accent); } .num-v.r { color: var(--red); }
+    .num-l { font-size: 13px; color: var(--text2); margin-top: 10px; line-height: 1.5; }
+    .num-l b { color: var(--text); }
 
     /* ── FEATURES ── */
-    .features-section { padding: 80px 48px; background: var(--bg2); }
-    .features-header { text-align: center; margin-bottom: 52px; }
-    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1100px; margin: 0 auto; }
-    .feature-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
-    .feature-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--accent-dim); border: 1px solid rgba(0,229,160,.2); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
-    .feature-icon svg { width: 18px; height: 18px; }
-    .feature-title { font-size: 14px; font-weight: 800; letter-spacing: -.2px; margin-bottom: 6px; }
-    .feature-desc { font-size: 13px; color: var(--text2); line-height: 1.6; }
+    .features { max-width: 1240px; margin: 0 auto; padding: 60px 48px 100px; }
+    .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 44px; }
+    .feat { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px; transition: border-color .2s, transform .2s; }
+    .feat:hover { border-color: rgba(0,229,160,.35); transform: translateY(-2px); }
+    .feat-ico { width: 38px; height: 38px; border-radius: 10px; background: var(--accent-dim); border: 1px solid rgba(0,229,160,.2); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+    .feat-ico svg { width: 17px; height: 17px; }
+    .feat h4 { font-size: 15px; font-weight: 800; margin-bottom: 6px; letter-spacing: -.2px; }
+    .feat p { font-size: 13px; color: var(--text2); line-height: 1.6; }
 
     /* ── COMPARE ── */
-    .compare-section { padding: 80px 48px; }
-    .compare-header { text-align: center; margin-bottom: 48px; }
-    .compare-table { max-width: 800px; margin: 0 auto; background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
-    .compare-row { display: grid; grid-template-columns: 1.5fr 1fr 1fr; border-bottom: 1px solid var(--border); }
-    .compare-row:last-child { border-bottom: none; }
-    .compare-row.header { background: var(--card2); }
-    .compare-cell { padding: 14px 20px; font-size: 13px; }
-    .compare-row.header .compare-cell { font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: .7px; text-transform: uppercase; }
-    .compare-cell.feature { color: var(--text2); }
-    .compare-cell.yes { color: var(--accent); font-weight: 700; }
-    .compare-cell.no { color: var(--text3); }
-    .compare-cell.rhq { font-weight: 700; color: var(--accent); }
+    .compare { padding: 80px 48px; background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .compare-in { max-width: 860px; margin: 0 auto; text-align: center; }
+    .compare-table { margin-top: 40px; background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; text-align: left; }
+    .cr { display: grid; grid-template-columns: 1.5fr 1fr 1fr; border-bottom: 1px solid var(--border); }
+    .cr:last-child { border-bottom: none; }
+    .cr.h { background: var(--card2); }
+    .cc { padding: 14px 20px; font-size: 13px; }
+    .cr.h .cc { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; }
+    .cc.f { color: var(--text2); } .cc.y { color: var(--accent); font-weight: 700; } .cc.n { color: var(--text3); }
 
-    /* ── FINAL CTA ── */
-    .cta-section {
-      padding: 100px 48px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .cta-section::before {
-      content: '';
-      position: absolute; bottom: -100px; left: 50%; transform: translateX(-50%);
-      width: 700px; height: 400px;
-      background: radial-gradient(ellipse at center, rgba(0,229,160,.08) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .cta-title { font-size: clamp(28px, 4vw, 44px); font-weight: 900; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 14px; }
-    .cta-sub { font-size: 16px; color: var(--text2); margin-bottom: 36px; }
-    .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-    .btn-lg { padding: 14px 28px; font-size: 15px; border-radius: 10px; }
+    /* ── PRICING ── */
+    .pricing { max-width: 820px; margin: 0 auto; padding: 100px 48px; text-align: center; }
+    .pricing p.lead-p { font-size: 15px; color: var(--text2); margin: 14px auto 40px; max-width: 480px; line-height: 1.65; }
+    .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .plan { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px 24px; position: relative; }
+    .plan.best { border-color: var(--accent); background: linear-gradient(135deg, rgba(0,229,160,.08), rgba(91,155,255,.05)); }
+    .plan-tag { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #000; font-size: 10px; font-weight: 900; padding: 4px 14px; border-radius: 99px; letter-spacing: .5px; text-transform: uppercase; white-space: nowrap; }
+    .plan-l { font-family: var(--mono); font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; }
+    .plan-v { font-size: 46px; font-weight: 900; letter-spacing: -1.8px; line-height: 1; }
+    .plan.best .plan-v { color: var(--accent); }
+    .plan-strike { font-size: 15px; color: var(--text3); text-decoration: line-through; margin-right: 10px; }
+    .plan-s { font-size: 12px; color: var(--text3); margin: 8px 0 20px; }
+    .plan.best .plan-s { color: var(--accent); font-weight: 700; }
+    .fine { font-size: 12px; color: var(--text3); margin-top: 20px; }
 
-    /* ── FOOTER ── */
-    footer {
-      padding: 28px 48px;
-      border-top: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 12px;
-    }
-    .footer-logo { font-size: 14px; font-weight: 800; letter-spacing: -.3px; }
-    .footer-logo span { color: var(--accent); }
-    .footer-links { display: flex; gap: 24px; }
-    .footer-link { font-size: 13px; color: var(--text3); text-decoration: none; transition: color .15s; }
-    .footer-link:hover { color: var(--text); }
-    .footer-copy { font-size: 12px; color: var(--text3); }
+    /* ── FINAL / FOOTER ── */
+    .final { padding: 100px 48px; text-align: center; background: var(--bg2); border-top: 1px solid var(--border); }
+    .final h2 { font-size: 44px; font-weight: 900; letter-spacing: -1.5px; line-height: 1.08; margin-bottom: 14px; }
+    .final p { color: var(--text2); font-size: 16px; margin-bottom: 28px; }
+    .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    footer { padding: 36px 48px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; }
+    .foot-logo { font-weight: 800; letter-spacing: -.3px; } .foot-logo span { color: var(--accent); }
+    .foot-links { display: flex; gap: 20px; } .foot-links a { font-size: 12px; color: var(--text3); text-decoration: none; } .foot-links a:hover { color: var(--text); }
+    .foot-copy { font-size: 11px; color: var(--text3); }
 
-    /* ── MODAL ── */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.75); backdrop-filter: blur(6px); z-index: 999; display: none; align-items: center; justify-content: center; padding: 20px; }
-    .modal-overlay.open { display: flex; }
-    .modal-box { background: var(--card); border: 1px solid var(--border2); border-radius: 20px; padding: 32px; width: 100%; max-width: 440px; box-shadow: 0 32px 80px rgba(0,0,0,.5); position: relative; }
-    .modal-close { position: absolute; top: 16px; right: 16px; width: 28px; height: 28px; border-radius: 6px; background: var(--bg2); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text2); font-size: 16px; font-family: inherit; transition: all .15s; }
-    .modal-close:hover { background: var(--card2); color: var(--text); }
-    .modal-title { font-size: 20px; font-weight: 900; letter-spacing: -.5px; margin-bottom: 4px; }
-    .modal-sub { font-size: 13px; color: var(--text2); margin-bottom: 22px; line-height: 1.5; }
-    .role-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
-    .role-option { border: 2px solid var(--border); border-radius: 12px; padding: 14px 12px; cursor: pointer; transition: all .15s; background: var(--bg2); }
-    .role-option:hover { border-color: var(--border2); }
-    .role-option.selected { border-color: var(--accent); background: var(--accent-dim); }
-    .role-option-icon { margin-bottom: 8px; color: var(--text3); }
-    .role-option.selected .role-option-icon { color: var(--accent); }
-    .role-option-label { font-size: 13px; font-weight: 700; }
-    .role-option-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
-    .form-group { margin-bottom: 12px; }
-    .form-input { width: 100%; background: var(--bg2); border: 1px solid var(--border); border-radius: 9px; padding: 11px 13px; color: var(--text); font-size: 14px; font-family: inherit; transition: border-color .15s; }
-    .form-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,229,160,.08); }
-    .form-input::placeholder { color: var(--text3); }
-    .success-state { text-align: center; padding: 10px 0; }
-    .success-title { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
-    .success-sub { font-size: 13px; color: var(--text2); line-height: 1.7; }
+    .rv { opacity: 0; transform: translateY(18px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); }
+    .rv.seen { opacity: 1; transform: none; }
 
-    @media (max-width: 768px) {
-      nav { padding: 0 20px; }
-      .hero { padding: 60px 20px 50px; }
-      .split-cards { grid-template-columns: 1fr; max-width: 400px; }
-      .proof-bar { gap: 24px; padding: 24px 20px; }
-      .proof-divider { display: none; }
-      .section { padding: 60px 20px; }
-      .hiw-grid { grid-template-columns: 1fr; gap: 40px; }
-      .features-section { padding: 60px 20px; }
-      .features-grid { grid-template-columns: 1fr; }
-      .compare-section { padding: 60px 20px; }
-      .cta-section { padding: 60px 20px; }
-      footer { padding: 24px 20px; flex-direction: column; text-align: center; }
-      .nav-right .btn-ghost { display: none; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      .rv { opacity: 1; transform: none; } .mock-card { transform: none; }
     }
+    @media (max-width: 1000px) {
+      .hero { grid-template-columns: 1fr; padding: 60px 24px 30px; min-height: 0; gap: 36px; }
+      .hero h1 { font-size: 48px; letter-spacing: -1.6px; }
+      .mock-card { transform: none; }
+      .story { padding: 80px 24px 40px; } .story-grid { grid-template-columns: 1fr; gap: 20px; }
+      .stage-wrap { position: sticky; top: 72px; height: auto; min-height: 0; margin-bottom: 20px; order: -1; z-index: 5; background: var(--bg); padding: 8px 0 14px; }
+      .stage { aspect-ratio: auto; height: 400px; }
+      .step { min-height: 50vh; padding: 22px 0 22px 24px; }
+      .num-grid, .feat-grid { grid-template-columns: 1fr 1fr; }
+      .plans { grid-template-columns: 1fr; }
+      nav, .numbers, .features, .compare, .pricing, .final, footer { padding-left: 24px; padding-right: 24px; }
+      .nav-links { display: none; }
+      .section-title { font-size: 32px; } .final h2 { font-size: 34px; }
+    }
+    .btn { white-space: nowrap; }
+    @media (max-width: 600px) { .nav-right .btn-ghost { display: none; } .nav { padding: 0 16px; } .num-grid, .feat-grid { grid-template-columns: 1fr; } .hero h1 { font-size: 40px; } .lead-subj { max-width: 150px; } .s3-row { grid-template-columns: 1fr .6fr 1fr auto; gap: 8px; } .stage { height: 440px; } }
   </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a href="/" class="nav-logo">
-    <div class="nav-logo-mark">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
-      </svg>
-    </div>
-    <span class="nav-logo-name">RetainerHQ</span>
-    <span class="nav-logo-beta">Beta</span>
+    <div class="nav-logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+    <span class="nav-logo-name">RetainerHQ</span><span class="nav-logo-beta">Beta</span>
   </a>
-  <div class="nav-right">
-    <a href="/auth.html" class="btn btn-ghost">Sign In</a>
-    <a href="/auth.html" class="btn btn-primary">Start Free Trial</a>
-  </div>
+  <div class="nav-links"><a href="#how">How it works</a><a href="#features">Features</a><a href="#compare">vs. a manager</a><a href="#pricing">Pricing</a></div>
+  <div class="nav-right"><a href="/auth.html" class="btn btn-ghost">Sign In</a><a href="/auth.html" class="btn btn-primary">Start Free Trial</a></div>
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-badge" id="hero-badge">
-    <div class="hero-badge-dot"></div>
-    <span id="hero-badge-text">Built by a $4M+ GMV TikTok Shop affiliate</span>
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="top">
+  <div>
+    <div class="hero-badge" id="hero-badge"><div class="hero-badge-dot"></div><span id="hero-badge-text">Built by a $4M+ GMV TikTok Shop affiliate</span></div>
+    <h1>Your AI brand deal manager.<br><span class="hl">None of the cut.</span></h1>
+    <p class="hero-sub">RetainerHQ finds the brand offers in your inbox, prices them, writes the reply with your real rates, and chases the invoice until you're paid. <b>A manager takes 15–20%. This takes $39.</b></p>
+    <div class="hero-ctas"><a href="/auth.html" class="btn btn-primary btn-lg">Start 7-Day Free Trial →</a><a href="#how" class="btn btn-outline btn-lg">See how it works</a></div>
+    <div class="hero-fine"><span>$0 today</span> · Cancel in one click · For TikTok Shop affiliates &amp; UGC creators</div>
   </div>
-  <h1>Your AI brand deal manager.<br><span class="highlight">None of the cut.</span></h1>
-  <p class="hero-sub">RetainerHQ finds the brand offers sitting in your inbox, prices them, writes the reply with your real rates, and chases the invoice until you're paid. A manager takes 15–20%. This takes $39.</p>
 
-  <div class="cta-buttons" style="margin-bottom:16px;">
-    <button class="btn btn-primary btn-lg" onclick="window.location.href='/auth.html'">Start 7-Day Free Trial →</button>
-    <button class="btn btn-outline btn-lg" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See how it works</button>
-  </div>
-  <p style="font-size:12px;color:var(--text3);">$0 today · Cancel in one click · Built by a $4M+ GMV affiliate</p>
-
-  <div class="split-cards" style="margin-top:44px;">
-    <div class="split-card" onclick="window.location.href='/auth.html'">
-      <div class="split-card-icon creator">
-        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+  <div class="mock" id="mock">
+    <div class="mock-glow"></div>
+    <div class="mock-card" id="mock-card">
+      <div class="mock-scan" id="mock-scan"></div>
+      <div class="mock-head">
+        <div>
+          <div class="mock-eyebrow">⚡ DEAL FLOW</div>
+          <div class="mock-hl"><span id="m-count">0</span> open brand offers · <span id="m-hot">0 hot</span></div>
+          <div class="mock-sub">Forwarded from your inbox. Scored, priced, ready to reply.</div>
+        </div>
+        <div class="mock-val"><div class="mock-val-num" id="m-total">$0</div><div class="mock-val-lbl">on the table</div></div>
       </div>
-      <div class="split-card-title">TikTok Shop Affiliates</div>
-      <div class="split-card-desc">Turn one-off videos into monthly retainers. Pitch with your GMV, not your follower count.</div>
-      <div class="split-card-cta">Start free trial <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-    </div>
-    <div class="split-card" onclick="window.location.href='/auth.html'">
-      <div class="split-card-icon creator">
-        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-      </div>
-      <div class="split-card-title">UGC Creators</div>
-      <div class="split-card-desc">Price per asset, lock in usage rights, and stop chasing brands for money you already earned.</div>
-      <div class="split-card-cta">Start free trial <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="12" height="12"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+      <div class="mock-list" id="m-list"></div>
+      <div class="mock-foot"><span class="mock-btn p">⚡ Preview Reply</span><span class="mock-btn">↗ Reply in Gmail</span><span class="mock-btn">✎ Counter</span></div>
     </div>
   </div>
 </section>
 
-<!-- PROOF BAR -->
-<div class="proof-bar">
-  <div class="proof-item"><div class="proof-num">$4M+</div><div class="proof-label">GMV by our founder</div></div>
-  <div class="proof-divider"></div>
-  <div class="proof-item"><div class="proof-num">15–20%</div><div class="proof-label">What a manager takes</div></div>
-  <div class="proof-divider"></div>
-  <div class="proof-item"><div class="proof-num">$39</div><div class="proof-label">What RetainerHQ takes</div></div>
-  <div class="proof-divider"></div>
-  <div class="proof-item"><div class="proof-num">1 deal</div><div class="proof-label">Pays for the whole year</div></div>
-</div>
+<div class="ticker-wrap"><div class="ticker" id="ticker"></div></div>
 
-<!-- HOW IT WORKS -->
-<section class="section" id="how" style="background:var(--bg);">
-  <div style="max-width:1100px;margin:0 auto;">
-    <div style="text-align:center;margin-bottom:52px;">
-      <div class="section-badge">How It Works</div>
-      <div class="section-title">Everything a manager does, on autopilot</div>
+<!-- ═══ STORY ═══ -->
+<section class="story" id="how">
+  <div class="story-head rv">
+    <div class="eyebrow">How it works</div>
+    <h2 class="section-title" style="margin-top:14px;">Four jobs. <span class="dim">One manager.</span><br>Zero percent.</h2>
+    <p>This is what a human manager does for 15–20% of every deal. RetainerHQ does it in the background while you make content.</p>
+  </div>
+
+  <div class="story-grid">
+    <div class="steps" id="steps">
+      <div class="step active" data-n="01" data-scene="s1">
+        <div class="kicker">Find</div>
+        <h3>Every brand offer, found and priced.</h3>
+        <p>One Gmail rule forwards brand emails to RetainerHQ. Newsletters get thrown out. Real offers get scored Hot, Warm, or Gifted — with a dollar estimate from the brand's budget or your own rate card.</p>
+      </div>
+      <div class="step" data-n="02" data-scene="s2">
+        <div class="kicker">Reply</div>
+        <h3>The reply, written in your numbers.</h3>
+        <p>Pitch, counter, negotiate up, or decline. Every email uses your actual rates and pushes toward a monthly retainer instead of a one-off. Affiliates lead with GMV. UGC creators lead with portfolio and usage rights.</p>
+      </div>
+      <div class="step" data-n="03" data-scene="s3">
+        <div class="kicker">Deliver</div>
+        <h3>Every video, deadline, and renewal.</h3>
+        <p>Each contract shows what you owe, what you've posted, and how many days are left. Fall behind pace and it tells you. Hit the last video and it prompts a renewal pitch before the brand forgets you.</p>
+      </div>
+      <div class="step" data-n="04" data-scene="s4">
+        <div class="kicker">Get paid</div>
+        <h3>Overdue becomes paid.</h3>
+        <p>Paid, pending, and overdue across every brand. One click generates the invoice. One more sends a firm, professional follow-up the moment a payment goes late — the longer it sits, the harder it is to collect.</p>
+      </div>
     </div>
-    <div class="hiw-grid">
-      <div>
-        <div class="hiw-col-label">Find &amp; close</div>
-        <div class="hiw-steps">
-          <div class="hiw-step">
-            <div class="step-num">1</div>
-            <div><div class="step-title">Forward brand emails. We do the rest.</div><div class="step-desc">One Gmail rule, set once. Every brand email lands in Deal Flow — newsletters filtered out, each lead scored Hot, Warm, or Gifted with a dollar estimate. Works with any email provider.</div></div>
-          </div>
-          <div class="hiw-step">
-            <div class="step-num">2</div>
-            <div><div class="step-title">Reply in one click, with your real rates.</div><div class="step-desc">Set your packages once. Every reply, pitch, and counter-offer is written around your actual numbers — and pushes the brand toward a monthly retainer instead of a one-off.</div></div>
-          </div>
-          <div class="hiw-step">
-            <div class="step-num">3</div>
-            <div><div class="step-title">Negotiate up. Decline gracefully. Never guess.</div><div class="step-desc">Counter-offer, upsell to a bigger package, or pass while keeping the door open — the right email for every situation, in seconds.</div></div>
+
+    <div class="stage-wrap">
+      <div class="stage" id="stage">
+
+        <div class="scene on" id="s1">
+          <div class="panel">
+            <div class="panel-title"><span>Deal Flow · forwarded this week</span><b>3 leads · $9,400</b></div>
+            <div class="s1-list">
+              <div class="lead"><div class="lead-av">G</div><div><div class="lead-from">Sarah Kim <small>· GlowUp Skincare · today</small></div><div class="lead-subj">Paid partnership — monthly retainer, 4 videos</div></div><div class="lead-right"><span class="score score-hot">🔥 Hot</span><span class="est">$2,500<small>quoted</small></span></div></div>
+              <div class="lead"><div class="lead-av">B</div><div><div class="lead-from">Marcus T. <small>· Beplain · yesterday</small></div><div class="lead-subj">UGC videos for our launch — budget $4,500 for 6</div></div><div class="lead-right"><span class="score score-hot">🔥 Hot</span><span class="est">$4,500<small>quoted</small></span></div></div>
+              <div class="lead"><div class="lead-av">N</div><div><div class="lead-from">Nova Hair <small>· 2d ago</small></div><div class="lead-subj">Interested in working with you — what are your rates?</div></div><div class="lead-right"><span class="score score-warm">◆ Warm</span><span class="est">$2,400<small>est. your rate</small></span></div></div>
+              <div class="lead"><div class="lead-av">C</div><div><div class="lead-from">Cute Co. <small>· 3d ago</small></div><div class="lead-subj">Gifted collab — free product in exchange for a post</div></div><div class="lead-right"><span class="score score-gift">🎁 Gifted</span></div></div>
+            </div>
+            <div class="s1-foot"><span>Filtered out: <b>3 newsletters, 1 promo</b></span><span>sorted hot → gifted</span></div>
           </div>
         </div>
-      </div>
-      <div>
-        <div class="hiw-col-label">Deliver &amp; get paid</div>
-        <div class="hiw-steps">
-          <div class="hiw-step">
-            <div class="step-num">4</div>
-            <div><div class="step-title">Track every deliverable and deadline.</div><div class="step-desc">Each contract shows videos owed, videos posted, and days left. Expiring deals prompt a renewal pitch before the brand forgets you exist.</div></div>
-          </div>
-          <div class="hiw-step">
-            <div class="step-num">5</div>
-            <div><div class="step-title">Know exactly who owes you what.</div><div class="step-desc">Paid, pending, and overdue — across every brand, in one view. No more digging through bank statements to find out if a brand actually paid.</div></div>
-          </div>
-          <div class="hiw-step">
-            <div class="step-num">6</div>
-            <div><div class="step-title">Chase invoices without the awkwardness.</div><div class="step-desc">Overdue payment? One click sends a firm, professional follow-up. You get paid; the relationship stays warm.</div></div>
+
+        <div class="scene" id="s2">
+          <div class="panel">
+            <div class="panel-title"><span>Email Generator</span><b>GlowUp Skincare · counter</b></div>
+            <div class="s2-top"><span class="chip">🚀 Retainer Pitch</span><span class="chip sel">💰 Counter Offer</span><span class="chip">📈 Negotiate Up</span><span class="chip">🙏 Decline</span></div>
+            <div class="s2-rates">Using your rates &nbsp;→&nbsp; 30-day GMV <b>$42,000</b> · Packages <b>5 videos $2,500</b> · <b>10 videos $4,200</b></div>
+            <div class="s2-out" id="s2-out"></div>
           </div>
         </div>
+
+        <div class="scene" id="s3">
+          <div class="panel">
+            <div class="panel-title"><span>Contracts · active</span><b>3 retainers · $9,700/mo</b></div>
+            <div class="s3-row"><div class="s3-brand">GlowUp Skincare<small>Monthly retainer</small></div><div class="s3-val">$2,500</div><div><div class="bar"><i style="--w:75%"></i></div><div class="s3-prog">3 / 4 videos · 9 days left</div></div><span class="pill ok">On pace</span></div>
+            <div class="s3-row"><div class="s3-brand">Beplain<small>UGC bundle</small></div><div class="s3-val">$4,500</div><div><div class="bar"><i style="--w:33%"></i></div><div class="s3-prog">2 / 6 videos · 18 days left</div></div><span class="pill ok">On pace</span></div>
+            <div class="s3-row"><div class="s3-brand">Nova Hair<small>Monthly retainer</small></div><div class="s3-val">$2,700</div><div><div class="bar"><i style="--w:100%"></i></div><div class="s3-prog">5 / 5 videos · 4 days left</div></div><span class="pill warn">Renew</span></div>
+            <div class="s3-alert"><span><b>Nova Hair expires in 4 days</b> — all videos delivered. Send the renewal pitch now.</span><span class="chip sel">Send renewal →</span></div>
+          </div>
+        </div>
+
+        <div class="scene" id="s4">
+          <div class="panel">
+            <div class="panel-title"><span>Income Tracker</span><b>October</b></div>
+            <div class="s4-stats">
+              <div class="s4-stat"><div class="s4-stat-l">Paid</div><div class="s4-stat-v g" id="s4-paid">$7,200</div></div>
+              <div class="s4-stat"><div class="s4-stat-l">Pending</div><div class="s4-stat-v y">$4,500</div></div>
+              <div class="s4-stat"><div class="s4-stat-l">Overdue</div><div class="s4-stat-v r" id="s4-over">$2,500</div></div>
+            </div>
+            <div class="s4-row"><div>GlowUp Skincare</div><div class="amt">$2,500</div><div class="date">Paid Oct 2</div><span class="pill ok">Paid</span></div>
+            <div class="s4-row"><div>Beplain</div><div class="amt">$4,500</div><div class="date">Due Oct 28</div><span class="pill warn">Pending</span></div>
+            <div class="s4-row s4-flip late" style="display:block;">
+              <div class="st late-state"><div>Nova Hair</div><div class="amt">$2,500</div><div class="date">Due Oct 5 · 9d late</div><span class="pill chase">Chase</span></div>
+              <div class="st paid-state"><div>Nova Hair</div><div class="amt">$2,500</div><div class="date" style="color:var(--accent);">Paid Oct 14</div><span class="pill ok">Paid</span></div>
+            </div>
+            <div class="s4-chase-note">✦ Chase sent: <b>"Hi Priya — the $2,500 invoice for the September videos was due Oct 5. Could you confirm a payment date?"</b> Firm, polite, 10 seconds. Invoice attached.</div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 </section>
 
-<!-- FEATURES -->
-<section class="features-section">
-  <div class="features-header">
-    <div class="section-badge">Platform Features</div>
-    <div class="section-title">Built for creators who treat this like a business</div>
+<!-- ═══ NUMBERS ═══ -->
+<section class="numbers">
+  <div class="rv">
+    <div class="eyebrow">The math</div>
+    <h2 class="section-title" style="margin-top:14px;">Cheaper than a manager.<br><span class="dim">Faster than doing it yourself.</span></h2>
   </div>
-  <div class="features-grid">
-    <div class="feature-card">
-      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
-      <div class="feature-title">Deal Flow Inbox</div>
-      <div class="feature-desc">Every brand offer, forwarded, scored, and priced. See "3 open offers · $6,500 on the table" the moment you log in.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-      <div class="feature-title">AI Email Generator</div>
-      <div class="feature-desc">Pitch, counter, negotiate up, or decline — written around your rates and results. Send straight from the app.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
-      <div class="feature-title">Contract Dashboard</div>
-      <div class="feature-desc">Every retainer in one place. Value, videos owed, videos posted, deadlines, and renewal prompts before a deal expires.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-      <div class="feature-title">Income Tracker</div>
-      <div class="feature-desc">Paid, pending, overdue — by brand, by month. Know your real numbers at tax time and at negotiation time.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-      <div class="feature-title">Rate Card &amp; Packages</div>
-      <div class="feature-desc">Set your retainer tiers once. Every email uses them automatically. No more making up a number on the spot.</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
-      <div class="feature-title">The Retainer System</div>
-      <div class="feature-desc">The same playbook our founder used to $4M+ GMV, baked into every pitch: one-offs become monthly, monthly becomes predictable income.</div>
+  <div class="num-grid">
+    <div class="num rv"><div class="num-v r"><span data-count="20" data-suffix="%">0%</span></div><div class="num-l">What a manager takes off <b>every</b> deal. On $3,000/mo that's $450–600.</div></div>
+    <div class="num rv"><div class="num-v g">$<span data-count="39">0</span></div><div class="num-l">What RetainerHQ takes. Flat. <b>One brand deal pays for the whole year.</b></div></div>
+    <div class="num rv"><div class="num-v"><span data-count="10">0</span>s</div><div class="num-l">From brand email to a reply in your rates. <b>Pitch, counter, or chase.</b></div></div>
+    <div class="num rv"><div class="num-v g">$<span data-count="4" data-suffix="M+">0</span></div><div class="num-l">GMV the founder generated as a TikTok Shop affiliate. <b>Built by the customer.</b></div></div>
+  </div>
+</section>
+
+<!-- ═══ FEATURES ═══ -->
+<section class="features" id="features">
+  <div class="rv">
+    <div class="eyebrow">Everything included</div>
+    <h2 class="section-title" style="margin-top:14px;">Built for creators who<br><span class="dim">treat this like a business.</span></h2>
+  </div>
+  <div class="feat-grid">
+    <div class="feat rv"><div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div><h4>Deal Flow inbox</h4><p>Every brand offer forwarded, scored, and priced. Works with Gmail, Outlook, iCloud — any email. Newsletters filtered out automatically.</p></div>
+    <div class="feat rv"><div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><h4>AI email generator</h4><p>Pitch, counter, negotiate up, decline, or chase a payment — written around your rates and results. Open it in Gmail with one click.</p></div>
+    <div class="feat rv"><div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div><h4>Contract dashboard</h4><p>Every retainer in one place: value, videos owed, posted, deadlines, pace alerts, and renewal prompts before a deal expires.</p></div>
+    <div class="feat rv"><div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><h4>Invoices &amp; payment chase</h4><p>Paid, pending, overdue — by brand. One-click invoices with your payment details. Overdue flips automatically; chase in one click.</p></div>
+    <div class="feat rv"><div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><h4>Rate card: affiliate or UGC</h4><p>Retainer packages and GMV for TikTok Shop affiliates. Per-asset pricing with usage rights for UGC creators. Set once, used everywhere.</p></div>
+    <div class="feat rv"><div class="feat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div><h4>The retainer system</h4><p>The playbook behind $4M+ in GMV, baked into every pitch: one-offs become monthly, monthly becomes predictable income.</p></div>
+  </div>
+</section>
+
+<!-- ═══ COMPARE ═══ -->
+<section class="compare" id="compare">
+  <div class="compare-in">
+    <div class="rv"><div class="eyebrow">Why not just get a manager?</div><h2 class="section-title" style="margin-top:14px;">Same jobs. <span class="dim">Different cut.</span></h2></div>
+    <div class="compare-table rv">
+      <div class="cr h"><div class="cc"></div><div class="cc" style="color:var(--accent);">RetainerHQ</div><div class="cc">A manager</div></div>
+      <div class="cr"><div class="cc f">Finds brand offers in your inbox</div><div class="cc y">✓ Automatic, scored &amp; priced</div><div class="cc n">Forwards you the email</div></div>
+      <div class="cr"><div class="cc f">Replies &amp; negotiates</div><div class="cc y">✓ In seconds, with your rates</div><div class="cc n">When they get to it</div></div>
+      <div class="cr"><div class="cc f">Tracks deliverables &amp; deadlines</div><div class="cc y">✓ Live dashboard</div><div class="cc n">Maybe a spreadsheet</div></div>
+      <div class="cr"><div class="cc f">Chases overdue payments</div><div class="cc y">✓ One click</div><div class="cc n">Only if you ask</div></div>
+      <div class="cr"><div class="cc f">Pushes retainers over one-offs</div><div class="cc y">✓ Every single email</div><div class="cc n">Depends on the manager</div></div>
+      <div class="cr"><div class="cc f">Cost on $3,000/mo in deals</div><div class="cc y">$39</div><div class="cc n">$450–600</div></div>
     </div>
   </div>
 </section>
 
-<!-- COMPARE -->
-<section class="compare-section">
-  <div class="compare-header">
-    <div class="section-badge">Why RetainerHQ</div>
-    <div class="section-title">Cheaper than a manager. Faster than doing it yourself.</div>
+<!-- ═══ PRICING ═══ -->
+<section class="pricing" id="pricing">
+  <div class="rv"><div class="eyebrow">Pricing</div><h2 class="section-title" style="margin-top:14px;">One plan. Everything included.</h2>
+  <p class="lead-p">Founders pricing is locked in for life when you join now. It goes up as we grow — early creators never pay more.</p></div>
+  <div class="plans rv">
+    <div class="plan"><div class="plan-l">Monthly</div><div class="plan-v">$39</div><div class="plan-s">per month · cancel anytime</div><a href="/auth.html" class="btn btn-outline" style="width:100%;justify-content:center;">Start 7-Day Free Trial</a></div>
+    <div class="plan best"><div class="plan-tag">Best value · Save $119</div><div class="plan-l">Yearly</div><div class="plan-v"><span class="plan-strike">$468</span>$349</div><div class="plan-s">= $29/mo · 3 months free</div><a href="/auth.html" class="btn btn-primary" style="width:100%;justify-content:center;">Start 7-Day Free Trial →</a></div>
   </div>
-  <div class="compare-table">
-    <div class="compare-row header">
-      <div class="compare-cell"></div>
-      <div class="compare-cell" style="color:var(--accent);">RetainerHQ</div>
-      <div class="compare-cell">A manager</div>
-    </div>
-    <div class="compare-row">
-      <div class="compare-cell feature">Finds brand offers in your inbox</div>
-      <div class="compare-cell yes">✓ Auto-forwarded, scored &amp; priced</div>
-      <div class="compare-cell no">Forwards you the email</div>
-    </div>
-    <div class="compare-row">
-      <div class="compare-cell feature">Replies &amp; negotiates</div>
-      <div class="compare-cell yes">✓ In seconds, with your rates</div>
-      <div class="compare-cell no">When they get to it</div>
-    </div>
-    <div class="compare-row">
-      <div class="compare-cell feature">Tracks deliverables &amp; deadlines</div>
-      <div class="compare-cell yes">✓ Live dashboard</div>
-      <div class="compare-cell no">Maybe a spreadsheet</div>
-    </div>
-    <div class="compare-row">
-      <div class="compare-cell feature">Chases overdue payments</div>
-      <div class="compare-cell yes">✓ One click</div>
-      <div class="compare-cell no">Only if you ask</div>
-    </div>
-    <div class="compare-row">
-      <div class="compare-cell feature">Pushes retainers over one-offs</div>
-      <div class="compare-cell yes">✓ Every single email</div>
-      <div class="compare-cell no">Depends on the manager</div>
-    </div>
-    <div class="compare-row" style="border-bottom:none;">
-      <div class="compare-cell feature">Cost on $3,000/mo in deals</div>
-      <div class="compare-cell yes">$39</div>
-      <div class="compare-cell no">$450–600</div>
-    </div>
+  <div class="fine">🔒 Secure checkout via Stripe · $0 charged during trial · cancel in one click</div>
+</section>
+
+<section class="final">
+  <div class="rv">
+    <h2>Stop leaving brand deals<br>in your inbox.</h2>
+    <p>7-day free trial. $0 today. One deal pays for the year.</p>
+    <div class="cta-row"><a href="/auth.html" class="btn btn-primary btn-lg">Start Free Trial →</a><a href="/brand-signup" class="btn btn-outline btn-lg">I'm a Brand</a></div>
   </div>
 </section>
 
-<!-- PRICING -->
-<section class="section" id="pricing" style="background:var(--bg);">
-  <div style="max-width:760px;margin:0 auto;text-align:center;">
-    <div class="section-badge">Pricing</div>
-    <div class="section-title">One plan. Everything included.</div>
-    <p style="font-size:14px;color:var(--text2);margin:10px auto 36px;max-width:480px;line-height:1.6;">Founders pricing is locked in for life when you join now. It goes up as we grow — early creators never pay more.</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;text-align:center;" class="split-cards">
-      <div class="split-card" style="cursor:default;">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:12px;">Monthly</div>
-        <div style="font-size:44px;font-weight:900;letter-spacing:-1.5px;line-height:1;">$39</div>
-        <div style="font-size:12px;color:var(--text3);margin:8px 0 20px;">per month · cancel anytime</div>
-        <a href="/auth.html" class="btn btn-outline" style="width:100%;justify-content:center;">Start 7-Day Free Trial</a>
-      </div>
-      <div class="split-card" style="cursor:default;border-color:var(--accent);position:relative;">
-        <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;font-size:10px;font-weight:900;padding:4px 14px;border-radius:99px;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;">Best value · Save $119</div>
-        <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:12px;">Yearly</div>
-        <div style="display:flex;align-items:baseline;justify-content:center;gap:10px;"><span style="font-size:15px;color:var(--text3);text-decoration:line-through;">$468</span><span style="font-size:44px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--accent);">$349</span></div>
-        <div style="font-size:12px;color:var(--accent);font-weight:700;margin:8px 0 20px;">= $29/mo · 3 months free</div>
-        <a href="/auth.html" class="btn btn-primary" style="width:100%;justify-content:center;">Start 7-Day Free Trial →</a>
-      </div>
-    </div>
-    <p style="font-size:12px;color:var(--text3);margin-top:20px;">🔒 Secure checkout via Stripe · $0 charged during trial · cancel in one click</p>
-  </div>
-</section>
-
-<!-- FINAL CTA -->
-<section class="cta-section" style="background:var(--bg2);border-top:1px solid var(--border);">
-  <div class="cta-title">Stop leaving brand deals<br>in your inbox.</div>
-  <p class="cta-sub">7-day free trial. $0 today. One deal pays for the year.</p>
-  <div class="cta-buttons">
-    <button class="btn btn-primary btn-lg" onclick="window.location.href='/auth.html'">Start Free Trial →</button>
-    <button class="btn btn-outline btn-lg" onclick="window.location.href='/brand-signup'">I'm a Brand</button>
-  </div>
-</section>
-
-<!-- FOOTER -->
 <footer>
-  <div class="footer-logo">Retainer<span>HQ</span></div>
-  <div class="footer-links">
-    <a href="/auth.html" class="footer-link">Sign In</a>
-    <a href="/brand" class="footer-link">For Brands</a>
-    <a href="mailto:isaac@retainerhq.io" class="footer-link">Contact</a>
-  </div>
-  <div class="footer-copy">© 2026 RetainerHQ · Built by a $4M+ GMV affiliate</div>
+  <div class="foot-logo">Retainer<span>HQ</span></div>
+  <div class="foot-links"><a href="/auth.html">Sign In</a><a href="/brand">For Brands</a><a href="mailto:isaac@retainerhq.io">Contact</a></div>
+  <div class="foot-copy">© 2026 RetainerHQ · Built by a $4M+ GMV affiliate</div>
 </footer>
-
-<!-- WAITLIST MODAL -->
-<div class="modal-overlay" id="modal-waitlist">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeWaitlist()">✕</button>
-    <div id="modal-content"></div>
-  </div>
-</div>
 
 <script>
 const SUPABASE_URL = 'https://tbfcwqcqpfbqaknktkyp.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRiZmN3cWNxcGZicWFrbmt0a3lwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2NDQyOTIsImV4cCI6MjA5MzIyMDI5Mn0.40OJm-heqGOiiGqE3QWHoafkRx8Snd3nH3cs19D7L4E';
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-let selectedRole = 'creator';
+const sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// Show the real creator count once it's big enough to be a selling point; otherwise lead with founder proof.
-async function loadCount() {
+// Real creator count once it's a selling point; founder proof until then.
+(async function loadCount() {
+  if (!sb) return;
   try {
     const { count } = await sb.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'creator');
-    if ((count || 0) >= 250) {
-      const rounded = Math.floor(count / 50) * 50;
-      document.getElementById('hero-badge-text').textContent = rounded.toLocaleString() + '+ TikTok Shop & UGC creators';
-    }
+    if ((count || 0) >= 250) document.getElementById('hero-badge-text').textContent = (Math.floor(count / 50) * 50).toLocaleString() + '+ TikTok Shop & UGC creators';
   } catch(e) {}
+})();
+
+function animateNum(el, to, prefix, suffix, ms) {
+  prefix = prefix || ''; suffix = suffix || ''; ms = ms || 700;
+  const from = parseInt((el.textContent || '0').replace(/[^0-9]/g, '')) || 0;
+  if (REDUCED) { el.textContent = prefix + to.toLocaleString() + suffix; return; }
+  const t0 = performance.now();
+  (function f(t) { const p = Math.min(1, (t - t0) / ms); const e = 1 - Math.pow(1 - p, 3); el.textContent = prefix + Math.round(from + (to - from) * e).toLocaleString() + suffix; if (p < 1) requestAnimationFrame(f); })(t0);
 }
 
-function openWaitlist(role) {
-  selectedRole = role;
-  const modal = document.getElementById('modal-waitlist');
-  const content = document.getElementById('modal-content');
-  content.innerHTML = `
-    <div class="modal-title">Join RetainerHQ</div>
-    <div class="modal-sub">7-day free trial. Your AI brand deal manager, $0 today.</div>
-    <div class="role-selector">
-      <div class="role-option ${role === 'creator' ? 'selected' : ''}" onclick="selectRole('creator')" id="role-creator">
-        <div class="role-option-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
-        <div class="role-option-label">Creator</div>
-        <div class="role-option-sub">TikTok Shop or UGC</div>
-      </div>
-      <div class="role-option ${role === 'brand' ? 'selected' : ''}" onclick="selectRole('brand')" id="role-brand">
-        <div class="role-option-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-        <div class="role-option-label">Brand</div>
-        <div class="role-option-sub">Looking for affiliates</div>
-      </div>
-    </div>
-    <div class="form-group">
-      <input type="email" class="form-input" id="waitlist-email" placeholder="Your email address" />
-    </div>
-    <div class="form-group">
-      <input type="text" class="form-input" id="waitlist-name" placeholder="Your name (optional)" />
-    </div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;font-size:14px;" onclick="submitWaitlist()">
-      Start Free Trial →
-    </button>
-    <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:12px;">No spam. Cancel anytime.</p>
-  `;
-  modal.classList.add('open');
-}
-
-function selectRole(role) {
-  selectedRole = role;
-  document.getElementById('role-creator').classList.toggle('selected', role === 'creator');
-  document.getElementById('role-brand').classList.toggle('selected', role === 'brand');
-}
-
-async function submitWaitlist() {
-  const email = document.getElementById('waitlist-email').value.trim();
-  const name  = document.getElementById('waitlist-name').value.trim();
-  if (!email || !email.includes('@')) {
-    document.getElementById('waitlist-email').style.borderColor = '#F87171';
-    document.getElementById('waitlist-email').focus(); return;
+// ── HERO: live Deal Flow ──
+(function hero() {
+  const LEADS = [
+    { a:'G', from:'Sarah Kim', brand:'GlowUp Skincare', subj:'Paid partnership — monthly retainer, 4 videos', tier:'hot', est:2500, src:'quoted' },
+    { a:'B', from:'Marcus T.', brand:'Beplain', subj:'UGC videos for our launch — $4,500 for 6', tier:'hot', est:4500, src:'quoted' },
+    { a:'N', from:'Nova Hair', brand:'Nova Hair', subj:'Interested in working with you — your rates?', tier:'warm', est:2400, src:'est. your rate' },
+    { a:'L', from:'Luma Wellness', brand:'Luma', subj:'Ambassador program — 3 videos/mo, paid', tier:'hot', est:1800, src:'quoted' },
+    { a:'C', from:'Cute Co.', brand:'Cute Co.', subj:'Gifted collab — free product for a post', tier:'gift', est:0, src:'' },
+    { a:'K', from:'Kaia Beauty', brand:'Kaia', subj:'Rate card? We have budget for Q4', tier:'warm', est:2400, src:'est. your rate' },
+  ];
+  const TIER = { hot:['score-hot','🔥 Hot'], warm:['score-warm','◆ Warm'], gift:['score-gift','🎁 Gifted'] };
+  const list = document.getElementById('m-list'); if (!list) return;
+  let shown = [], i = 0;
+  function leadEl(l) {
+    const d = document.createElement('div'); d.className = 'lead';
+    d.innerHTML = '<div class="lead-av">' + l.a + '</div><div><div class="lead-from">' + l.from + ' <small>· ' + l.brand + ' · just now</small></div><div class="lead-subj">' + l.subj + '</div></div>' +
+      '<div class="lead-right"><span class="score ' + TIER[l.tier][0] + '">' + TIER[l.tier][1] + '</span>' + (l.est ? '<span class="est">$' + l.est.toLocaleString() + '<small>' + l.src + '</small></span>' : '') + '</div>';
+    return d;
   }
-  const btn = document.querySelector('#modal-content .btn-primary');
-  if (btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
-  try { await sb.from('waitlist').insert({ email, name, role: selectedRole }); } catch(e) {}
-  try {
-    await fetch('https://formspree.io/f/xkokvqgq', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ email, name, role: selectedRole })
+  function sync() {
+    animateNum(document.getElementById('m-count'), shown.filter(l => l.tier !== 'gift').length);
+    document.getElementById('m-hot').textContent = shown.filter(l => l.tier === 'hot').length + ' hot';
+    animateNum(document.getElementById('m-total'), shown.reduce((s, l) => s + l.est, 0), '$');
+  }
+  function add() {
+    const l = LEADS[i % LEADS.length]; i++;
+    const scan = document.getElementById('mock-scan'); scan.classList.remove('run'); void scan.offsetWidth; scan.classList.add('run');
+    list.prepend(leadEl(l)); shown.unshift(l);
+    if (shown.length > 4) { const last = list.lastElementChild; last.classList.add('out'); shown.pop(); setTimeout(() => last.remove(), 420); }
+    setTimeout(sync, 500);
+  }
+  add(); setTimeout(add, 900); setTimeout(add, 1800);
+  if (!REDUCED) setInterval(add, 3400);
+  const card = document.getElementById('mock-card'), wrap = document.getElementById('mock');
+  if (!REDUCED && window.matchMedia('(hover:hover)').matches) {
+    wrap.addEventListener('mousemove', e => { const r = wrap.getBoundingClientRect(); const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; card.style.transform = 'rotateY(' + (-6 + x * 10) + 'deg) rotateX(' + (3 - y * 8) + 'deg)'; });
+    wrap.addEventListener('mouseleave', () => card.style.transform = '');
+  }
+})();
+
+// ── TICKER ──
+(function ticker() {
+  const items = [
+    ['Skincare brand','$2,500 / mo retainer','hot'],['UGC · 6 videos','$4,500','hot'],['Hair care','rate card requested','warm'],
+    ['Invoice #0412','$2,500','paid'],['Wellness brand','$1,800 ambassador','hot'],['Supplement co.','payment 9 days late → chased','late'],
+    ['Fashion label','$3,200 / mo','hot'],['Invoice #0409','$4,200','paid'],['Beauty brand','"what are your rates?"','warm'],
+    ['Kitchen gadget','$900 one-off → countered to $2,400 retainer','hot'],['Invoice #0415','$1,800','paid'],['Fitness app','UGC · 3 videos + 2 hooks','warm'],
+  ];
+  const html = items.map(([a, b, t]) => '<div class="tk"><b>' + a + '</b><span class="' + (t === 'paid' ? 'amt' : '') + '">' + b + '</span><span class="tag ' + t + '">' + (t === 'paid' ? 'paid' : t === 'late' ? 'chased' : t) + '</span></div>').join('');
+  document.getElementById('ticker').innerHTML = html + html;
+})();
+
+// ── STORY: pinned steps → scenes ──
+(function story() {
+  const steps = [...document.querySelectorAll('.step')];
+  const scenes = { s1: document.getElementById('s1'), s2: document.getElementById('s2'), s3: document.getElementById('s3'), s4: document.getElementById('s4') };
+  let current = 's1', typedS2 = false;
+  function typeReply() {
+    const out = document.getElementById('s2-out');
+    const text = "Hi Sarah,\n\nThanks for reaching out — GlowUp is right in my lane.\n\nRather than 4 one-off videos, I'd suggest a monthly retainer: 5 videos for $2,500/mo. Ongoing content lets us test hooks and angles, find what converts, and double down — that's how I've driven $42K/mo in GMV for brands like yours. Spark Ads usage for 365 days is included.\n\nWant to hop on a quick call this week?\n\nIsaac";
+    if (REDUCED) { out.innerHTML = text.replace(/\n/g, '<br>'); return; }
+    let i = 0; out.innerHTML = '<span class="cur"></span>';
+    (function tick() { i += 2; out.innerHTML = text.slice(0, i).replace(/\n/g, '<br>') + (i < text.length ? '<span class="cur"></span>' : ''); if (i < text.length) setTimeout(tick, 14); })();
+  }
+  function show(id) {
+    if (id === current) return; current = id;
+    steps.forEach(s => s.classList.toggle('active', s.dataset.scene === id));
+    Object.keys(scenes).forEach(k => scenes[k].classList.toggle('on', k === id));
+    if (id === 's2' && !typedS2) { typedS2 = true; typeReply(); }
+    if (id === 's4') setTimeout(() => { animateNum(document.getElementById('s4-over'), 0, '$'); animateNum(document.getElementById('s4-paid'), 9700, '$'); }, 2200);
+  }
+  const io = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) show(e.target.dataset.scene); }); }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+  steps.forEach(s => io.observe(s));
+})();
+
+// ── Reveal + count-up ──
+(function reveal() {
+  const rv = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('seen'); rv.unobserve(e.target);
+      e.target.querySelectorAll('[data-count]').forEach(n => animateNum(n, parseInt(n.dataset.count), n.dataset.prefix || '', n.dataset.suffix || '', 1100));
     });
-  } catch(e) {}
-  document.getElementById('modal-content').innerHTML = `
-    <div class="success-state">
-      <div style="width:56px;height:56px;border-radius:14px;background:var(--accent-dim);border:1px solid rgba(0,229,160,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" width="26" height="26"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>
-      <div class="success-title">You're in!</div>
-      <div class="success-sub">We'll reach out to <strong style="color:var(--text)">${email}</strong> as soon as your ${selectedRole === 'creator' ? 'creator' : 'brand'} account is ready.<br><br>You can also jump in right now.</div>
-      <div style="display:flex;gap:10px;justify-content:center;margin-top:24px;flex-wrap:wrap;">
-        <a href="/auth.html" class="btn btn-primary">Open App →</a>
-        <button class="btn btn-outline" onclick="closeWaitlist()">Back to Home</button>
-      </div>
-    </div>
-  `;
-  loadCount();
-}
-
-function closeWaitlist() {
-  document.getElementById('modal-waitlist').classList.remove('open');
-}
-
-document.getElementById('modal-waitlist').addEventListener('click', e => {
-  if (e.target === document.getElementById('modal-waitlist')) closeWaitlist();
-});
-
-loadCount();
+  }, { threshold: .2 });
+  document.querySelectorAll('.rv, .num').forEach(el => rv.observe(el));
+})();
 </script>
 </body>
 </html>
