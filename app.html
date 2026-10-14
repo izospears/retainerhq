@@ -2369,32 +2369,13 @@
           </div>
         </div>
 
-        <!-- Setup state: show forwarding address + Gmail steps -->
-        <div id="inbox-connect" class="inbox-connect-state" style="text-align:left;padding:8px 0 4px;">
-          <div class="fwd-grid">
-            <div class="fwd-left">
-              <div class="inbox-connect-title" style="font-size:16px;margin-bottom:6px;">Your Deal Flow address</div>
-              <div class="inbox-connect-sub" style="margin:0 0 12px;max-width:none;">Forward brand emails here and they show up below — scored, priced, and ready to reply. Nothing else to connect.</div>
-              <div class="fwd-addr-row">
-                <code class="fwd-addr" id="fwd-addr">loading…</code>
-                <button class="fwd-copy" id="fwd-copy" onclick="copyFwdAddr()">Copy</button>
-              </div>
-              <div class="inbox-feature-pills" style="justify-content:flex-start;margin:14px 0 0;">
-                <span class="inbox-feature-pill">✦ Works with any email</span>
-                <span class="inbox-feature-pill">✦ Scores every lead</span>
-                <span class="inbox-feature-pill">✦ Replies with your rates</span>
-              </div>
-            </div>
-            <div class="fwd-right">
-              <div class="fwd-steps-title">Set it and forget it — Gmail (2 min)</div>
-              <ol class="fwd-steps">
-                <li>Gmail → ⚙️ <b>See all settings</b> → <b>Forwarding and POP/IMAP</b> → <b>Add a forwarding address</b> → paste the address above. Gmail emails a confirmation here — it'll appear below as a <b>Confirm</b> button.</li>
-                <li>Then <a href="#" onclick="openGmailFilter();return false;" style="color:var(--accent);font-weight:700;">open this pre-filled Gmail filter</a> → <b>Create filter</b> → tick <b>Forward it to</b> → pick your RetainerHQ address → <b>Create filter</b>.</li>
-                <li>Done. Every brand email now lands in Deal Flow automatically. You can also just forward any email manually.</li>
-              </ol>
-              <div style="font-size:11px;color:var(--text3);margin-top:8px;">Outlook / iCloud: create a rule that forwards emails containing “collab”, “partnership”, “UGC”, or “rates” to the address above.</div>
-            </div>
+        <!-- Setup state (compact): address + copy + how-to link. Hidden automatically once leads exist. -->
+        <div id="inbox-connect" class="inbox-connect-state" style="text-align:left;padding:4px 0 2px;">
+          <div class="fwd-addr-row" style="max-width:640px;">
+            <code class="fwd-addr" id="fwd-addr">loading…</code>
+            <button class="fwd-copy" id="fwd-copy" onclick="copyFwdAddr()">Copy</button>
           </div>
+          <div style="font-size:12px;color:var(--text2);margin-top:10px;">Forward any brand email to this address and it shows up below — scored, priced, ready to reply. <a href="#" onclick="openFwdHelp();return false;" style="color:var(--accent);font-weight:700;text-decoration:none;">Set up auto-forwarding from Gmail →</a></div>
         </div>
 
         <!-- Leads -->
@@ -2405,7 +2386,7 @@
               <span id="inbox-status-label">Waiting for your first forwarded email…</span>
             </div>
             <div class="inbox-toolbar-right">
-              <button class="inbox-refresh-btn" onclick="toggleFwdSetup()" id="fwd-toggle">Hide setup</button>
+              <button class="inbox-refresh-btn" onclick="toggleFwdSetup()" id="fwd-toggle" style="display:none;">Address</button>
               <button class="inbox-refresh-btn" onclick="fetchBrandEmails()">↻ Refresh</button>
             </div>
           </div>
@@ -3663,6 +3644,23 @@ select.pay-input option{background:#0d1828;}
       Start Free Trial — $39/mo →
     </button>
     <div style="font-size:12px;color:var(--text3);margin-top:12px;cursor:pointer;" onclick="closeUpgradePopup()">Maybe later</div>
+  </div>
+</div>
+
+<!-- FORWARDING HELP MODAL -->
+<div class="motiv-flash" id="fwd-help-modal" onclick="event.target===this&&closeFwdHelp()">
+  <div class="motiv-card" style="max-width:520px;text-align:left;" onclick="event.stopPropagation()">
+    <div style="font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;">⚡ Deal Flow · auto-forwarding</div>
+    <div style="font-size:21px;font-weight:900;letter-spacing:-.4px;margin-bottom:6px;">Set it once. Never miss an offer.</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.6;">Two minutes in Gmail. After this, every brand email lands in Deal Flow on its own.</div>
+    <div class="fwd-addr-row" style="margin-bottom:18px;"><code class="fwd-addr" id="fwd-addr-modal">—</code><button class="fwd-copy" onclick="copyFwdAddr('fwd-addr-modal')">Copy</button></div>
+    <ol class="fwd-steps" style="font-size:13px;gap:12px;">
+      <li><b>Add the address.</b> Gmail → ⚙️ <b>See all settings</b> → <b>Forwarding and POP/IMAP</b> → <b>Add a forwarding address</b> → paste the address above. Gmail sends a confirmation — it appears in Deal Flow as a yellow <b>Confirm</b> button. Click it.</li>
+      <li><b>Create the rule.</b> <a href="#" onclick="openGmailFilter();return false;" style="color:var(--accent);font-weight:700;">Open this pre-filled Gmail filter</a> → <b>Create filter</b> → tick <b>Forward it to</b> → choose your RetainerHQ address → <b>Create filter</b>.</li>
+      <li><b>Done.</b> You can also forward any email manually, anytime.</li>
+    </ol>
+    <div style="font-size:11px;color:var(--text3);margin-top:14px;line-height:1.6;">Outlook / iCloud: make a rule that forwards emails containing “collab”, “partnership”, “UGC”, or “rates” to the address above.</div>
+    <button onclick="closeFwdHelp()" style="width:100%;margin-top:18px;background:var(--accent);color:#000;font-weight:900;font-size:14px;font-family:inherit;border:none;border-radius:10px;padding:12px;cursor:pointer;">Got it</button>
   </div>
 </div>
 
@@ -6613,23 +6611,32 @@ function fwdAddress() {
   const t = mediaKitProfile?.inbox_token;
   return t ? `${t}@${INBOUND_DOMAIN}` : '';
 }
-function copyFwdAddr() {
+function copyFwdAddr(srcId) {
   const a = fwdAddress(); if (!a) return;
   navigator.clipboard?.writeText(a).then(() => {
-    const b = document.getElementById('fwd-copy'); if (b) { b.textContent = 'Copied ✓'; setTimeout(() => b.textContent = 'Copy', 1600); }
+    const btn = srcId ? document.querySelector('#' + srcId + ' + .fwd-copy') : document.getElementById('fwd-copy');
+    if (btn) { btn.textContent = 'Copied ✓'; setTimeout(() => btn.textContent = 'Copy', 1600); }
+    showToast('Address copied');
   });
+}
+function openFwdHelp() {
+  const m = document.getElementById('fwd-addr-modal'); if (m) m.textContent = fwdAddress() || '—';
+  const el = document.getElementById('fwd-help-modal'); el.classList.remove('hide'); el.classList.add('show');
+}
+function closeFwdHelp() {
+  const el = document.getElementById('fwd-help-modal'); el.classList.add('hide'); setTimeout(() => el.classList.remove('show','hide'), 600);
 }
 function openGmailFilter() {
   // Gmail supports pre-filling the filter form via the URL hash
   const has = encodeURIComponent('collab OR collaboration OR partnership OR sponsorship OR "brand deal" OR retainer OR UGC OR "rate card" OR "your rates" OR ambassador OR "paid partnership"');
   window.open('https://mail.google.com/mail/u/0/#create-filter/has=' + has, '_blank');
 }
-function toggleFwdSetup() {
+// Toolbar "Address" button → shows the help modal (the inline setup auto-hides once leads exist)
+function toggleFwdSetup() { openFwdHelp(); }
+function _setSetupVisible(hasLeads) {
   const el = document.getElementById('inbox-connect'); const b = document.getElementById('fwd-toggle');
-  const hidden = el.style.display === 'none';
-  el.style.display = hidden ? 'block' : 'none';
-  if (b) b.textContent = hidden ? 'Hide setup' : 'Show setup';
-  localStorage.setItem('rhq_fwd_setup_hidden', hidden ? '0' : '1');
+  if (el) el.style.display = hasLeads ? 'none' : 'block';
+  if (b) b.style.display = hasLeads ? '' : 'none';
 }
 
 // Called from renderDashboard()
@@ -6639,11 +6646,6 @@ async function initDealFlow() {
   const addrEl = document.getElementById('fwd-addr');
   if (addrEl) addrEl.textContent = token ? fwdAddress() : 'Could not create your address — reload';
   if (INBOUND_DOMAIN.startsWith('REPLACE_') && addrEl) addrEl.textContent = 'Forwarding not configured yet';
-  // Hide setup once the user has leads (or chose to hide it)
-  const hide = localStorage.getItem('rhq_fwd_setup_hidden') === '1';
-  const el = document.getElementById('inbox-connect'); const b = document.getElementById('fwd-toggle');
-  if (el) el.style.display = hide ? 'none' : 'block';
-  if (b) b.textContent = hide ? 'Show setup' : 'Hide setup';
   if (!_dealflowLoadedOnce) { _dealflowLoadedOnce = true; fetchBrandEmails(); }
 }
 
@@ -6793,6 +6795,7 @@ async function fetchBrandEmails() {
     const leads    = rows.filter(r => r.kind !== 'gmail_verify' && _isBrandEmail(r.subject, r.snippet));
     const other    = rows.filter(r => r.kind !== 'gmail_verify' && !_isBrandEmail(r.subject, r.snippet));
 
+    _setSetupVisible(rows.length > 0);
     if (!rows.length) {
       _setInboxStatus('Waiting for your first forwarded email…');
       if (listEl) listEl.innerHTML = '<div class="inbox-empty"><div class="inbox-empty-icon">📬</div><div class="inbox-empty-title">Nothing here yet</div><div class="inbox-empty-sub">Forward a brand email to your Deal Flow address above and it\'ll show up here within seconds. Try forwarding one now to test it.</div></div>';
@@ -6801,7 +6804,7 @@ async function fetchBrandEmails() {
     }
 
     const n = leads.length + other.length;
-    _setInboxStatus(`Last checked: just now · ${n} email${n === 1 ? '' : 's'}${leads.length ? ` · ${leads.length} brand lead${leads.length === 1 ? '' : 's'}` : ''}`);
+    _setInboxStatus(`${leads.length} brand lead${leads.length === 1 ? '' : 's'}${other.length ? ` · ${other.length} other` : ''} · updated just now`);
     _renderInboxEmails([...verifies, ...leads, ...other], listEl);
     _updateDealflowHeadline();
   } catch (e) {
