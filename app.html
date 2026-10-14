@@ -2185,6 +2185,81 @@
     .inbox-btn-dismiss { background:transparent;color:var(--text3);border:1px solid transparent;margin-left:auto; }
     .inbox-btn-dismiss:hover { color:var(--text2);border-color:var(--border2); }
     @media (max-width:700px) { .dealflow-head { flex-direction:column; } .dealflow-value { text-align:left; } .dealflow-value-num { font-size:24px; } }
+  
+    /* ═══════════════ MOTION LAYER ═══════════════ */
+    @keyframes mPageIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    @keyframes mRowIn  { from { opacity: 0; transform: translateY(8px); }  to { opacity: 1; transform: none; } }
+    @keyframes mCardIn { from { opacity: 0; transform: translateY(12px) scale(.985); } to { opacity: 1; transform: none; } }
+    @keyframes mScan   { 0% { top: 0; opacity: 0; } 12% { opacity: 1; } 88% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+    @keyframes mNavIn  { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+    @keyframes mPop    { 0% { transform: scale(.92); } 60% { transform: scale(1.04); } 100% { transform: scale(1); } }
+
+    .page.active { animation: mPageIn .38s cubic-bezier(.16,1,.3,1) both; }
+
+    /* Stat cards: lift on hover, numbers tabular so count-ups don't jitter */
+    .stat-card { transition: transform .2s cubic-bezier(.16,1,.3,1), border-color .2s, box-shadow .2s; }
+    .stat-card:hover { transform: translateY(-3px); border-color: rgba(0,229,160,.3); box-shadow: 0 14px 40px rgba(0,0,0,.35); }
+    .stat-value { font-variant-numeric: tabular-nums; }
+    .stats-grid .stat-card { animation: mCardIn .5s cubic-bezier(.16,1,.3,1) both; }
+    .stats-grid .stat-card:nth-child(1) { animation-delay: .04s; } .stats-grid .stat-card:nth-child(2) { animation-delay: .10s; }
+    .stats-grid .stat-card:nth-child(3) { animation-delay: .16s; } .stats-grid .stat-card:nth-child(4) { animation-delay: .22s; }
+    .income-summary .stat-card { animation: mCardIn .5s cubic-bezier(.16,1,.3,1) both; }
+    .income-summary .stat-card:nth-child(2) { animation-delay: .07s; } .income-summary .stat-card:nth-child(3) { animation-delay: .14s; }
+
+    /* Table rows stagger in on every render */
+    tbody tr { animation: mRowIn .42s cubic-bezier(.16,1,.3,1) both; }
+    tbody tr:nth-child(1) { animation-delay: .03s; } tbody tr:nth-child(2) { animation-delay: .07s; } tbody tr:nth-child(3) { animation-delay: .11s; }
+    tbody tr:nth-child(4) { animation-delay: .15s; } tbody tr:nth-child(5) { animation-delay: .19s; } tbody tr:nth-child(6) { animation-delay: .23s; }
+    tbody tr:nth-child(7) { animation-delay: .27s; } tbody tr:nth-child(8) { animation-delay: .31s; } tbody tr:nth-child(n+9) { animation-delay: .35s; }
+    tr:hover td { background: rgba(0,229,160,.025); }
+
+    /* Progress bars fill with a spring */
+    .progress-fill { transition: width .9s cubic-bezier(.16,1,.3,1); }
+
+    /* Sidebar: sliding indicator on the active item */
+    .nav-item { position: relative; }
+    .nav-item::before { content: ''; position: absolute; left: 0; top: 7px; bottom: 7px; width: 3px; border-radius: 0 3px 3px 0; background: var(--accent); transform: scaleY(0); transform-origin: center; transition: transform .25s cubic-bezier(.16,1,.3,1); }
+    .nav-item.active::before { transform: scaleY(1); }
+    .nav-item:active { transform: scale(.98); }
+
+    /* Deal Flow: leads stagger in; scan line while refreshing; value counts up */
+    .inbox-card { animation: mCardIn .45s cubic-bezier(.16,1,.3,1) both; transition: border-color .2s, transform .2s; }
+    #inbox-email-list .inbox-card:nth-child(1) { animation-delay: .05s; } #inbox-email-list .inbox-card:nth-child(2) { animation-delay: .12s; }
+    #inbox-email-list .inbox-card:nth-child(3) { animation-delay: .19s; } #inbox-email-list .inbox-card:nth-child(4) { animation-delay: .26s; }
+    #inbox-email-list .inbox-card:nth-child(5) { animation-delay: .33s; } #inbox-email-list .inbox-card:nth-child(n+6) { animation-delay: .40s; }
+    .inbox-card:hover { transform: translateY(-1px); }
+    .inbox-score { animation: mPop .4s .35s cubic-bezier(.16,1,.3,1) both; }
+    .dealflow { position: relative; }
+    .dealflow::after { content: ''; position: absolute; left: 0; right: 0; height: 1px; top: 0; background: linear-gradient(90deg, transparent, rgba(0,229,160,.8), transparent); opacity: 0; pointer-events: none; }
+    .dealflow.scanning::after { animation: mScan 1.2s ease-in-out; }
+    .dealflow-value-num { font-variant-numeric: tabular-nums; }
+    .inbox-status-dot { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+
+    /* Alerts + buttons */
+    .deadline-alert.alert-red .alert-icon { animation: mPop 1.6s .4s ease-in-out infinite alternate; }
+    .btn, .btn-generate, .welcome-cta, .pay-row-btn, .inbox-btn, .fwd-copy { transition: transform .15s cubic-bezier(.16,1,.3,1), background .15s, border-color .15s, box-shadow .15s, color .15s; }
+    .btn:active, .btn-generate:active, .welcome-cta:active, .pay-row-btn:active, .inbox-btn:active, .fwd-copy:active { transform: scale(.97); }
+    .btn-primary:hover { transform: translateY(-1px); }
+
+    /* Detail page cards + pipeline */
+    .detail-card { animation: mCardIn .45s cubic-bezier(.16,1,.3,1) both; }
+    .detail-grid .detail-card:nth-child(2) { animation-delay: .08s; }
+    .pipeline-list li { animation: mRowIn .4s cubic-bezier(.16,1,.3,1) both; }
+    .pipeline-list li:nth-child(2) { animation-delay: .05s; } .pipeline-list li:nth-child(3) { animation-delay: .10s; } .pipeline-list li:nth-child(4) { animation-delay: .15s; } .pipeline-list li:nth-child(n+5) { animation-delay: .20s; }
+
+    /* Email generator output */
+    .email-output { animation: mCardIn .45s cubic-bezier(.16,1,.3,1) both; }
+    .type-chip.selected { animation: mPop .35s cubic-bezier(.16,1,.3,1); }
+
+    /* Rates page cards */
+    .rates-card, .ctype-opt { transition: transform .2s cubic-bezier(.16,1,.3,1), border-color .2s, background .2s; }
+    .ctype-opt.sel { animation: mPop .35s cubic-bezier(.16,1,.3,1); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .page.active, tbody tr, .stat-card, .inbox-card, .inbox-score, .detail-card, .pipeline-list li, .email-output, .deadline-alert .alert-icon, .type-chip.selected, .ctype-opt.sel { animation: none !important; }
+      .progress-fill, .nav-item::before { transition: none !important; }
+    }
   </style>
 </head>
 <body>
@@ -6952,6 +7027,56 @@ function _showFeedback(el, msg, type) {
   el.className     = 'inbox-card-feedback inbox-feedback-' + type;
   el.textContent   = msg;
 }
+
+// ═══════════════ MOTION LAYER ═══════════════
+// Hooks existing render functions to count numbers up and flag refreshes. No logic changes.
+(function motion() {
+  const REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Count an element from its last value to its newly-rendered value, preserving "$" and "," formatting
+  function countUp(el, ms) {
+    if (!el || REDUCED) return;
+    const target = el.textContent || '';
+    const m = target.match(/^(\$?)(-?[\d,]+)(.*)$/);
+    if (!m) return;
+    const to = parseInt(m[2].replace(/,/g, ''), 10); if (isNaN(to)) return;
+    const from = parseInt(el.dataset.mPrev || '0', 10) || 0;
+    el.dataset.mPrev = String(to);
+    if (from === to) return;
+    const prefix = m[1], suffix = m[3], t0 = performance.now(), dur = ms || 650;
+    (function f(t) {
+      const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = prefix + Math.round(from + (to - from) * e).toLocaleString() + suffix;
+      if (p < 1) requestAnimationFrame(f); else el.textContent = target;
+    })(t0);
+  }
+  function countAll(sel, ms) { document.querySelectorAll(sel).forEach(el => countUp(el, ms)); }
+  function wrap(name, after) {
+    const orig = window[name];
+    if (typeof orig !== 'function') return;
+    window[name] = function () { const r = orig.apply(this, arguments); try { after(r, arguments); } catch (e) {} return r; };
+  }
+
+  wrap('renderDashboard', () => countAll('#page-dashboard .stat-value', 700));
+  wrap('renderIncome',    () => countAll('#page-income .stat-value', 700));
+  wrap('_updateDealflowHeadline', () => countUp(document.getElementById('dealflow-value-num'), 800));
+  wrap('openDetail', () => {
+    // let the progress bar visibly fill from 0 on open
+    const bar = document.getElementById('d-progress-bar');
+    if (bar && !REDUCED) { const w = bar.style.width; bar.style.transition = 'none'; bar.style.width = '0%'; requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.transition = ''; bar.style.width = w; })); }
+  });
+
+  // Scan line across Deal Flow while it refreshes
+  const origFetch = window.fetchBrandEmails;
+  if (typeof origFetch === 'function') {
+    window.fetchBrandEmails = async function () {
+      const df = document.getElementById('dealflow');
+      if (df) { df.classList.remove('scanning'); void df.offsetWidth; df.classList.add('scanning'); }
+      try { return await origFetch.apply(this, arguments); }
+      finally { setTimeout(() => df && df.classList.remove('scanning'), 1300); }
+    };
+  }
+})();
 </script>
 
 <!-- CREATOR TOUR v2 -->
