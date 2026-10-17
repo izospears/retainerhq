@@ -3120,6 +3120,7 @@
               <th style="padding:12px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;">Creator</th>
               <th style="padding:12px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;">Niche</th>
               <th style="padding:12px 16px;text-align:right;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;">Followers</th>
+              <th style="padding:12px 16px;text-align:right;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;">30d GMV</th>
               <th style="padding:12px 16px;text-align:right;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;">Lifetime GMV</th>
               <th style="padding:12px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;">Email</th>
               <th style="padding:12px 16px;text-align:right;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;">Joined</th>
@@ -3521,7 +3522,7 @@ select.pay-input option{background:#0d1828;}
 
     <!-- Step 0: Handle + Name -->
     <div class="ob-step active" id="ob-s0">
-      <div class="ob-step-label">Step 1 of 4</div>
+      <div class="ob-step-label">Step 1 of 5</div>
       <div class="ob-title" id="ob-welcome-title">Welcome to RetainerHQ 👋</div>
       <div class="ob-sub">Let's get you set up. This takes less than 2 minutes.</div>
       <div class="ob-field">
@@ -3539,7 +3540,7 @@ select.pay-input option{background:#0d1828;}
 
     <!-- Step 1: Niche -->
     <div class="ob-step" id="ob-s1">
-      <div class="ob-step-label">Step 2 of 4</div>
+      <div class="ob-step-label">Step 2 of 5</div>
       <div class="ob-title">What's your niche?</div>
       <div class="ob-sub">Pick the category that best describes your content.</div>
       <div class="ob-chips" id="ob-niche-chips">
@@ -3560,7 +3561,7 @@ select.pay-input option{background:#0d1828;}
 
     <!-- Step 2: Platforms -->
     <div class="ob-step" id="ob-s2">
-      <div class="ob-step-label">Step 3 of 4</div>
+      <div class="ob-step-label">Step 3 of 5</div>
       <div class="ob-title">Where do you create?</div>
       <div class="ob-sub">Select all the platforms you post on.</div>
       <div class="ob-chips" id="ob-platform-chips" style="margin-top:16px;">
@@ -3574,9 +3575,40 @@ select.pay-input option{background:#0d1828;}
       <button class="ob-btn" onclick="obNext(2)" style="margin-top:24px;">Continue →</button>
     </div>
 
-    <!-- Step 3: Bio -->
+    <!-- Step 3: GMV (required, attested) -->
     <div class="ob-step" id="ob-s3">
-      <div class="ob-step-label">Step 4 of 4</div>
+      <div class="ob-step-label">Step 4 of 5</div>
+      <div class="ob-title">Your numbers.</div>
+      <div class="ob-sub">Brands on RetainerHQ find creators by GMV, not followers. This is the number that gets you hired.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
+        <div class="ob-field" style="margin:0;">
+          <label class="ob-label">Last 30-day TikTok Shop GMV ($) *</label>
+          <input class="ob-input" id="ob-gmv30" type="number" inputmode="numeric" min="0" placeholder="e.g. 42000" />
+          <div class="ob-error-hint" id="ob-gmv30-err">Required — enter 0 if you don't do TikTok Shop yet</div>
+        </div>
+        <div class="ob-field" style="margin:0;">
+          <label class="ob-label">Lifetime GMV ($) *</label>
+          <input class="ob-input" id="ob-gmv-lifetime" type="number" inputmode="numeric" min="0" placeholder="e.g. 850000" />
+          <div class="ob-error-hint" id="ob-gmv-lifetime-err">Required — enter 0 if none yet</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.6;">Find it in TikTok Shop → Affiliate Center → Analytics. No GMV yet (UGC only)? Enter 0 — you're still in, but brands sort by this number, so update it the moment you have one.</div>
+
+      <div style="margin-top:18px;background:rgba(255,209,102,.07);border:1px solid rgba(255,209,102,.3);border-radius:12px;padding:14px 16px;">
+        <div style="font-size:12px;font-weight:800;color:var(--yellow);margin-bottom:6px;letter-spacing:.3px;">⚠ This will be verified.</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.65;">Brands trust RetainerHQ because the numbers are real. We spot-check GMV against TikTok Shop analytics, and we'll ask for a screenshot before you're shown to brands. Inflated numbers get your profile removed — no exceptions, no refunds.</div>
+        <label style="display:flex;align-items:flex-start;gap:10px;margin-top:12px;cursor:pointer;font-size:12px;color:var(--text);line-height:1.5;">
+          <input type="checkbox" id="ob-gmv-attest" style="margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;" />
+          <span>I understand my GMV will be verified and the numbers above are accurate.</span>
+        </label>
+        <div class="ob-error-hint" id="ob-gmv-attest-err">You have to confirm this to continue</div>
+      </div>
+      <button class="ob-btn" onclick="obNext(3)" style="margin-top:22px;">Continue →</button>
+    </div>
+
+    <!-- Step 4: Bio -->
+    <div class="ob-step" id="ob-s4">
+      <div class="ob-step-label">Step 5 of 5</div>
       <div class="ob-title">Almost there 🔥</div>
       <div class="ob-sub">A quick intro. The AI uses this to sound like you in every pitch and reply.</div>
       <div class="ob-field">
@@ -3589,7 +3621,7 @@ select.pay-input option{background:#0d1828;}
     </div>
 
     <!-- Step 4: Done -->
-    <div class="ob-step" id="ob-s4">
+    <div class="ob-step" id="ob-s5">
       <div style="text-align:center;padding:20px 0;">
         <div class="ob-success-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -3867,9 +3899,11 @@ async function initAuth() {
     }
     setCreatorType(getCreatorType(), true);
 
-    // Show onboarding for new users
+    // Show onboarding for new users; GMV gate for existing creators who never attested
     if (!profile.onboarded) {
       showProfileOnboarding(profile.role || 'creator');
+    } else if (profile.role !== 'brand' && !gmvIsAnswered(profile)) {
+      showGmvGate();
     }
 
     // Admin: show creator roster nav only for isaacspears01@gmail.com
@@ -4065,10 +4099,10 @@ let allRosterCreators = [];
 async function loadCreatorRoster() {
   // Try with rates_data first; fall back without it if column doesn't exist yet
   let data, error;
-  ({ data, error } = await sb.from('profiles').select('id, name, email, tiktok_handle, niche, followers, total_gmv, created_at, avatar_url, rates_data').eq('role', 'creator').order('created_at', { ascending: false }));
+  ({ data, error } = await sb.from('profiles').select('id, name, email, tiktok_handle, niche, followers, total_gmv, last_30d_gmv, created_at, avatar_url, rates_data').eq('role', 'creator').order('created_at', { ascending: false }));
   if (error) {
     console.warn('rates_data column missing, retrying without it:', error.message);
-    ({ data, error } = await sb.from('profiles').select('id, name, email, tiktok_handle, niche, followers, total_gmv, created_at, avatar_url').eq('role', 'creator').order('created_at', { ascending: false }));
+    ({ data, error } = await sb.from('profiles').select('id, name, email, tiktok_handle, niche, followers, total_gmv, last_30d_gmv, created_at, avatar_url, rates_data').eq('role', 'creator').order('created_at', { ascending: false }));
   }
   // Always update DOM — never leave it stuck on "Loading creators..."
   const tbody = document.getElementById('roster-body');
@@ -4152,6 +4186,7 @@ function renderRoster(list) {
       </td>
       <td style="padding:13px 16px;font-size:12px;color:var(--text2);">${c.niche || '—'}</td>
       <td style="padding:13px 16px;font-size:13px;font-weight:700;text-align:right;">${fmtN(c.followers)}</td>
+      <td style="padding:13px 16px;font-size:13px;font-weight:800;text-align:right;white-space:nowrap;">${c.last_30d_gmv !== null && c.last_30d_gmv !== undefined ? '$'+fmtN(c.last_30d_gmv) : '<span style="color:var(--text3);font-weight:500;">not answered</span>'}${c.rates_data && c.rates_data.gmvAttestedAt ? ' <span title="Attested ' + new Date(c.rates_data.gmvAttestedAt).toLocaleDateString() + '" style="font-size:10px;color:var(--yellow);">●</span>' : ''}</td>
       <td style="padding:13px 16px;font-size:13px;font-weight:800;color:var(--accent);text-align:right;">${c.total_gmv ? '$'+fmtN(c.total_gmv) : '—'}</td>
       <td style="padding:13px 16px;font-size:11px;color:var(--text2);">${c.email || '—'}</td>
       ${ratesTd}
@@ -4329,7 +4364,8 @@ function checkOnboarding() { /* retired — tour replaces this */ }
 /* ── PROFILE ONBOARDING ── */
 let _obRole = 'creator';
 let _obStep = 0;
-const _obTotal = 4;
+const _obTotal = 5;
+let _obGmvOnly = false; // true when an existing user is only being asked for GMV
 let _obData = {};
 
 function showProfileOnboarding(currentRole) {
@@ -4422,6 +4458,19 @@ function obNext(fromStep) {
     if (!_obData.platforms || _obData.platforms.length === 0) { obShowErr('ob-platform-err', true); return; }
     obShowErr('ob-platform-err', false);
   }
+  if (fromStep === 3) {
+    const g30 = document.getElementById('ob-gmv30').value.trim();
+    const glt = document.getElementById('ob-gmv-lifetime').value.trim();
+    const att = document.getElementById('ob-gmv-attest').checked;
+    let valid = true;
+    if (g30 === '' || isNaN(Number(g30)) || Number(g30) < 0) { obShowErr('ob-gmv30-err', true); obShake('ob-gmv30'); valid = false; } else obShowErr('ob-gmv30-err', false);
+    if (glt === '' || isNaN(Number(glt)) || Number(glt) < 0) { obShowErr('ob-gmv-lifetime-err', true); obShake('ob-gmv-lifetime'); valid = false; } else obShowErr('ob-gmv-lifetime-err', false);
+    if (!att) { obShowErr('ob-gmv-attest-err', true); valid = false; } else obShowErr('ob-gmv-attest-err', false);
+    if (!valid) return;
+    _obData.gmv30 = Math.round(Number(g30));
+    _obData.gmvLifetime = Math.max(Math.round(Number(glt)), _obData.gmv30);
+    if (_obGmvOnly) { saveGmvOnly(); return; }
+  }
 
   const cur = document.getElementById('ob-s' + fromStep);
   cur.classList.add('leaving');
@@ -4448,7 +4497,7 @@ async function obFinish() {
   const hasUgc = plats.some(p => p.includes('ugc'));
   const ctype  = hasUgc ? (plats.length === 1 ? 'ugc' : 'both') : 'affiliate';
   const prevRates = mediaKitProfile?.rates_data || JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
-  const ratesMerged = { ...prevRates, creatorType: ctype };
+  const ratesMerged = { ...prevRates, creatorType: ctype, gmv30d: String(_obData.gmv30), gmvLifetime: String(_obData.gmvLifetime), gmvAttestedAt: new Date().toISOString() };
   localStorage.setItem('rhq_rates_data', JSON.stringify(ratesMerged));
   const updates = {
     role: 'creator', onboarded: true,
@@ -4456,6 +4505,8 @@ async function obFinish() {
     tiktok_handle: _obData.handle,
     niche:         _obData.niche,
     bio:           _obData.bio,
+    last_30d_gmv:  _obData.gmv30,
+    total_gmv:     _obData.gmvLifetime,
     rates_data:    ratesMerged,
   };
 
@@ -4467,13 +4518,40 @@ async function obFinish() {
   document.querySelector('.user-name').textContent = _obData.name;
   document.querySelector('.avatar').textContent = _obData.name.slice(0,2).toUpperCase();
 
-  const cur = document.getElementById('ob-s3');
+  const cur = document.getElementById('ob-s4');
   cur.classList.add('leaving');
   setTimeout(() => {
     cur.classList.remove('active', 'leaving');
-    _obStep = 4; obRenderProgress();
-    document.getElementById('ob-s4').classList.add('active');
+    _obStep = 5; obRenderProgress();
+    document.getElementById('ob-s5').classList.add('active');
   }, 200);
+}
+
+// ── GMV gate for existing users who onboarded before the GMV step existed ──
+function showGmvGate() {
+  _obGmvOnly = true; _obStep = 3; _obData = _obData || {};
+  obRenderProgress();
+  document.querySelectorAll('.ob-step').forEach(s => s.classList.remove('active'));
+  const st = document.getElementById('ob-s3'); st.classList.add('active');
+  const lbl = st.querySelector('.ob-step-label'); if (lbl) lbl.textContent = 'One more thing';
+  document.getElementById('ob-full').classList.add('show');
+}
+async function saveGmvOnly() {
+  const prevRates = mediaKitProfile?.rates_data || JSON.parse(localStorage.getItem('rhq_rates_data') || '{}');
+  const ratesMerged = { ...prevRates, gmv30d: String(_obData.gmv30), gmvLifetime: String(_obData.gmvLifetime), gmvAttestedAt: new Date().toISOString() };
+  localStorage.setItem('rhq_rates_data', JSON.stringify(ratesMerged));
+  const updates = { last_30d_gmv: _obData.gmv30, total_gmv: _obData.gmvLifetime, rates_data: ratesMerged };
+  const { error } = await sb.from('profiles').update(updates).eq('id', currentUser.id);
+  if (error) { showToast('Could not save — try again'); return; }
+  Object.assign(mediaKitProfile, updates);
+  loadRatesData();
+  _obGmvOnly = false;
+  document.getElementById('ob-full').classList.remove('show');
+  showToast('✓ GMV saved. Keep it current — brands sort by it.');
+}
+function gmvIsAnswered(profile) {
+  const rd = profile?.rates_data || {};
+  return !!rd.gmvAttestedAt && profile.last_30d_gmv !== null && profile.last_30d_gmv !== undefined;
 }
 
 function closOb() {
